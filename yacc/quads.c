@@ -1,19 +1,27 @@
 #include "quads.h"
 
-quadOP  QOcreat_cst(int v){
-    quadOP qo;
-    qo.kind=QO_CST;
-    qo.u.cst=v;
+quadOP* QOcreat_cst(int v){
+    quadOP * qo=malloc(sizeof(quadOP));
+    qo->kind=QO_CST;
+    qo->u.cst=v;
     return qo;
 }
-quadOP  QOcreat_name(char* v){
-    quadOP qo;
-    qo.kind=QO_NAME;
-    qo.u.name=v;
+quadOP  *QOcreat_name(char* v){
+    quadOP * qo=malloc(sizeof(quadOP));
+    qo->kind=QO_NAME;
+    qo->u.name=v;
     return qo;
+}
+void QOaffiche(quadOP *op){
+    switch(op->kind){
+        case QO_CST:
+            printf("%i",op->u.cst);
+        case QO_NAME:
+            printf("%s",op->u.name);
+    }
 }
 
-quads * Qcreat(int type,quadOP op1, quadOP op2, quadOP res){
+quads * Qcreat(int type,quadOP* op1, quadOP* op2, quadOP *res){
     quads *q=malloc(sizeof(quads));
     q->op1=op1;
     q->op2=op2;
@@ -22,14 +30,19 @@ quads * Qcreat(int type,quadOP op1, quadOP op2, quadOP res){
     return q;
 }
 
-void QOaffiche(quadOP op){
-    switch(op.kind){
-        case QO_CST:
-            printf("%i",op.u.cst);
-        case QO_NAME:
-            printf("%s",op.u.name);
+void Qfree(quads *q){
+    if(q->op1!=NULL){
+        free(q->op1);
+    }
+    if(q->op2!=NULL){
+        free(q->op2);
+    }
+    if(q->res!=NULL){
+        free(q->res);
     }
 }
+
+
 void Qaffiche(quads *q){
     printf("quad type %i: ",q->kind);
         QOaffiche(q->op1);
@@ -102,9 +115,7 @@ void Lfree(listQ *list) {
     }
 }
 
-void Qfree(quads *q){
-    free(q);
-}
+
 
 
 size_t Lsize(listQ*list){

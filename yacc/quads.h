@@ -7,16 +7,18 @@ typedef struct quadOP {
     union{int cst;char *name;}u;
 } quadOP;
 
-quadOP  QOcreat_cst(int v);
-quadOP  QOcreat_name(char* v);
+quadOP*  QOcreat_cst(int v);
+quadOP*  QOcreat_name(char* v);
 
 /* quad / instruction à 3 addresse*/
 typedef struct quads {
     enum{Q_ADD=100,Q_MUL,Q_ASS,Q_GOTO}kind;
-    quadOP op1,op2,res;
+    quadOP *op1,*op2,*res;
     struct quads *next;
 } quads;
-quads * Qcreat(int type,quadOP op1, quadOP op2, quadOP res);
+
+void Qfree(quads *q);
+quads * Qcreat(int type,quadOP *op1, quadOP *op2, quadOP* res);
 
 /* liste stockant les quads */
 typedef struct listQ {
@@ -33,8 +35,6 @@ quads* Lget(listQ *list, unsigned int value_idx) ;
 void Lconcat(listQ *list, listQ *list2) ;
 
 void Lfree(listQ *list);
-
-void Qfree(quads *q);
 
 size_t Lsize(listQ*list);
 
