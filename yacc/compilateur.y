@@ -3,13 +3,17 @@
   yydebug = 1;
 #endif
 
+#include "quads.h"
 #include <stdio.h>
 
 extern int yylex(); 
+extern char* text;
 extern void yyerror(const char * msg);
 %}
+%union{char *strval;}
 
-%token IF THEN FOR DO DONE IN WHILE UNTIL CASE ESAC MYECHO READ RETURN EXIT LOCAL ELIF ELSE FI DECLARE TEST EXPR ID CHAINE O A N Z EQ NE GT GE LT LE
+%token IF THEN FOR DO DONE IN WHILE UNTIL CASE ESAC MYECHO READ RETURN EXIT LOCAL ELIF ELSE FI DECLARE TEST EXPR CHAINE O A N Z EQ NE GT GE LT LE
+%token <strval> ID
 %start programme
 
 %%
@@ -22,7 +26,8 @@ liste_instructions ';' instruction {printf("liste_instruction->liste_instruction
 |instruction                       {printf("liste_instruction->instruction\n");};
 
 instruction: 
-ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");}
+ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");
+printf("%s\n",$1);}
 | ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
 | DECLARE ID '[' ID ']'                                { printf("instruction-> DECLARE ID [ ENTIER ] \n");}
 | IF test_bloc THEN liste_instructions else_part FI    { printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");}
@@ -104,7 +109,8 @@ EQ  { printf("operateur2-> -eq\n");}
 operande:
 '$' '{' ID '}'                           { printf("operande-> $ { ID }\n");}
 | '$' '{' ID '[' operande_entier ']' '}' { printf("operande-> $ { ID [ operande_entier ] }\n");}
-| ID                                     { printf("operande-> MOT\n");}
+| ID                                     { printf("operande-> MOT\n");
+}
 | '$' ID                                 { printf("operande-> $ ENTIER\n");} 
 | '$' '*'                                { printf("operande-> $ *\n");}
 | '$' '?'                                { printf("operande-> $ ?\n");}

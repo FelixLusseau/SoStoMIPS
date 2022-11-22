@@ -1,6 +1,8 @@
 %{
 #include "compilateur.tab.h" 
 #include <stdio.h>
+
+char *text;
 %}
 %option noyywrap
 
@@ -75,6 +77,7 @@ AUTORISER ([[:alnum:]ëËàéçèùêÊ&#~_^€@$£µ§:\.?,/*+\-]*)
 ({AUTORISER}|{SPECIAUX})* {
     //alors on ne peut pas séparer le cas MOT, ENTIER ou ID à ce stade, le yacc décidera ce que ce sera
     printf("    mot/id/entier:%s\n",yytext);
+    yylval.strval=strdup(yytext);
     return ID;
 }
 

@@ -1,4 +1,3 @@
-
 prefixe=compilateur
 
 # exige 3 fichiers:
@@ -12,11 +11,14 @@ prefixe=compilateur
 
 all: main
 
-main: $(prefixe).tab.o lex.yy.o main.o
+main: $(prefixe).tab.o lex.yy.o main.o quads.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
+quads: quads.c quads.h	
+		$(CC) -o quads.o -c quads.c -Wall -Wextra -Werror
+
 $(prefixe).tab.c: $(prefixe).y
-	bison -t -d $(prefixe).y -Wother
+	bison -t -d $(prefixe).y
 
 lex.yy.c: $(prefixe).lex $(prefixe).tab.h
 	flex $(prefixe).lex
