@@ -1,5 +1,5 @@
 #include "quads.h"
-
+/******************************** QUADOP ********************************************/
 quadOP* QOcreat_cst(int v){
     quadOP * qo=malloc(sizeof(quadOP));
     qo->kind=QO_CST;
@@ -12,15 +12,19 @@ quadOP  *QOcreat_name(char* v){
     qo->u.name=v;
     return qo;
 }
+
 void QOaffiche(quadOP *op){
     switch(op->kind){
         case QO_CST:
-            printf("%i",op->u.cst);
+            printf("%i, ",op->u.cst);
+            break;
         case QO_NAME:
-            printf("%s",op->u.name);
+            printf("%s, ",op->u.name);
+            break;
     }
 }
 
+/******************************** QUADS ********************************************/
 quads * Qcreat(int type,quadOP* op1, quadOP* op2, quadOP *res){
     quads *q=malloc(sizeof(quads));
     q->op1=op1;
@@ -45,11 +49,19 @@ void Qfree(quads *q){
 
 void Qaffiche(quads *q){
     printf("quad type %i: ",q->kind);
+    if(q->op1!=NULL){
         QOaffiche(q->op1);
+    }
+    if(q->op2!=NULL){
         QOaffiche(q->op2);
+    }
+    if(q->res!=NULL){
         QOaffiche(q->res);
+    }
+    printf("\n");
 }
 
+/******************************** LISTE ********************************************/
 listQ * Lcreat(void) {
     listQ * list = malloc(sizeof(listQ));
     if(list==NULL)
@@ -108,6 +120,7 @@ void Lfree(listQ *list) {
             noeud2=noeud;
             noeud = noeud->next;
             Qfree(noeud2);
+            free(noeud2);
         }
         free(noeud);
         free(list);
@@ -115,18 +128,21 @@ void Lfree(listQ *list) {
     }
 }
 
-
-
-
 size_t Lsize(listQ*list){
     return list->taille;
 }
 
 void Laffiche (listQ* list){
     quads *it = list->first;
-    int idx=list->taille;
-    for(unsigned int i = 0; i < idx; i++) {
-        it = it->next;
+    int i=1;
+    if(it!=NULL){
+        while(it->next != NULL) {
+            printf("add %i: ",i);
+            Qaffiche(it);
+            it = it->next;
+            i++;
+        }
+        printf("add %i: ",i);
         Qaffiche(it);
     }
 }

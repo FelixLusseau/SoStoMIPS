@@ -1,3 +1,5 @@
+#ifndef QUADS_H
+#define QUADS_H
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,8 +9,11 @@ typedef struct quadOP {
     union{int cst;char *name;}u;
 } quadOP;
 
-quadOP*  QOcreat_cst(int v);
-quadOP*  QOcreat_name(char* v);
+quadOP* QOcreat_cst(int v);
+
+quadOP* QOcreat_name(char* v);
+
+void QOaffiche(quadOP *op);
 
 /* quad / instruction à 3 addresse*/
 typedef struct quads {
@@ -18,6 +23,7 @@ typedef struct quads {
 } quads;
 
 void Qfree(quads *q);
+
 quads * Qcreat(int type,quadOP *op1, quadOP *op2, quadOP* res);
 
 /* liste stockant les quads */
@@ -34,6 +40,8 @@ quads* Lget(listQ *list, unsigned int value_idx) ;
 
 void Lconcat(listQ *list, listQ *list2) ;
 
+void Laffiche (listQ* list);
+
 void Lfree(listQ *list);
 
 size_t Lsize(listQ*list);
@@ -41,3 +49,5 @@ size_t Lsize(listQ*list);
 quads* Lfirst(listQ *list);
 
 quads* Llast(listQ *list);
+
+#endif
