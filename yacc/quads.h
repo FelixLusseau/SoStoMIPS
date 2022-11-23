@@ -13,6 +13,8 @@ quadOP* QOcreat_cst(int v);
 
 quadOP* QOcreat_name(char* v);
 
+quadOP* QOcreat_addrs(int v);
+
 void QOaffiche(quadOP *op);
 
 /* quad / instruction à 3 addresse*/
@@ -38,7 +40,7 @@ void Lappend(listQ *list,  quads * new_element);
 
 quads* Lget(listQ *list, unsigned int value_idx) ;
 
-void Lconcat(listQ *list, listQ *list2) ;
+listQ * Lconcat(listQ *list, listQ *list2) ;
 
 void Laffiche (listQ* list);
 

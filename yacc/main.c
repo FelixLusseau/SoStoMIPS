@@ -5,19 +5,27 @@ extern int yyparse(void);
 
 void testQuad(){
     listQ *L=Lcreat();
+    listQ *L1=Lcreat();
+
     quadOP *op1=QOcreat_cst(5);
     quadOP *op2=QOcreat_cst(7);
+    quadOP *op3=QOcreat_addrs(1);
     quadOP *res=QOcreat_name("id");
+
     quads *q=Qcreat(Q_ADD,op1,op2,res);
-    quads *q2=Qcreat(Q_ADD,op2,op1,res);
+    quads *q1=Qcreat(Q_GOTO,NULL,op3,NULL);
+
     Lappend(L,q);
-    Lappend(L,q2);
+    Lappend(L1,q1);
+
+    listQ* concat=Lconcat(L,L1);
+
     Laffiche(L);
     Lfree(L);
 }
 
 int main(void){
-
+    
     int r=yyparse();
 
     printf("->%d\n",r);

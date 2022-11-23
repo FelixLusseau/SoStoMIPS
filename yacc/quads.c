@@ -12,14 +12,24 @@ quadOP  *QOcreat_name(char* v){
     qo->u.name=v;
     return qo;
 }
+quadOP  *QOcreat_addrs(int v){
+    quadOP * qo=malloc(sizeof(quadOP));
+    qo->kind=QO_ADDR;
+    qo->u.cst=v;
+    return qo;
+}
+
 
 void QOaffiche(quadOP *op){
     switch(op->kind){
         case QO_CST:
-            printf("%i, ",op->u.cst);
+            printf("cst:%i ",op->u.cst);
             break;
         case QO_NAME:
-            printf("%s, ",op->u.name);
+            printf("name:%s ",op->u.name);
+            break;
+        case QO_ADDR:
+            printf("addr:%i ",op->u.cst);
             break;
     }
 }
@@ -48,7 +58,20 @@ void Qfree(quads *q){
 
 
 void Qaffiche(quads *q){
-    printf("quad type %i: ",q->kind);
+    switch(q->kind){
+        case Q_ADD:
+            printf(" ADD ");
+            break;
+        case Q_ASS:
+            printf(" ASS ");
+            break;
+        case Q_GOTO:
+            printf(" GOTO ");
+            break;
+        case Q_MUL:
+            printf(" MUL ");
+            break;
+    }
     if(q->op1!=NULL){
         QOaffiche(q->op1);
     }
@@ -101,9 +124,11 @@ quads* Lget(listQ *list, unsigned int value_idx) {
     return it;
 }
 
-void Lconcat(listQ *list, listQ *list2){
+listQ * Lconcat(listQ *list, listQ *list2){
     quads *last=Llast(list);
     last->next=Lfirst(list2);
+    free(list2);
+    return list;
 }
 
 void Lfree(listQ *list) {
@@ -122,6 +147,7 @@ void Lfree(listQ *list) {
             Qfree(noeud2);
             free(noeud2);
         }
+        Qfree(noeud);
         free(noeud);
         free(list);
         return ;
