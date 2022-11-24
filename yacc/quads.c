@@ -34,11 +34,11 @@ quadOP  *QOcreat_addrs(int v){
 }
 
 quadOP * QOcreat_temp(){
-    int taille=(int)((ceil(log10(nb_temp))+1)*sizeof(char));
+    int taille=(int)((ceil(log10(nb_temp))+1)*sizeof(char));// nombre de char necessaire pour écrire nb_temp
     char temp[taille+10];
     temp[taille+10]='\0';
 
-    sprintf(temp,"__temp__%d",nb_temp);
+    sprintf(temp,"__TEMP__%d",nb_temp);
     quadOP *Qtemp=QOcreat_name(temp);
 
     nb_temp++;
