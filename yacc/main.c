@@ -2,6 +2,7 @@
 #include "quads.h"
 
 extern int yyparse(void);
+int nb_temp=1;
 
 void testQuad(){
     listQ *L=Lcreat();

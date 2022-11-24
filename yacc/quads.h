@@ -2,6 +2,10 @@
 #define QUADS_H
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
+/* vérifie que str est un entier et stocke ça valeur dans i */
+int ToInt( int *i, char * str);
 
 /* opérande d'une instruction à 3 addresse: entier/variable/addresse goto*/
 typedef struct quadOP {
@@ -15,6 +19,9 @@ quadOP* QOcreat_name(char* v);
 
 /* créer quadOP de type addresse, si l'adresse<0 alors elle inconnue pour l'instant */
 quadOP* QOcreat_addrs(int v);
+
+/* creer un variable temporaire pour le code 3 adresses */
+quadOP * QOcreat_temp();
 
 void QOaffiche(quadOP *op);
 

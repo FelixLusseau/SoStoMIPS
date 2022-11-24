@@ -27,7 +27,8 @@ liste_instructions ';' instruction {printf("liste_instruction->liste_instruction
 
 instruction: 
 ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");
-printf("%s\n",$1);}
+printf("%s\n",$1);
+}
 | ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
 | DECLARE ID '[' ID ']'                                { printf("instruction-> DECLARE ID [ ENTIER ] \n");}
 | IF test_bloc THEN liste_instructions else_part FI    { printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");}
@@ -68,7 +69,11 @@ liste_operandes operande      { printf("liste_operandes-> liste_operandes operan
 | '$' '{' ID '[' '*' ']' '}'  { printf("liste_operandes-> $ { ID [ * ] } \n");} ;
 
 concatenation:
-concatenation operande { printf("concatenation-> concatenation operande \n");}
+concatenation operande { printf("concatenation-> concatenation operande \n");
+  quadOP* optemp=QOcreat_temp();
+  QOaffiche(optemp);
+  free(optemp);
+}
 | operande             { printf("concatenation-> operande \n");} ;
 
 test_bloc:
@@ -111,7 +116,9 @@ operande:
 | '$' '{' ID '[' operande_entier ']' '}' { printf("operande-> $ { ID [ operande_entier ] }\n");}
 | ID                                     { printf("operande-> MOT\n");
 }
-| '$' ID                                 { printf("operande-> $ ENTIER\n");} 
+| '$' ID                                 { printf("operande-> $ ENTIER\n");
+ 
+} 
 | '$' '*'                                { printf("operande-> $ *\n");}
 | '$' '?'                                { printf("operande-> $ ?\n");}
 | CHAINE                                 { printf("operande-> CHAINE\n");}

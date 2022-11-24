@@ -12,10 +12,10 @@ prefixe=compilateur
 all: main
 
 main: $(prefixe).tab.o lex.yy.o main.o quads.o
-	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS) -lm
 
 quads: quads.c quads.h	
-		$(CC) -o quads.o -c quads.c -Wall -Wextra -Werror
+		$(CC) -o quads.o -c quads.c -Wall -Wextra -Werror -lm
 
 $(prefixe).tab.c: $(prefixe).y
 	bison -t -d $(prefixe).y

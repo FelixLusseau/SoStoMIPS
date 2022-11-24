@@ -1,3 +1,6 @@
-ma_variable
+a=5 $7;
+i=$0;
+exit
+
 
 

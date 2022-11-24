@@ -1,4 +1,18 @@
 #include "quads.h"
+#include <math.h>
+extern int nb_temp;
+
+int ToInt( int *i, char * str){
+    *i=atoi(str); // atoi renvoit 0 si str n'est pas un entier
+    int isInt=1;
+    if(*i==0 && str[1]=='\0' && str[0]=='0'){ // cas str='0'
+        return isInt;
+    }else{
+        isInt=0;
+    }
+    return isInt;
+}
+
 /******************************** QUADOP ********************************************/
 quadOP* QOcreat_cst(int v){
     quadOP * qo=malloc(sizeof(quadOP));
@@ -6,7 +20,7 @@ quadOP* QOcreat_cst(int v){
     qo->u.cst=v;
     return qo;
 }
-quadOP  *QOcreat_name(char* v){
+quadOP *QOcreat_name(char* v){
     quadOP * qo=malloc(sizeof(quadOP));
     qo->kind=QO_NAME;
     qo->u.name=v;
@@ -17,6 +31,18 @@ quadOP  *QOcreat_addrs(int v){
     qo->kind=QO_ADDR;
     qo->u.cst=v;
     return qo;
+}
+
+quadOP * QOcreat_temp(){
+    int taille=(int)((ceil(log10(nb_temp))+1)*sizeof(char));
+    char temp[taille+10];
+    temp[taille+10]='\0';
+
+    sprintf(temp,"__temp__%d",nb_temp);
+    quadOP *Qtemp=QOcreat_name(temp);
+
+    nb_temp++;
+    return Qtemp;
 }
 
 
