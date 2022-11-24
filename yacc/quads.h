@@ -13,6 +13,7 @@ quadOP* QOcreat_cst(int v);
 
 quadOP* QOcreat_name(char* v);
 
+/* créer quadOP de type addresse, si l'adresse<0 alors elle inconnue pour l'instant */
 quadOP* QOcreat_addrs(int v);
 
 void QOaffiche(quadOP *op);
