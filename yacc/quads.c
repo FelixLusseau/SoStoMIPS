@@ -127,6 +127,7 @@ quads* Lget(listQ *list, unsigned int value_idx) {
 listQ * Lconcat(listQ *list, listQ *list2){
     quads *last=Llast(list);
     last->next=Lfirst(list2);
+    list->taille+=list2->taille;
     free(list2);
     return list;
 }
