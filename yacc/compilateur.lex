@@ -1,4 +1,5 @@
 %{
+#include "quads.h"
 #include "compilateur.tab.h" 
 #include <stdio.h>
 
@@ -70,9 +71,11 @@ AUTORISER ([[:alnum:]ëËàéçèùêÊ&#~_^€@£µ§:\.?,\*+\-]*)
 
 [[:space:]\n]* {/*printf("    tabulation\n");*/};
 
-\".*\" {printf("    chaine:%s\n",yytext);return CHAINE;}
-
-\"({AUTORISER}|{SPECIAUX}|[[:space:]])*\"|\'({AUTORISER}|{SPECIAUX}|[[:space:]])*\' {printf("    chaine:%s\n",yytext);return CHAINE;}
+\".*\"|\'.*\' {
+    printf("    chaine:%s\n",yytext);
+    yylval.strval=strdup(yytext);
+    return CHAINE;
+}
 
 ({AUTORISER}|{SPECIAUX})* {
     //alors on ne peut pas séparer le cas MOT, ENTIER ou ID à ce stade, le yacc décidera ce que ce sera

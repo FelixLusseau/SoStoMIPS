@@ -10,24 +10,61 @@ extern int yylex();
 extern char* text;
 extern void yyerror(const char * msg);
 %}
-%union{char *strval;}
+%union{char *strval; int intval; listQ* listeQ;}
 
-%token IF THEN FOR DO DONE IN WHILE UNTIL CASE ESAC MYECHO READ RETURN EXIT LOCAL ELIF ELSE FI DECLARE TEST EXPR CHAINE O A N Z EQ NE GT GE LT LE
-%token <strval> ID
+%token IF THEN FOR DO DONE IN WHILE UNTIL CASE ESAC MYECHO READ RETURN EXIT LOCAL ELIF ELSE FI DECLARE TEST EXPR O A N Z EQ NE GT GE LT LE
+%token <strval> ID 
+%token <strval> CHAINE 
+
+%type <strval> concatenation 
+%type <strval> operande
+
+%type <listeQ> instruction
+%type <listeQ> liste_instructions
+%type <listeQ> programme
+%type <listeQ> somme_entiere
+%type <listeQ> produit_entier
+
+%type <intval> plus_ou_moin
+%type <intval> fois_div_mod
 %start programme
 
 %%
 
 programme: 
-liste_instructions {printf("programme->liste_instruction\n");};
+liste_instructions {
+  printf("programme->liste_instruction\n");
+  Laffiche($1);
+  Lfree($1);
+  };
 
 liste_instructions: 
-liste_instructions ';' instruction {printf("liste_instruction->liste_instructions ; instruction\n");}
-|instruction                       {printf("liste_instruction->instruction\n");};
+liste_instructions ';' instruction {
+  printf("liste_instruction->liste_instructions ; instruction\n");
+  $$=Lconcat($1,$3);
+}
+|instruction {
+  printf("liste_instruction->instruction\n");
+  $$=$1;
+};
 
 instruction: 
 ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");
-printf("%s\n",$1);
+  quadOP* res= QOcreat_name($1);
+  quadOP* op1=NULL;
+  int concat;
+
+  if(ToInt(&concat,$3)){
+    op1= QOcreat_cst(concat);
+  }else{
+    op1= QOcreat_name($3);
+  }
+  quads *q=Qcreat(Q_ASS,op1,NULL,res);
+
+  listQ *L=Lcreat();
+  Lappend(L,q);
+  
+  $$=L;
 }
 | ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
 | DECLARE ID '[' ID ']'                                { printf("instruction-> DECLARE ID [ ENTIER ] \n");}
@@ -44,8 +81,14 @@ printf("%s\n",$1);
 | appel_de_fonction                                    { printf("instruction-> appel_de_fonction \n");}
 | RETURN                                               { printf("instruction-> RETURN \n");}
 | RETURN operande_entier                               { printf("instruction-> RETURN operande_entier \n");}
-| EXIT                                                 { printf("instruction->EXIT\n");}
-| EXIT operande_entier                                 { printf("instruction->EXIT operande_entier\n");}; 
+| EXIT { 
+  printf("instruction->EXIT\n");
+  $$=Lcreat();
+ }
+| EXIT operande_entier { 
+  printf("instruction->EXIT operande_entier\n");
+  $$=Lcreat();
+  }; 
 
 else_part:
 ELIF test_bloc THEN liste_instructions else_part  { printf("else_part->ELIF test_bloc THEN liste_instructions else_part\n");}
@@ -69,12 +112,13 @@ liste_operandes operande      { printf("liste_operandes-> liste_operandes operan
 | '$' '{' ID '[' '*' ']' '}'  { printf("liste_operandes-> $ { ID [ * ] } \n");} ;
 
 concatenation:
-concatenation operande { printf("concatenation-> concatenation operande \n");
-  quadOP* optemp=QOcreat_temp();
-  QOaffiche(optemp);
-  free(optemp);
+concatenation operande { 
+  printf("concatenation-> concatenation operande \n");
 }
-| operande             { printf("concatenation-> operande \n");} ;
+| operande { 
+  printf("concatenation-> operande \n"); 
+  $$=$1;
+} ;
 
 test_bloc:
 TEST test_expr  { printf("test_bloc-> TEST test_exp \n");};
@@ -112,25 +156,59 @@ EQ  { printf("operateur2-> -eq\n");}
 |LE { printf("operateur2-> -le\n");};
 
 operande:
-'$' '{' ID '}'                           { printf("operande-> $ { ID }\n");}
+'$' '{' ID '}' { 
+  printf("operande-> $ { ID }\n");
+  $$=$3;
+  }
 | '$' '{' ID '[' operande_entier ']' '}' { printf("operande-> $ { ID [ operande_entier ] }\n");}
-| ID                                     { printf("operande-> MOT\n");
-}
-| '$' ID                                 { printf("operande-> $ ENTIER\n");
- 
+| ID { 
+  printf("operande-> MOT\n"); 
+  $$=$1; 
+  }
+| '$' ID { 
+  printf("operande-> $ ENTIER\n");
+
+  int entier;
+  if(ToInt(&entier,$2)){
+
+    int taille=(int)((ceil(log10(entier))+1)*sizeof(char));
+    char val[taille+2];
+    val[taille+2]='\0';
+    sprintf(val,"$%d",entier);
+
+    $$=val;
+    
+  }else{ // $a ou $1mp
+      printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
+  }
 } 
 | '$' '*'                                { printf("operande-> $ *\n");}
 | '$' '?'                                { printf("operande-> $ ?\n");}
-| CHAINE                                 { printf("operande-> CHAINE\n");}
+| CHAINE { 
+  printf("operande-> CHAINE:%s\n",$1); 
+  $$=$1; 
+  }
 | '$' '(' EXPR somme_entiere ')'         { printf("operande-> $ ( EXPR somme_entiere )\n");}
 | '$' '(' appel_de_fonction ')'          { printf("operande-> $ ( appel_de_fonction )\n");} ;
 
 somme_entiere:
-somme_entiere plus_ou_moin produit_entier { printf("somme_entiere-> somme_entiere plus_ou_moin produit_entier \n");}
-| produit_entier                          { printf("somme_entiere-> produit_entier \n");};
+somme_entiere plus_ou_moin produit_entier { 
+  printf("somme_entiere-> somme_entiere plus_ou_moin produit_entier \n");
+  if($2){
+
+  }else{
+
+  }
+}
+| produit_entier { 
+  printf("somme_entiere-> produit_entier \n");
+  $$=$1;
+};
 
 produit_entier:
-produit_entier fois_div_mod operande_entier { printf("produit_entier-> produit_entier fois_div_mod operande_entier\n");}
+produit_entier fois_div_mod operande_entier { 
+  printf("produit_entier-> produit_entier fois_div_mod operande_entier\n");
+}
 |operande_entier                            { printf("produit_entier-> operande_entier \n");};
 
 
@@ -141,13 +219,15 @@ operande_entier:
 | plus_ou_moin '$' '{' ID '}'                         { printf("operande_entier-> plus_ou_moin $ { ID } \n");}
 | plus_ou_moin '$' '{' ID '[' operande_entier ']' '}' { printf("operande_entier-> plus_ou_moin $ { ID [ operande_entier ] }\n");}
 | plus_ou_moin '$' ID                                 { printf("operande_entier-> plus_ou_moin $ ENTIER\n");}
-| ID                                                  { printf("operande_entier-> ENTIER \n");}
+| ID { 
+  printf("operande_entier-> ENTIER \n");
+}
 | plus_ou_moin ID                                     { printf("operande_entier-> plus_ou_moin ENTIER\n");}
 | '(' somme_entiere ')'                               { printf("operande_entier-> ( somme_entiere ) \n");};
 
-plus_ou_moin: '+' | '-' ;
+plus_ou_moin: '+' {$$=1;} | '-' {$$=0;};
 
-fois_div_mod: '*' | '/' | '%' ;
+fois_div_mod: '*' {$$=1;}| '/' {$$=2;}| '%' {$$=3;};
 
 declaration_de_fonction:
 ID '(' ')' '{' decl_loc liste_instructions '}' { printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");} ;

@@ -1,5 +1,5 @@
-a=5 $7;
-i=$0;
+a=5;
+i="hello world";
 exit
 
 

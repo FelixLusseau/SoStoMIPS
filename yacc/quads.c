@@ -4,13 +4,15 @@ extern int nb_temp;
 
 int ToInt( int *i, char * str){
     *i=atoi(str); // atoi renvoit 0 si str n'est pas un entier
-    int isInt=1;
+    printf("ToInt: %i\n",*i);
+
     if(*i==0 && str[1]=='\0' && str[0]=='0'){ // cas str='0'
-        return isInt;
-    }else{
-        isInt=0;
+        return 1;
     }
-    return isInt;
+    if(*i==0){
+        return 0;
+    }
+    return 1;
 }
 
 /******************************** QUADOP ********************************************/
@@ -84,6 +86,9 @@ void Qfree(quads *q){
 
 
 void Qaffiche(quads *q){
+    if(q->res!=NULL){
+        QOaffiche(q->res);
+    }
     switch(q->kind){
         case Q_ADD:
             printf(" ADD ");
@@ -103,9 +108,6 @@ void Qaffiche(quads *q){
     }
     if(q->op2!=NULL){
         QOaffiche(q->op2);
-    }
-    if(q->res!=NULL){
-        QOaffiche(q->res);
     }
     printf("\n");
 }

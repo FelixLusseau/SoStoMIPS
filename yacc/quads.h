@@ -36,6 +36,8 @@ void Qfree(quads *q);
 
 quads * Qcreat(int type,quadOP *op1, quadOP *op2, quadOP* res);
 
+void Qaffiche(quads *q);
+
 /* liste stockant les quads */
 typedef struct listQ {
     struct quads *first;
