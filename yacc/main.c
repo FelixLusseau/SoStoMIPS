@@ -2,7 +2,7 @@
 #include "quads.h"
 
 extern int yyparse(void);
-int nb_temp=1; // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur créeation
+int nb_temp=1; // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur création
 
 void testQuad(){
     listQ *L=Lcreat();

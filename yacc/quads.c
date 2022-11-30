@@ -74,6 +74,9 @@ quads * Qcreat(int type,quadOP* op1, quadOP* op2, quadOP *res){
 }
 
 void Qfree(quads *q){
+    if(q==NULL){
+        return;
+    }
     if(q->op1!=NULL){
         free(q->op1);
     }
@@ -160,9 +163,7 @@ void Lfree(listQ *list) {
     if (list==NULL)
         return ;
     if (list->next==NULL){
-        if(list->quad!=NULL){
-            Qfree(list->quad);
-        }
+        Qfree(list->quad);
         free(list);
         return ;
     }
@@ -191,8 +192,10 @@ void Laffiche (listQ* list){
             it = it->next;
             i++;
         }
-        printf("ligne %i: ",i);
-        Qaffiche(it->quad);
+        if(it->quad!=NULL){
+            printf("ligne %i: ",i);
+            Qaffiche(it->quad);
+        }
     }
 }
 

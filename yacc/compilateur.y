@@ -35,7 +35,9 @@ programme:
 liste_instructions {
   printf("programme->liste_instruction\n");
   Laffiche($1);
+  printf("after1\n");
   Lfree($1);
+  printf("after2\n");
   };
 
 liste_instructions: 
