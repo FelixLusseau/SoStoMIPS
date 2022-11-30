@@ -29,7 +29,6 @@ void QOaffiche(quadOP *op);
 typedef struct quads {
     enum{Q_ADD=100,Q_MUL,Q_ASS,Q_GOTO}kind;
     quadOP *op1,*op2,*res;
-    struct quads *next;
 } quads;
 
 void Qfree(quads *q);
@@ -40,15 +39,15 @@ void Qaffiche(quads *q);
 
 /* liste stockant les quads */
 typedef struct listQ {
-    struct quads *first;
-    int taille;
+    struct listQ *next;
+    struct quads *quad;
 }listQ;
 
 listQ * Lcreat(void);
 
 void Lappend(listQ *list,  quads * new_element);
 
-quads* Lget(listQ *list, unsigned int value_idx) ;
+quads* LgetQuad(listQ *list, unsigned int value_idx) ;
 
 listQ * Lconcat(listQ *list, listQ *list2) ;
 
@@ -56,10 +55,8 @@ void Laffiche (listQ* list);
 
 void Lfree(listQ *list);
 
-size_t Lsize(listQ*list);
 
-quads* Lfirst(listQ *list);
-
-quads* Llast(listQ *list);
+/* renvoit le dernier node de la liste */
+listQ* Llast(listQ *list);
 
 #endif

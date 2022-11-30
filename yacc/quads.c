@@ -65,6 +65,7 @@ void QOaffiche(quadOP *op){
 /******************************** QUADS ********************************************/
 quads * Qcreat(int type,quadOP* op1, quadOP* op2, quadOP *res){
     quads *q=malloc(sizeof(quads));
+    printf("taille:%li\n",sizeof(quads));
     q->op1=op1;
     q->op2=op2;
     q->res=res;
@@ -82,6 +83,7 @@ void Qfree(quads *q){
     if(q->res!=NULL){
         free(q->res);
     }
+    free(q);
 }
 
 
@@ -117,98 +119,94 @@ listQ * Lcreat(void) {
     listQ * list = malloc(sizeof(listQ));
     if(list==NULL)
         return NULL;
-    list->first = NULL;
-    list->taille=0;
+    list->quad = NULL;
+    list->next=NULL;
     return list;
 }
 
 void Lappend(listQ *list, quads * new_element) {
-    if(new_element == NULL) {
-        fprintf(stderr, "Allocation error in ll_append\n");
-        exit(1);
-    }
-    new_element->next = NULL;
-    list->taille+=1;
 
-    if(list->first == NULL) {
-        list->first = new_element;
+    if(list->quad==NULL){
+        list->quad=new_element;
         return;
     }
 
-    quads *it = list->first;
+    listQ *new_list=Lcreat();
+    new_list->quad=new_element;
+
+    listQ *last=Llast(list);
+    last->next=new_list;
+}
+
+quads* LgetQuad(listQ *list, unsigned int value_idx) {
+    if(list->next == NULL) {
+        return list->quad;
+    }
+
+    listQ *it = list->next;
     while(it->next != NULL) {
         it = it->next;
     }
-    it->next = new_element;
-}
-
-quads* Lget(listQ *list, unsigned int value_idx) {
-
-    quads *it = list->first;
-
-    for(unsigned int i = 0; i < value_idx; i++) {
-        it = it->next;
-    }
-    return it;
+    return it->quad;
 }
 
 listQ * Lconcat(listQ *list, listQ *list2){
-    quads *last=Llast(list);
-    last->next=Lfirst(list2);
-    list->taille+=list2->taille;
-    free(list2);
+    listQ *last=Llast(list);
+    last->next=list2;
     return list;
 }
 
 void Lfree(listQ *list) {
     if (list==NULL)
         return ;
-    if (list->first==NULL){
+    if (list->next==NULL){
+        if(list->quad!=NULL){
+            Qfree(list->quad);
+        }
         free(list);
         return ;
     }
     else{
-        quads *noeud = list->first;
-        quads *noeud2;
+        listQ *noeud = list;
+        listQ *noeud2;
         while(noeud->next != NULL) {
             noeud2=noeud;
             noeud = noeud->next;
-            Qfree(noeud2);
+            Qfree(noeud2->quad);
             free(noeud2);
         }
-        Qfree(noeud);
+        Qfree(noeud->quad);
         free(noeud);
-        free(list);
         return ;
     }
 }
 
-size_t Lsize(listQ*list){
-    return list->taille;
-}
-
 void Laffiche (listQ* list){
-    quads *it = list->first;
+    listQ *it = list;
     int i=1;
     if(it!=NULL){
         while(it->next != NULL) {
-            printf("add %i: ",i);
-            Qaffiche(it);
+            printf("ligne %i: ",i);
+            Qaffiche(it->quad);
             it = it->next;
             i++;
         }
-        printf("add %i: ",i);
-        Qaffiche(it);
+        printf("ligne %i: ",i);
+        Qaffiche(it->quad);
     }
 }
 
-quads* Lfirst(listQ *list){
-    return Lget(list,0);
-}
+listQ* Llast(listQ *list){
+        
+    if(list->next == NULL) {
+        return list;
+    }
 
-quads* Llast(listQ *list){
-    int taille = Lsize(list);
-    return Lget(list,taille-1);
+    listQ *it = list->next;
+    while(it->next != NULL) {
+        it = it->next;
+    }
+    return it;
 }
 
 
