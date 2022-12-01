@@ -51,7 +51,8 @@ liste_instructions ';' instruction {
 instruction: 
 ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");
   quadOP* res= QOcreat_id($1);
-  quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
+  quadOP* op1=CopieID($3);
+  quads *q=Qcreat(Q_EQUAL,res,op1,NULL);
 
   Lappend(Lglobal,q);
 }
@@ -102,12 +103,14 @@ concatenation:
 concatenation operande { 
   printf("concatenation-> concatenation operande \n");
   quadOP *temp=QOcreat_temp();
-  quads *q=Qcreat(Q_CONCAT,temp,$1,$2);
+  quadOP* op1=CopieID($1);
+  quadOP* op2=CopieID($2);
+  quads *q=Qcreat(Q_CONCAT,temp,op1,op2);
   Lappend(Lglobal,q);
   $$=temp;
 }
 | operande { 
-  printf("concatenation-> operande \n"); 
+  printf("concatenation-> operande \n");  
   $$=$1;
 } ;
 

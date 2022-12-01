@@ -15,6 +15,7 @@ int ToInt( int *i, char * str){
     return 1;
 }
 
+
 /******************************** QUADOP ********************************************/
 quadOP* QOcreat_cst(int v){
     quadOP * qo=malloc(sizeof(quadOP));
@@ -42,9 +43,16 @@ quadOP  *QOcreat_bool(int v){
 }
 quadOP  *QOcreat_id(char* v){
     quadOP * qo=malloc(sizeof(quadOP));
-    qo->kind=QO_STR;
-    qo->u.name=v;
+    qo->kind=QO_ID;
+    qo->u.name=strdup(v);
     return qo;
+}
+quadOP* CopieID( quadOP* og){
+    quadOP* newOP=og;
+    if(og->kind==QO_ID){
+        newOP=QOcreat_id(og->u.name);
+    }
+    return newOP;
 }
 
 quadOP * QOcreat_temp(void){
@@ -53,12 +61,23 @@ quadOP * QOcreat_temp(void){
     temp[taille+10]='\0';
 
     sprintf(temp,"__TEMP__%d",nb_temp);
+    printf("temp créer:%s\n\n",temp);
+
     quadOP *Qtemp=QOcreat_id(temp);
 
     nb_temp++;
     return Qtemp;
 }
 
+void QOfree(quadOP *op){
+    if(op==NULL){
+        return;
+    }
+    if(op->kind==QO_ID  && op->u.name!=NULL){
+        free(op->u.name);
+    }
+    free(op);
+}
 
 void QOaffiche(quadOP *op){
     switch(op->kind){
@@ -83,7 +102,6 @@ void QOaffiche(quadOP *op){
 /******************************** QUADS ********************************************/
 quads * Qcreat(int type, quadOP *res,quadOP* op1, quadOP* op2){
     quads *q=malloc(sizeof(quads));
-    printf("taille:%li\n",sizeof(quads));
     q->op1=op1;
     q->op2=op2;
     q->res=res;
@@ -95,15 +113,11 @@ void Qfree(quads *q){
     if(q==NULL){
         return;
     }
-    if(q->op1!=NULL){
-        free(q->op1);
-    }
-    if(q->op2!=NULL){
-        free(q->op2);
-    }
-    if(q->res!=NULL){
-        free(q->res);
-    }
+
+    QOfree(q->op1);
+    QOfree(q->op2);
+    QOfree(q->res);
+
     free(q);
 }
 
@@ -152,9 +166,21 @@ listQ * Lcreat(void) {
     return list;
 }
 
-void Lappend(listQ *list, quads * new_element) {
-    list->taille+=1;
+listQ* Llast(listQ *list){
+        
+    if(list->next == NULL) {
+        return list;
+    }
 
+    listQ *it = list->next;
+    while(it->next != NULL) {
+        it = it->next;
+    }
+    return it;
+}
+
+void Lappend(listQ *list, quads * new_element) {
+    list->taille=1;
     if(list->quad==NULL){
         list->quad=new_element;
         return;
@@ -226,17 +252,5 @@ void Laffiche (listQ* list){
     }
 }
 
-listQ* Llast(listQ *list){
-        
-    if(list->next == NULL) {
-        return list;
-    }
-
-    listQ *it = list->next;
-    while(it->next != NULL) {
-        it = it->next;
-    }
-    return it;
-}
 
 

@@ -576,16 +576,16 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    37,    37,    44,    47,    52,    58,    59,    60,    61,
-      62,    63,    64,    65,    66,    67,    68,    69,    70,    71,
-      72,    73,    76,    81,    82,    83,    86,    87,    90,    91,
-      92,    93,    94,    97,    98,    99,   102,   109,   115,   118,
-     119,   122,   123,   126,   127,   128,   129,   132,   133,   134,
-     135,   138,   139,   142,   143,   144,   145,   146,   147,   150,
-     154,   155,   159,   169,   170,   171,   175,   176,   179,   194,
-     200,   203,   207,   208,   209,   210,   211,   212,   213,   216,
-     217,   219,   219,   221,   221,   221,   224,   227,   228,   231,
-     232
+       0,    37,    37,    44,    47,    52,    59,    60,    61,    62,
+      63,    64,    65,    66,    67,    68,    69,    70,    71,    72,
+      73,    74,    77,    82,    83,    84,    87,    88,    91,    92,
+      93,    94,    95,    98,    99,   100,   103,   112,   118,   121,
+     122,   125,   126,   129,   130,   131,   132,   135,   136,   137,
+     138,   141,   142,   145,   146,   147,   148,   149,   150,   153,
+     157,   158,   162,   172,   173,   174,   178,   179,   182,   197,
+     203,   206,   210,   211,   212,   213,   214,   215,   216,   219,
+     220,   222,   222,   224,   224,   224,   227,   230,   231,   234,
+     235
 };
 #endif
 
@@ -1317,358 +1317,361 @@ yyreduce:
 #line 52 "compilateur.y"
                                                        { printf("instruction-> ID = concatenation\n");
   quadOP* res= QOcreat_id((yyvsp[-2].strval));
-  quads *q=Qcreat(Q_EQUAL,res,(yyvsp[0].operateur),NULL);
+  quadOP* op1=CopieID((yyvsp[0].operateur));
+  quads *q=Qcreat(Q_EQUAL,res,op1,NULL);
 
   Lappend(Lglobal,q);
 }
-#line 1325 "compilateur.tab.c"
+#line 1326 "compilateur.tab.c"
     break;
 
   case 6: /* instruction: ID '[' operande_entier ']' '=' concatenation  */
-#line 58 "compilateur.y"
+#line 59 "compilateur.y"
                                                        { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
-#line 1331 "compilateur.tab.c"
+#line 1332 "compilateur.tab.c"
     break;
 
   case 7: /* instruction: DECLARE ID '[' ID ']'  */
-#line 59 "compilateur.y"
+#line 60 "compilateur.y"
                                                        { printf("instruction-> DECLARE ID [ ENTIER ] \n");}
-#line 1337 "compilateur.tab.c"
+#line 1338 "compilateur.tab.c"
     break;
 
   case 8: /* instruction: IF test_bloc THEN liste_instructions else_part FI  */
-#line 60 "compilateur.y"
+#line 61 "compilateur.y"
                                                        { printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");}
-#line 1343 "compilateur.tab.c"
+#line 1344 "compilateur.tab.c"
     break;
 
   case 9: /* instruction: FOR ID DO IN liste_instructions DONE  */
-#line 61 "compilateur.y"
+#line 62 "compilateur.y"
                                                        { printf("instruction->FOR ID DO IN liste_instructions DONE \n");}
-#line 1349 "compilateur.tab.c"
+#line 1350 "compilateur.tab.c"
     break;
 
   case 10: /* instruction: FOR ID IN liste_operandes DO liste_instructions DONE  */
-#line 62 "compilateur.y"
+#line 63 "compilateur.y"
                                                        { printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");}
-#line 1355 "compilateur.tab.c"
+#line 1356 "compilateur.tab.c"
     break;
 
   case 11: /* instruction: WHILE test_bloc DO liste_instructions DONE  */
-#line 63 "compilateur.y"
+#line 64 "compilateur.y"
                                                        { printf("instruction-> WHILE test_bloc DO liste_instructions DONE \n");}
-#line 1361 "compilateur.tab.c"
+#line 1362 "compilateur.tab.c"
     break;
 
   case 12: /* instruction: UNTIL test_bloc DO liste_instructions DONE  */
-#line 64 "compilateur.y"
+#line 65 "compilateur.y"
                                                        { printf("instruction-> UNTIL test_bloc DO liste_instructions DONE \n");}
-#line 1367 "compilateur.tab.c"
+#line 1368 "compilateur.tab.c"
     break;
 
   case 13: /* instruction: CASE operande IN liste_cas ESAC  */
-#line 65 "compilateur.y"
+#line 66 "compilateur.y"
                                                        { printf("instruction-> CASE operande IN liste_cas ESAC \n");}
-#line 1373 "compilateur.tab.c"
+#line 1374 "compilateur.tab.c"
     break;
 
   case 14: /* instruction: MYECHO liste_operandes  */
-#line 66 "compilateur.y"
+#line 67 "compilateur.y"
                                                        { printf("instruction-> MYECHO liste_operandes \n");}
-#line 1379 "compilateur.tab.c"
+#line 1380 "compilateur.tab.c"
     break;
 
   case 15: /* instruction: READ ID  */
-#line 67 "compilateur.y"
+#line 68 "compilateur.y"
                                                        { printf("instruction-> READ ID \n");}
-#line 1385 "compilateur.tab.c"
+#line 1386 "compilateur.tab.c"
     break;
 
   case 16: /* instruction: READ ID '[' operande_entier ']'  */
-#line 68 "compilateur.y"
+#line 69 "compilateur.y"
                                                        { printf("instruction-> READ ID [ operande_entier ] \n");}
-#line 1391 "compilateur.tab.c"
+#line 1392 "compilateur.tab.c"
     break;
 
   case 17: /* instruction: declaration_de_fonction  */
-#line 69 "compilateur.y"
+#line 70 "compilateur.y"
                                                        { printf("instruction-> declaration_de_fonction \n");}
-#line 1397 "compilateur.tab.c"
+#line 1398 "compilateur.tab.c"
     break;
 
   case 18: /* instruction: appel_de_fonction  */
-#line 70 "compilateur.y"
+#line 71 "compilateur.y"
                                                        { printf("instruction-> appel_de_fonction \n");}
-#line 1403 "compilateur.tab.c"
+#line 1404 "compilateur.tab.c"
     break;
 
   case 19: /* instruction: RETURN  */
-#line 71 "compilateur.y"
+#line 72 "compilateur.y"
                                                        { printf("instruction-> RETURN \n");}
-#line 1409 "compilateur.tab.c"
+#line 1410 "compilateur.tab.c"
     break;
 
   case 20: /* instruction: RETURN operande_entier  */
-#line 72 "compilateur.y"
+#line 73 "compilateur.y"
                                                        { printf("instruction-> RETURN operande_entier \n");}
-#line 1415 "compilateur.tab.c"
+#line 1416 "compilateur.tab.c"
     break;
 
   case 21: /* instruction: EXIT  */
-#line 73 "compilateur.y"
+#line 74 "compilateur.y"
        { 
   printf("instruction->EXIT\n");
  }
-#line 1423 "compilateur.tab.c"
+#line 1424 "compilateur.tab.c"
     break;
 
   case 22: /* instruction: EXIT operande_entier  */
-#line 76 "compilateur.y"
+#line 77 "compilateur.y"
                        { 
   printf("instruction->EXIT operande_entier\n");
   }
-#line 1431 "compilateur.tab.c"
+#line 1432 "compilateur.tab.c"
     break;
 
   case 23: /* else_part: ELIF test_bloc THEN liste_instructions else_part  */
-#line 81 "compilateur.y"
+#line 82 "compilateur.y"
                                                   { printf("else_part->ELIF test_bloc THEN liste_instructions else_part\n");}
-#line 1437 "compilateur.tab.c"
+#line 1438 "compilateur.tab.c"
     break;
 
   case 24: /* else_part: ELSE liste_instructions  */
-#line 82 "compilateur.y"
+#line 83 "compilateur.y"
                                                   { printf("else_part->ELSE liste_instructions\n");}
-#line 1443 "compilateur.tab.c"
+#line 1444 "compilateur.tab.c"
     break;
 
   case 25: /* else_part: %empty  */
-#line 83 "compilateur.y"
+#line 84 "compilateur.y"
                                                   { printf("else_part->empty\n");}
-#line 1449 "compilateur.tab.c"
+#line 1450 "compilateur.tab.c"
     break;
 
   case 26: /* liste_cas: liste_cas filtre ')' liste_instructions ';' ';'  */
-#line 86 "compilateur.y"
+#line 87 "compilateur.y"
                                                  { printf("liste_cas->liste_cas filtre ) liste_instructions ; ; \n");}
-#line 1455 "compilateur.tab.c"
+#line 1456 "compilateur.tab.c"
     break;
 
   case 27: /* liste_cas: filtre ')' liste_instructions ';' ';'  */
-#line 87 "compilateur.y"
+#line 88 "compilateur.y"
                                                  { printf("liste_cas->filtre ) liste_instructions ; ; \n");}
-#line 1461 "compilateur.tab.c"
+#line 1462 "compilateur.tab.c"
     break;
 
   case 28: /* filtre: ID  */
-#line 90 "compilateur.y"
+#line 91 "compilateur.y"
                      { printf("filtre->MOT\n");}
-#line 1467 "compilateur.tab.c"
+#line 1468 "compilateur.tab.c"
     break;
 
   case 29: /* filtre: CHAINE  */
-#line 91 "compilateur.y"
+#line 92 "compilateur.y"
                      { printf("filtre->CHAINE\n");}
-#line 1473 "compilateur.tab.c"
+#line 1474 "compilateur.tab.c"
     break;
 
   case 30: /* filtre: filtre '|' ID  */
-#line 92 "compilateur.y"
+#line 93 "compilateur.y"
                      { printf("filtre->filtre | MOT\n");}
-#line 1479 "compilateur.tab.c"
+#line 1480 "compilateur.tab.c"
     break;
 
   case 31: /* filtre: filtre '|' CHAINE  */
-#line 93 "compilateur.y"
+#line 94 "compilateur.y"
                      { printf("filtre->filtre | CHAINE\n");}
-#line 1485 "compilateur.tab.c"
+#line 1486 "compilateur.tab.c"
     break;
 
   case 32: /* filtre: '*'  */
-#line 94 "compilateur.y"
+#line 95 "compilateur.y"
                      { printf("filtre-> *\n");}
-#line 1491 "compilateur.tab.c"
+#line 1492 "compilateur.tab.c"
     break;
 
   case 33: /* liste_operandes: liste_operandes operande  */
-#line 97 "compilateur.y"
+#line 98 "compilateur.y"
                               { printf("liste_operandes-> liste_operandes operande \n");}
-#line 1497 "compilateur.tab.c"
+#line 1498 "compilateur.tab.c"
     break;
 
   case 34: /* liste_operandes: operande  */
-#line 98 "compilateur.y"
+#line 99 "compilateur.y"
                               { printf("liste_operandes-> operande \n");}
-#line 1503 "compilateur.tab.c"
+#line 1504 "compilateur.tab.c"
     break;
 
   case 35: /* liste_operandes: '$' '{' ID '[' '*' ']' '}'  */
-#line 99 "compilateur.y"
+#line 100 "compilateur.y"
                               { printf("liste_operandes-> $ { ID [ * ] } \n");}
-#line 1509 "compilateur.tab.c"
+#line 1510 "compilateur.tab.c"
     break;
 
   case 36: /* concatenation: concatenation operande  */
-#line 102 "compilateur.y"
+#line 103 "compilateur.y"
                        { 
   printf("concatenation-> concatenation operande \n");
   quadOP *temp=QOcreat_temp();
-  quads *q=Qcreat(Q_CONCAT,temp,(yyvsp[-1].operateur),(yyvsp[0].operateur));
+  quadOP* op1=CopieID((yyvsp[-1].operateur));
+  quadOP* op2=CopieID((yyvsp[0].operateur));
+  quads *q=Qcreat(Q_CONCAT,temp,op1,op2);
   Lappend(Lglobal,q);
   (yyval.operateur)=temp;
 }
-#line 1521 "compilateur.tab.c"
+#line 1524 "compilateur.tab.c"
     break;
 
   case 37: /* concatenation: operande  */
-#line 109 "compilateur.y"
+#line 112 "compilateur.y"
            { 
-  printf("concatenation-> operande \n"); 
+  printf("concatenation-> operande \n");  
   (yyval.operateur)=(yyvsp[0].operateur);
 }
-#line 1530 "compilateur.tab.c"
+#line 1533 "compilateur.tab.c"
     break;
 
   case 38: /* test_bloc: TEST test_expr  */
-#line 115 "compilateur.y"
+#line 118 "compilateur.y"
                 { printf("test_bloc-> TEST test_exp \n");}
-#line 1536 "compilateur.tab.c"
+#line 1539 "compilateur.tab.c"
     break;
 
   case 39: /* test_expr: test_expr O test_expr2  */
-#line 118 "compilateur.y"
+#line 121 "compilateur.y"
                        { printf("test_expr-> test_expr O test_expr2 \n");}
-#line 1542 "compilateur.tab.c"
+#line 1545 "compilateur.tab.c"
     break;
 
   case 40: /* test_expr: test_expr2  */
-#line 119 "compilateur.y"
+#line 122 "compilateur.y"
                        { printf("test_expr-> test_expr2 \n");}
-#line 1548 "compilateur.tab.c"
+#line 1551 "compilateur.tab.c"
     break;
 
   case 41: /* test_expr2: test_expr2 A test_expr3  */
-#line 122 "compilateur.y"
+#line 125 "compilateur.y"
                         { printf("test_expr2-> test_expr2 A test_expr3 \n");}
-#line 1554 "compilateur.tab.c"
+#line 1557 "compilateur.tab.c"
     break;
 
   case 42: /* test_expr2: test_expr3  */
-#line 123 "compilateur.y"
+#line 126 "compilateur.y"
                         { printf("test_expr2-> test_expr3 \n");}
-#line 1560 "compilateur.tab.c"
+#line 1563 "compilateur.tab.c"
     break;
 
   case 43: /* test_expr3: '(' test_expr ')'  */
-#line 126 "compilateur.y"
+#line 129 "compilateur.y"
                         { printf("test_expr3-> ( test_expr ) \n");}
-#line 1566 "compilateur.tab.c"
+#line 1569 "compilateur.tab.c"
     break;
 
   case 44: /* test_expr3: '!' '(' test_expr ')'  */
-#line 127 "compilateur.y"
+#line 130 "compilateur.y"
                         { printf("test_expr3-> ! ( test_expr ) \n");}
-#line 1572 "compilateur.tab.c"
+#line 1575 "compilateur.tab.c"
     break;
 
   case 45: /* test_expr3: test_instruction  */
-#line 128 "compilateur.y"
+#line 131 "compilateur.y"
                         { printf("test_expr3-> test_instruction \n");}
-#line 1578 "compilateur.tab.c"
+#line 1581 "compilateur.tab.c"
     break;
 
   case 46: /* test_expr3: '!' test_instruction  */
-#line 129 "compilateur.y"
+#line 132 "compilateur.y"
                         { printf("test_expr3-> ! test_instruction \n");}
-#line 1584 "compilateur.tab.c"
+#line 1587 "compilateur.tab.c"
     break;
 
   case 47: /* test_instruction: concatenation '=' concatenation  */
-#line 132 "compilateur.y"
+#line 135 "compilateur.y"
                                       { printf("test_instruction-> concatenation = concatenation \n");}
-#line 1590 "compilateur.tab.c"
+#line 1593 "compilateur.tab.c"
     break;
 
   case 48: /* test_instruction: concatenation '!' '=' concatenation  */
-#line 133 "compilateur.y"
+#line 136 "compilateur.y"
                                       { printf("test_instruction-> concatenation != concatenation \n");}
-#line 1596 "compilateur.tab.c"
+#line 1599 "compilateur.tab.c"
     break;
 
   case 49: /* test_instruction: operateur1 concatenation  */
-#line 134 "compilateur.y"
+#line 137 "compilateur.y"
                                       { printf("test_instruction-> operateur1 concatenation \n");}
-#line 1602 "compilateur.tab.c"
+#line 1605 "compilateur.tab.c"
     break;
 
   case 50: /* test_instruction: operande operateur2 operande  */
-#line 135 "compilateur.y"
+#line 138 "compilateur.y"
                                       { printf("test_instruction-> operande operateur2 operande \n");}
-#line 1608 "compilateur.tab.c"
+#line 1611 "compilateur.tab.c"
     break;
 
   case 53: /* operateur2: EQ  */
-#line 142 "compilateur.y"
+#line 145 "compilateur.y"
     { printf("operateur2-> -eq\n");}
-#line 1614 "compilateur.tab.c"
+#line 1617 "compilateur.tab.c"
     break;
 
   case 54: /* operateur2: NE  */
-#line 143 "compilateur.y"
+#line 146 "compilateur.y"
     { printf("operateur2-> -ne\n");}
-#line 1620 "compilateur.tab.c"
+#line 1623 "compilateur.tab.c"
     break;
 
   case 55: /* operateur2: GT  */
-#line 144 "compilateur.y"
+#line 147 "compilateur.y"
     { printf("operateur2-> -gt\n");}
-#line 1626 "compilateur.tab.c"
+#line 1629 "compilateur.tab.c"
     break;
 
   case 56: /* operateur2: GE  */
-#line 145 "compilateur.y"
+#line 148 "compilateur.y"
     { printf("operateur2-> -ge\n");}
-#line 1632 "compilateur.tab.c"
+#line 1635 "compilateur.tab.c"
     break;
 
   case 57: /* operateur2: LT  */
-#line 146 "compilateur.y"
+#line 149 "compilateur.y"
     { printf("operateur2-> -lt\n");}
-#line 1638 "compilateur.tab.c"
+#line 1641 "compilateur.tab.c"
     break;
 
   case 58: /* operateur2: LE  */
-#line 147 "compilateur.y"
+#line 150 "compilateur.y"
     { printf("operateur2-> -le\n");}
-#line 1644 "compilateur.tab.c"
+#line 1647 "compilateur.tab.c"
     break;
 
   case 59: /* operande: '$' '{' ID '}'  */
-#line 150 "compilateur.y"
+#line 153 "compilateur.y"
                { 
   printf("operande-> $ { ID }\n");
   (yyval.operateur)=QOcreat_id((yyvsp[-1].strval));
   }
-#line 1653 "compilateur.tab.c"
+#line 1656 "compilateur.tab.c"
     break;
 
   case 60: /* operande: '$' '{' ID '[' operande_entier ']' '}'  */
-#line 154 "compilateur.y"
+#line 157 "compilateur.y"
                                          { printf("operande-> $ { ID [ operande_entier ] }\n");}
-#line 1659 "compilateur.tab.c"
+#line 1662 "compilateur.tab.c"
     break;
 
   case 61: /* operande: ID  */
-#line 155 "compilateur.y"
+#line 158 "compilateur.y"
      { 
   printf("operande-> MOT\n");
   (yyval.operateur)=QOcreat_str((yyvsp[0].strval));
   }
-#line 1668 "compilateur.tab.c"
+#line 1671 "compilateur.tab.c"
     break;
 
   case 62: /* operande: '$' ID  */
-#line 159 "compilateur.y"
+#line 162 "compilateur.y"
          { 
   printf("operande-> $ ENTIER\n");
 
@@ -1679,44 +1682,44 @@ yyreduce:
       printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
   }
 }
-#line 1683 "compilateur.tab.c"
+#line 1686 "compilateur.tab.c"
     break;
 
   case 63: /* operande: '$' '*'  */
-#line 169 "compilateur.y"
+#line 172 "compilateur.y"
                                          { printf("operande-> $ *\n");}
-#line 1689 "compilateur.tab.c"
+#line 1692 "compilateur.tab.c"
     break;
 
   case 64: /* operande: '$' '?'  */
-#line 170 "compilateur.y"
+#line 173 "compilateur.y"
                                          { printf("operande-> $ ?\n");}
-#line 1695 "compilateur.tab.c"
+#line 1698 "compilateur.tab.c"
     break;
 
   case 65: /* operande: CHAINE  */
-#line 171 "compilateur.y"
+#line 174 "compilateur.y"
          { 
   printf("operande-> CHAINE:%s\n",(yyvsp[0].strval)); 
   (yyval.operateur)=QOcreat_str((yyvsp[0].strval));
   }
-#line 1704 "compilateur.tab.c"
+#line 1707 "compilateur.tab.c"
     break;
 
   case 66: /* operande: '$' '(' EXPR somme_entiere ')'  */
-#line 175 "compilateur.y"
+#line 178 "compilateur.y"
                                          { printf("operande-> $ ( EXPR somme_entiere )\n");}
-#line 1710 "compilateur.tab.c"
+#line 1713 "compilateur.tab.c"
     break;
 
   case 67: /* operande: '$' '(' appel_de_fonction ')'  */
-#line 176 "compilateur.y"
+#line 179 "compilateur.y"
                                          { printf("operande-> $ ( appel_de_fonction )\n");}
-#line 1716 "compilateur.tab.c"
+#line 1719 "compilateur.tab.c"
     break;
 
   case 68: /* somme_entiere: somme_entiere plus_ou_moin produit_entier  */
-#line 179 "compilateur.y"
+#line 182 "compilateur.y"
                                           { 
   printf("somme_entiere-> somme_entiere plus_ou_moin produit_entier \n");
 /*
@@ -1732,150 +1735,150 @@ yyreduce:
 
   $$=q;*/
 }
-#line 1736 "compilateur.tab.c"
+#line 1739 "compilateur.tab.c"
     break;
 
   case 69: /* somme_entiere: produit_entier  */
-#line 194 "compilateur.y"
+#line 197 "compilateur.y"
                  { 
   printf("somme_entiere-> produit_entier \n");
   (yyval.quad)=(yyvsp[0].quad);
 }
-#line 1745 "compilateur.tab.c"
+#line 1748 "compilateur.tab.c"
     break;
 
   case 70: /* produit_entier: produit_entier fois_div_mod operande_entier  */
-#line 200 "compilateur.y"
+#line 203 "compilateur.y"
                                             { 
   printf("produit_entier-> produit_entier fois_div_mod operande_entier\n");
 }
-#line 1753 "compilateur.tab.c"
+#line 1756 "compilateur.tab.c"
     break;
 
   case 71: /* produit_entier: operande_entier  */
-#line 203 "compilateur.y"
+#line 206 "compilateur.y"
                                             { printf("produit_entier-> operande_entier \n");}
-#line 1759 "compilateur.tab.c"
+#line 1762 "compilateur.tab.c"
     break;
 
   case 72: /* operande_entier: '$' '{' ID '}'  */
-#line 207 "compilateur.y"
+#line 210 "compilateur.y"
                                                       { printf("operande_entier-> $ { ID } \n");}
-#line 1765 "compilateur.tab.c"
+#line 1768 "compilateur.tab.c"
     break;
 
   case 73: /* operande_entier: '$' '{' ID '[' operande_entier ']' '}'  */
-#line 208 "compilateur.y"
+#line 211 "compilateur.y"
                                                       { printf("operande_entier-> $ { ID [ operande_entier ] } \n");}
-#line 1771 "compilateur.tab.c"
+#line 1774 "compilateur.tab.c"
     break;
 
   case 74: /* operande_entier: '$' ID  */
-#line 209 "compilateur.y"
+#line 212 "compilateur.y"
                                                       { printf("operande_entier-> $ ENTIER \n");}
-#line 1777 "compilateur.tab.c"
+#line 1780 "compilateur.tab.c"
     break;
 
   case 75: /* operande_entier: plus_ou_moin '$' '{' ID '}'  */
-#line 210 "compilateur.y"
+#line 213 "compilateur.y"
                                                       { printf("operande_entier-> plus_ou_moin $ { ID } \n");}
-#line 1783 "compilateur.tab.c"
+#line 1786 "compilateur.tab.c"
     break;
 
   case 76: /* operande_entier: plus_ou_moin '$' '{' ID '[' operande_entier ']' '}'  */
-#line 211 "compilateur.y"
+#line 214 "compilateur.y"
                                                       { printf("operande_entier-> plus_ou_moin $ { ID [ operande_entier ] }\n");}
-#line 1789 "compilateur.tab.c"
+#line 1792 "compilateur.tab.c"
     break;
 
   case 77: /* operande_entier: plus_ou_moin '$' ID  */
-#line 212 "compilateur.y"
+#line 215 "compilateur.y"
                                                       { printf("operande_entier-> plus_ou_moin $ ENTIER\n");}
-#line 1795 "compilateur.tab.c"
+#line 1798 "compilateur.tab.c"
     break;
 
   case 78: /* operande_entier: ID  */
-#line 213 "compilateur.y"
+#line 216 "compilateur.y"
      { 
   printf("operande_entier-> ENTIER \n");
 }
-#line 1803 "compilateur.tab.c"
+#line 1806 "compilateur.tab.c"
     break;
 
   case 79: /* operande_entier: plus_ou_moin ID  */
-#line 216 "compilateur.y"
+#line 219 "compilateur.y"
                                                       { printf("operande_entier-> plus_ou_moin ENTIER\n");}
-#line 1809 "compilateur.tab.c"
+#line 1812 "compilateur.tab.c"
     break;
 
   case 80: /* operande_entier: '(' somme_entiere ')'  */
-#line 217 "compilateur.y"
+#line 220 "compilateur.y"
                                                       { printf("operande_entier-> ( somme_entiere ) \n");}
-#line 1815 "compilateur.tab.c"
+#line 1818 "compilateur.tab.c"
     break;
 
   case 81: /* plus_ou_moin: '+'  */
-#line 219 "compilateur.y"
+#line 222 "compilateur.y"
                   {(yyval.intval)=1;}
-#line 1821 "compilateur.tab.c"
+#line 1824 "compilateur.tab.c"
     break;
 
   case 82: /* plus_ou_moin: '-'  */
-#line 219 "compilateur.y"
+#line 222 "compilateur.y"
                                 {(yyval.intval)=0;}
-#line 1827 "compilateur.tab.c"
+#line 1830 "compilateur.tab.c"
     break;
 
   case 83: /* fois_div_mod: '*'  */
-#line 221 "compilateur.y"
+#line 224 "compilateur.y"
                   {(yyval.intval)=1;}
-#line 1833 "compilateur.tab.c"
+#line 1836 "compilateur.tab.c"
     break;
 
   case 84: /* fois_div_mod: '/'  */
-#line 221 "compilateur.y"
+#line 224 "compilateur.y"
                                {(yyval.intval)=2;}
-#line 1839 "compilateur.tab.c"
+#line 1842 "compilateur.tab.c"
     break;
 
   case 85: /* fois_div_mod: '%'  */
-#line 221 "compilateur.y"
+#line 224 "compilateur.y"
                                             {(yyval.intval)=3;}
-#line 1845 "compilateur.tab.c"
+#line 1848 "compilateur.tab.c"
     break;
 
   case 86: /* declaration_de_fonction: ID '(' ')' '{' decl_loc liste_instructions '}'  */
-#line 224 "compilateur.y"
+#line 227 "compilateur.y"
                                                { printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");}
-#line 1851 "compilateur.tab.c"
+#line 1854 "compilateur.tab.c"
     break;
 
   case 87: /* decl_loc: decl_loc LOCAL ID '=' concatenation ';'  */
-#line 227 "compilateur.y"
+#line 230 "compilateur.y"
                                         { printf("decl_loc-> decl_loc LOCAL ID = concatenation \n");}
-#line 1857 "compilateur.tab.c"
+#line 1860 "compilateur.tab.c"
     break;
 
   case 88: /* decl_loc: %empty  */
-#line 228 "compilateur.y"
+#line 231 "compilateur.y"
                                         { printf("decl_loc-> empty \n");}
-#line 1863 "compilateur.tab.c"
+#line 1866 "compilateur.tab.c"
     break;
 
   case 89: /* appel_de_fonction: ID liste_operandes  */
-#line 231 "compilateur.y"
+#line 234 "compilateur.y"
                     { printf("appel_de_fonction-> ID liste_operandes \n");}
-#line 1869 "compilateur.tab.c"
+#line 1872 "compilateur.tab.c"
     break;
 
   case 90: /* appel_de_fonction: ID  */
-#line 232 "compilateur.y"
+#line 235 "compilateur.y"
                     { printf("appel_de_fonction-> ID \n");}
-#line 1875 "compilateur.tab.c"
+#line 1878 "compilateur.tab.c"
     break;
 
 
-#line 1879 "compilateur.tab.c"
+#line 1882 "compilateur.tab.c"
 
       default: break;
     }
@@ -2068,7 +2071,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 234 "compilateur.y"
+#line 237 "compilateur.y"
 
 
 void yyerror(const char * msg){
