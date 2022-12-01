@@ -9,31 +9,35 @@ int ToInt( int *i, char * str);
 
 /* opérande d'une instruction à 3 addresse: entier/variable/addresse goto*/
 typedef struct quadOP {
-    enum{QO_CST=1,QO_NAME,QO_ADDR}kind;
+    enum{QO_CST=1,QO_STR,QO_ID,QO_ADDR,QO_BOOL}kind;
     union{int cst;char *name;}u;
 } quadOP;
 
 quadOP* QOcreat_cst(int v);
 
-quadOP* QOcreat_name(char* v);
+quadOP* QOcreat_str(char* v);
+
+quadOP  *QOcreat_bool(int v);
+
+quadOP  *QOcreat_id(char* v);
 
 /* créer quadOP de type addresse, si l'adresse<0 alors elle inconnue pour l'instant */
 quadOP* QOcreat_addrs(int v);
 
 /* creer un variable temporaire pour le code 3 adresses */
-quadOP * QOcreat_temp();
+quadOP * QOcreat_temp(void);
 
 void QOaffiche(quadOP *op);
 
 /* quad / instruction à 3 addresse*/
 typedef struct quads {
-    enum{Q_ADD=100,Q_MUL,Q_ASS,Q_GOTO}kind;
+    enum{Q_ADD=100,Q_LESS,Q_CONCAT,Q_MUL,Q_EQUAL,Q_GOTO,Q_EXIT}kind;
     quadOP *op1,*op2,*res;
 } quads;
 
 void Qfree(quads *q);
 
-quads * Qcreat(int type,quadOP *op1, quadOP *op2, quadOP* res);
+quads * Qcreat(int type, quadOP* res,quadOP *op1, quadOP *op2);
 
 void Qaffiche(quads *q);
 
@@ -41,6 +45,7 @@ void Qaffiche(quads *q);
 typedef struct listQ {
     struct listQ *next;
     struct quads *quad;
+    int taille;
 }listQ;
 
 listQ * Lcreat(void);

@@ -3,6 +3,7 @@
 
 extern int yyparse(void);
 int nb_temp=1; // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur création
+listQ *Lglobal; // liste des quads
 
 void testQuad(){
     listQ *L=Lcreat();
@@ -11,7 +12,7 @@ void testQuad(){
     quadOP *op1=QOcreat_cst(5);
     quadOP *op2=QOcreat_cst(7);
     quadOP *op3=QOcreat_addrs(1);
-    quadOP *res=QOcreat_name("id");
+    quadOP *res=QOcreat_str("id");
 
     quads *q=Qcreat(Q_ADD,op1,op2,res);
     quads *q1=Qcreat(Q_GOTO,NULL,op3,NULL);
@@ -26,6 +27,7 @@ void testQuad(){
 }
 
 int main(void){
+    Lglobal=Lcreat();
     
     int r=yyparse();
 

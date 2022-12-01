@@ -22,9 +22,9 @@ quadOP* QOcreat_cst(int v){
     qo->u.cst=v;
     return qo;
 }
-quadOP *QOcreat_name(char* v){
+quadOP *QOcreat_str(char* v){
     quadOP * qo=malloc(sizeof(quadOP));
-    qo->kind=QO_NAME;
+    qo->kind=QO_STR;
     qo->u.name=v;
     return qo;
 }
@@ -34,14 +34,26 @@ quadOP  *QOcreat_addrs(int v){
     qo->u.cst=v;
     return qo;
 }
+quadOP  *QOcreat_bool(int v){
+    quadOP * qo=malloc(sizeof(quadOP));
+    qo->kind=QO_BOOL;
+    qo->u.cst=v;
+    return qo;
+}
+quadOP  *QOcreat_id(char* v){
+    quadOP * qo=malloc(sizeof(quadOP));
+    qo->kind=QO_STR;
+    qo->u.name=v;
+    return qo;
+}
 
-quadOP * QOcreat_temp(){
+quadOP * QOcreat_temp(void){
     int taille=(int)((ceil(log10(nb_temp))+1)*sizeof(char));// nombre de char necessaire pour écrire nb_temp
     char temp[taille+10];
     temp[taille+10]='\0';
 
     sprintf(temp,"__TEMP__%d",nb_temp);
-    quadOP *Qtemp=QOcreat_name(temp);
+    quadOP *Qtemp=QOcreat_id(temp);
 
     nb_temp++;
     return Qtemp;
@@ -53,17 +65,23 @@ void QOaffiche(quadOP *op){
         case QO_CST:
             printf("cst:%i ",op->u.cst);
             break;
-        case QO_NAME:
-            printf("name:%s ",op->u.name);
+        case QO_STR:
+            printf("string:%s ",op->u.name);
+            break;
+        case QO_ID:
+            printf("id:%s ",op->u.name);
             break;
         case QO_ADDR:
             printf("addr:%i ",op->u.cst);
+            break;
+        case QO_BOOL:
+            printf("bool:%i ",op->u.cst);
             break;
     }
 }
 
 /******************************** QUADS ********************************************/
-quads * Qcreat(int type,quadOP* op1, quadOP* op2, quadOP *res){
+quads * Qcreat(int type, quadOP *res,quadOP* op1, quadOP* op2){
     quads *q=malloc(sizeof(quads));
     printf("taille:%li\n",sizeof(quads));
     q->op1=op1;
@@ -98,14 +116,20 @@ void Qaffiche(quads *q){
         case Q_ADD:
             printf(" ADD ");
             break;
-        case Q_ASS:
-            printf(" ASS ");
-            break;
-        case Q_GOTO:
-            printf(" GOTO ");
+        case Q_LESS:
+            printf(" LESS ");
             break;
         case Q_MUL:
             printf(" MUL ");
+            break;
+        case Q_CONCAT:
+            printf(" CONCAT ");
+            break;
+        case Q_EQUAL:
+            printf(" EQUAL ");
+            break;
+        case Q_GOTO:
+            printf(" GOTO ");
             break;
     }
     if(q->op1!=NULL){
@@ -124,10 +148,12 @@ listQ * Lcreat(void) {
         return NULL;
     list->quad = NULL;
     list->next=NULL;
+    list->taille=0;
     return list;
 }
 
 void Lappend(listQ *list, quads * new_element) {
+    list->taille+=1;
 
     if(list->quad==NULL){
         list->quad=new_element;
@@ -156,6 +182,7 @@ quads* LgetQuad(listQ *list, unsigned int value_idx) {
 listQ * Lconcat(listQ *list, listQ *list2){
     listQ *last=Llast(list);
     last->next=list2;
+    list->taille+=list2->taille;
     return list;
 }
 

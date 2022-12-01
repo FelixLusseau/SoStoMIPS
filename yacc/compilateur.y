@@ -9,21 +9,23 @@
 extern int yylex(); 
 extern char* text;
 extern void yyerror(const char * msg);
+extern listQ *Lglobal;
 %}
-%union{char *strval; int intval; listQ* listeQ;}
+%union{char *strval; int intval; listQ* listeQ; quads *quad; quadOP *operateur;}
 
 %token IF THEN FOR DO DONE IN WHILE UNTIL CASE ESAC MYECHO READ RETURN EXIT LOCAL ELIF ELSE FI DECLARE TEST EXPR O A N Z EQ NE GT GE LT LE
 %token <strval> ID 
 %token <strval> CHAINE 
 
-%type <strval> concatenation 
-%type <strval> operande
+%type <operateur> concatenation 
+%type <operateur> operande
 
 %type <listeQ> instruction
 %type <listeQ> liste_instructions
 %type <listeQ> programme
-%type <listeQ> somme_entiere
-%type <listeQ> produit_entier
+
+%type <quad> somme_entiere
+%type <quad> produit_entier
 
 %type <intval> plus_ou_moin
 %type <intval> fois_div_mod
@@ -34,39 +36,24 @@ extern void yyerror(const char * msg);
 programme: 
 liste_instructions {
   printf("programme->liste_instruction\n");
-  Laffiche($1);
-  printf("after1\n");
-  Lfree($1);
-  printf("after2\n");
+  Laffiche(Lglobal);
+  Lfree(Lglobal);
   };
 
 liste_instructions: 
 liste_instructions ';' instruction {
   printf("liste_instruction->liste_instructions ; instruction\n");
-  $$=Lconcat($1,$3);
 }
 |instruction {
   printf("liste_instruction->instruction\n");
-  $$=$1;
 };
 
 instruction: 
 ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");
-  quadOP* res= QOcreat_name($1);
-  quadOP* op1=NULL;
-  int concat;
+  quadOP* res= QOcreat_id($1);
+  quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
 
-  if(ToInt(&concat,$3)){
-    op1= QOcreat_cst(concat);
-  }else{
-    op1= QOcreat_name($3);
-  }
-  quads *q=Qcreat(Q_ASS,op1,NULL,res);
-
-  listQ *L=Lcreat();
-  Lappend(L,q);
-  
-  $$=L;
+  Lappend(Lglobal,q);
 }
 | ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
 | DECLARE ID '[' ID ']'                                { printf("instruction-> DECLARE ID [ ENTIER ] \n");}
@@ -85,11 +72,9 @@ ID '=' concatenation                                   { printf("instruction-> I
 | RETURN operande_entier                               { printf("instruction-> RETURN operande_entier \n");}
 | EXIT { 
   printf("instruction->EXIT\n");
-  $$=Lcreat();
  }
 | EXIT operande_entier { 
   printf("instruction->EXIT operande_entier\n");
-  $$=Lcreat();
   }; 
 
 else_part:
@@ -116,6 +101,10 @@ liste_operandes operande      { printf("liste_operandes-> liste_operandes operan
 concatenation:
 concatenation operande { 
   printf("concatenation-> concatenation operande \n");
+  quadOP *temp=QOcreat_temp();
+  quads *q=Qcreat(Q_CONCAT,temp,$1,$2);
+  Lappend(Lglobal,q);
+  $$=temp;
 }
 | operande { 
   printf("concatenation-> operande \n"); 
@@ -160,26 +149,19 @@ EQ  { printf("operateur2-> -eq\n");}
 operande:
 '$' '{' ID '}' { 
   printf("operande-> $ { ID }\n");
-  $$=$3;
+  $$=QOcreat_id($3);
   }
 | '$' '{' ID '[' operande_entier ']' '}' { printf("operande-> $ { ID [ operande_entier ] }\n");}
 | ID { 
-  printf("operande-> MOT\n"); 
-  $$=$1; 
+  printf("operande-> MOT\n");
+  $$=QOcreat_str($1);
   }
 | '$' ID { 
   printf("operande-> $ ENTIER\n");
 
   int entier;
   if(ToInt(&entier,$2)){
-
-    int taille=(int)((ceil(log10(entier))+1)*sizeof(char));
-    char val[taille+2];
-    val[taille+2]='\0';
-    sprintf(val,"$%d",entier);
-
-    $$=val;
-    
+    $$=QOcreat_cst(entier);
   }else{ // $a ou $1mp
       printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
   }
@@ -188,7 +170,7 @@ operande:
 | '$' '?'                                { printf("operande-> $ ?\n");}
 | CHAINE { 
   printf("operande-> CHAINE:%s\n",$1); 
-  $$=$1; 
+  $$=QOcreat_str($1);
   }
 | '$' '(' EXPR somme_entiere ')'         { printf("operande-> $ ( EXPR somme_entiere )\n");}
 | '$' '(' appel_de_fonction ')'          { printf("operande-> $ ( appel_de_fonction )\n");} ;
@@ -196,11 +178,18 @@ operande:
 somme_entiere:
 somme_entiere plus_ou_moin produit_entier { 
   printf("somme_entiere-> somme_entiere plus_ou_moin produit_entier \n");
+/*
+  quadOP *temp=QOcreat_temp();
+
+  quads *q=NULL;
   if($2){
-
+    q=Qcreat(Q_ADD,temp,$1,$3);
   }else{
-
+    q=Qcreat(Q_LESS,temp,$1,$3);
   }
+  Lappend(Lglobal,q);
+
+  $$=q;*/
 }
 | produit_entier { 
   printf("somme_entiere-> produit_entier \n");
