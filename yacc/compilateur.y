@@ -57,7 +57,17 @@ ID '=' concatenation                                   { printf("instruction-> I
 }
 | ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
 | DECLARE ID '[' ID ']'                                { printf("instruction-> DECLARE ID [ ENTIER ] \n");}
-| IF test_bloc THEN liste_instructions else_part FI    { printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");}
+| IF test_bloc THEN liste_instructions else_part FI    { printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");
+  listQ * L_inst = $4;
+  quadOP * taille = QOcreat(QO_ADDR,0,Lglobal->taille +3);
+  quads *q_if = Qcreat(Q_IF,$2,taille,NULL);
+  Lappend(Lglobal,q_if);
+  listQ * Lgoto = Lcreate();
+  quadOP * goto_addr = QOcreat(QO_ADDR,0,L_inst->taille + Lglobal->taille);
+  quads *q_goto = Qcreat(Q_GOTO,goto_addr,NULL,NULL);
+  Lappend(Lgoto,q_goto);
+  Lconcat(Lglobal,L_inst);
+}
 | FOR ID DO IN liste_instructions DONE                 { printf("instruction->FOR ID DO IN liste_instructions DONE \n");}
 | FOR ID IN liste_operandes DO liste_instructions DONE { printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");}
 | WHILE test_bloc DO liste_instructions DONE           { printf("instruction-> WHILE test_bloc DO liste_instructions DONE \n");}

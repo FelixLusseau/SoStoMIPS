@@ -557,9 +557,9 @@ static const yytype_int16 yyrline[] =
      123,   126,   127,   130,   131,   132,   133,   136,   137,   138,
      139,   142,   143,   146,   147,   148,   149,   150,   151,   154,
      159,   160,   165,   183,   187,   191,   196,   200,   203,   218,
-     224,   242,   249,   255,   256,   274,   288,   289,   315,   323,
-     337,   342,   342,   344,   344,   344,   347,   350,   351,   354,
-     355
+     224,   243,   250,   256,   264,   282,   296,   314,   340,   348,
+     362,   367,   367,   369,   369,   369,   372,   375,   376,   379,
+     380
 };
 #endif
 
@@ -1994,38 +1994,46 @@ yyreduce:
       break;
   }
   Lappend(Lglobal,q);
+  (yyval.operateur)=temp;
 }
-#line 1999 "compilateur.tab.c"
+#line 2000 "compilateur.tab.c"
     break;
 
   case 71:
-#line 242 "compilateur.y"
+#line 243 "compilateur.y"
                  { 
   printf("produit_entier-> operande_entier \n");
   (yyval.operateur)=(yyvsp[0].operateur);
   }
-#line 2008 "compilateur.tab.c"
+#line 2009 "compilateur.tab.c"
     break;
 
   case 72:
-#line 249 "compilateur.y"
+#line 250 "compilateur.y"
               { 
   printf("operande_entier-> $ { ID } \n");
     quadOP* op=QOcreat(QO_ID,(yyvsp[-1].strval),0);
     (yyval.operateur)=op;
     free((yyvsp[-1].strval));
   }
-#line 2019 "compilateur.tab.c"
+#line 2020 "compilateur.tab.c"
     break;
 
   case 73:
-#line 255 "compilateur.y"
-                                                      { printf("operande_entier-> $ { ID [ operande_entier ] } \n");}
-#line 2025 "compilateur.tab.c"
+#line 256 "compilateur.y"
+                                         { 
+  printf("operande_entier-> $ { ID [ operande_entier ] } \n");
+  quadOP* tab=QOcreat(QO_TAB,(yyvsp[-4].strval),0);
+  quadOP* temp=QOcreat_temp();
+  quads *q=Qcreat(Q_TAB_GIVE,temp,tab,(yyvsp[-2].operateur));
+  Lappend(Lglobal,q);
+  (yyval.operateur)=temp;
+  }
+#line 2033 "compilateur.tab.c"
     break;
 
   case 74:
-#line 256 "compilateur.y"
+#line 264 "compilateur.y"
          { 
   printf("operande_entier-> $ ENTIER \n");
   int entier;
@@ -2044,11 +2052,11 @@ yyreduce:
       printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
   }
   }
-#line 2048 "compilateur.tab.c"
+#line 2056 "compilateur.tab.c"
     break;
 
   case 75:
-#line 274 "compilateur.y"
+#line 282 "compilateur.y"
                               { 
   printf("operande_entier-> plus_ou_moin $ { ID } \n");
 
@@ -2063,17 +2071,34 @@ yyreduce:
     Lappend(Lglobal,q);
     free((yyvsp[-1].strval));
   }
-#line 2067 "compilateur.tab.c"
+#line 2075 "compilateur.tab.c"
     break;
 
   case 76:
-#line 288 "compilateur.y"
-                                                      { printf("operande_entier-> plus_ou_moin $ { ID [ operande_entier ] }\n");}
-#line 2073 "compilateur.tab.c"
+#line 296 "compilateur.y"
+                                                      {
+ printf("operande_entier-> plus_ou_moin $ { ID [ operande_entier ] }\n");
+
+  quadOP* tab=QOcreat(QO_TAB,(yyvsp[-4].strval),0);
+  quadOP* temp1=QOcreat_temp();
+  quads *q=Qcreat(Q_TAB_GIVE,temp1,tab,(yyvsp[-2].operateur));
+  Lappend(Lglobal,q);
+
+  quadOP* temp2=QOcreat_temp();
+  q=NULL;
+  if((yyvsp[-7].intval)){
+    q=Qcreat(Q_ADD,temp2,NULL,temp1);
+  }else{
+    q=Qcreat(Q_LESS,temp2,NULL,temp1);
+  }
+  Lappend(Lglobal,q);
+  free((yyvsp[-4].strval));
+ }
+#line 2098 "compilateur.tab.c"
     break;
 
   case 77:
-#line 289 "compilateur.y"
+#line 314 "compilateur.y"
                        { 
   printf("operande_entier-> plus_ou_moin $ ENTIER\n");
   int entier;
@@ -2100,11 +2125,11 @@ yyreduce:
       printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
   }
   }
-#line 2104 "compilateur.tab.c"
+#line 2129 "compilateur.tab.c"
     break;
 
   case 78:
-#line 315 "compilateur.y"
+#line 340 "compilateur.y"
      { 
   printf("operande_entier-> ENTIER \n");
   int entier;
@@ -2113,11 +2138,11 @@ yyreduce:
     free((yyvsp[0].strval));
   }
 }
-#line 2117 "compilateur.tab.c"
+#line 2142 "compilateur.tab.c"
     break;
 
   case 79:
-#line 323 "compilateur.y"
+#line 348 "compilateur.y"
                   { 
   printf("operande_entier-> plus_ou_moin ENTIER\n");
   int entier;
@@ -2132,80 +2157,80 @@ yyreduce:
     free((yyvsp[0].strval));
   }
   }
-#line 2136 "compilateur.tab.c"
+#line 2161 "compilateur.tab.c"
     break;
 
   case 80:
-#line 337 "compilateur.y"
+#line 362 "compilateur.y"
                         { 
   printf("operande_entier-> ( somme_entiere ) \n");
   (yyval.operateur)=(yyvsp[-1].operateur);
   }
-#line 2145 "compilateur.tab.c"
+#line 2170 "compilateur.tab.c"
     break;
 
   case 81:
-#line 342 "compilateur.y"
+#line 367 "compilateur.y"
                   {(yyval.intval)=1;}
-#line 2151 "compilateur.tab.c"
+#line 2176 "compilateur.tab.c"
     break;
 
   case 82:
-#line 342 "compilateur.y"
+#line 367 "compilateur.y"
                                 {(yyval.intval)=0;}
-#line 2157 "compilateur.tab.c"
+#line 2182 "compilateur.tab.c"
     break;
 
   case 83:
-#line 344 "compilateur.y"
+#line 369 "compilateur.y"
                   {(yyval.intval)=1;}
-#line 2163 "compilateur.tab.c"
+#line 2188 "compilateur.tab.c"
     break;
 
   case 84:
-#line 344 "compilateur.y"
+#line 369 "compilateur.y"
                                {(yyval.intval)=2;}
-#line 2169 "compilateur.tab.c"
+#line 2194 "compilateur.tab.c"
     break;
 
   case 85:
-#line 344 "compilateur.y"
+#line 369 "compilateur.y"
                                             {(yyval.intval)=3;}
-#line 2175 "compilateur.tab.c"
+#line 2200 "compilateur.tab.c"
     break;
 
   case 86:
-#line 347 "compilateur.y"
+#line 372 "compilateur.y"
                                                { printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");}
-#line 2181 "compilateur.tab.c"
+#line 2206 "compilateur.tab.c"
     break;
 
   case 87:
-#line 350 "compilateur.y"
+#line 375 "compilateur.y"
                                         { printf("decl_loc-> decl_loc LOCAL ID = concatenation \n");}
-#line 2187 "compilateur.tab.c"
+#line 2212 "compilateur.tab.c"
     break;
 
   case 88:
-#line 351 "compilateur.y"
+#line 376 "compilateur.y"
                                         { printf("decl_loc-> empty \n");}
-#line 2193 "compilateur.tab.c"
+#line 2218 "compilateur.tab.c"
     break;
 
   case 89:
-#line 354 "compilateur.y"
+#line 379 "compilateur.y"
                     { printf("appel_de_fonction-> ID liste_operandes \n");}
-#line 2199 "compilateur.tab.c"
+#line 2224 "compilateur.tab.c"
     break;
 
   case 90:
-#line 355 "compilateur.y"
+#line 380 "compilateur.y"
                     { printf("appel_de_fonction-> ID \n");}
-#line 2205 "compilateur.tab.c"
+#line 2230 "compilateur.tab.c"
     break;
 
 
-#line 2209 "compilateur.tab.c"
+#line 2234 "compilateur.tab.c"
 
       default: break;
     }
@@ -2437,7 +2462,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 357 "compilateur.y"
+#line 382 "compilateur.y"
 
 
 void yyerror(const char * msg){
