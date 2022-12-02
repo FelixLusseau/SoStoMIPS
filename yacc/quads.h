@@ -15,16 +15,8 @@ typedef struct quadOP {
     union{int cst;char *name;}u;
 } quadOP;
 
-quadOP* QOcreat_cst(int v);
+quadOP* QOcreat(int Type, char* str,int val);
 
-quadOP* QOcreat_str(char* v);
-
-quadOP  *QOcreat_bool(int v);
-
-quadOP  *QOcreat_id(char* v);
-
-/* Si le quadOP est un ID, renvoit une copie de l'ID, renvoit l'original sinon */
-quadOP  *CopieID(quadOP* og);
 
 /* créer quadOP de type addresse, si l'adresse<0 alors elle inconnue pour l'instant */
 quadOP* QOcreat_addrs(int v);
@@ -36,7 +28,7 @@ void QOaffiche(quadOP *op);
 
 /* quad / instruction à 3 addresse*/
 typedef struct quads {
-    enum{Q_ADD=100,Q_LESS,Q_CONCAT,Q_MUL,Q_EQUAL,Q_GOTO,Q_EXIT}kind;
+    enum{Q_ADD=100,Q_LESS,Q_CONCAT,Q_MUL,Q_EQUAL,Q_GOTO,Q_EXIT,Q_TAB}kind;
     quadOP *op1,*op2,*res;
 } quads;
 

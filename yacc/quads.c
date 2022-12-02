@@ -17,53 +17,27 @@ int ToInt( int *i, char * str){
 
 
 /******************************** QUADOP ********************************************/
-quadOP* QOcreat_cst(int v){
+quadOP* QOcreat(int Type, char* str,int val){
     quadOP * qo=malloc(sizeof(quadOP));
-    qo->kind=QO_CST;
-    qo->u.cst=v;
-    return qo;
-}
-quadOP *QOcreat_str(char* v){
-    quadOP * qo=malloc(sizeof(quadOP));
-    qo->kind=QO_STR;
-    qo->u.name=v;
-    return qo;
-}
-quadOP  *QOcreat_addrs(int v){
-    quadOP * qo=malloc(sizeof(quadOP));
-    qo->kind=QO_ADDR;
-    qo->u.cst=v;
-    return qo;
-}
-quadOP  *QOcreat_bool(int v){
-    quadOP * qo=malloc(sizeof(quadOP));
-    qo->kind=QO_BOOL;
-    qo->u.cst=v;
-    return qo;
-}
-quadOP  *QOcreat_id(char* v){
-    quadOP * qo=malloc(sizeof(quadOP));
-    qo->kind=QO_ID;
-    qo->u.name=strdup(v);
-    return qo;
-}
-quadOP* CopieID( quadOP* og){
-    quadOP* newOP=og;
-    if(og->kind==QO_ID){
-        newOP=QOcreat_id(og->u.name);
+    qo->kind=Type;
+    if(!(Type=QO_ID || Type==QO_STR)){
+        qo->u.cst=val;
     }
-    return newOP;
+    else{
+        qo->u.name=strdup(str);
+    }
+    return qo;
 }
 
 quadOP * QOcreat_temp(void){
     int taille=(int)((ceil(log10(nb_temp))+1)*sizeof(char));// nombre de char necessaire pour écrire nb_temp
     char temp[taille+10];
-    temp[taille+10]='\0';
+    temp[taille+9]='\0';
 
     sprintf(temp,"__TEMP__%d",nb_temp);
     printf("temp créer:%s\n\n",temp);
 
-    quadOP *Qtemp=QOcreat_id(temp);
+    quadOP *Qtemp=QOcreat(QO_ID,temp,0);
 
     nb_temp++;
     return Qtemp;
@@ -73,7 +47,8 @@ void QOfree(quadOP *op){
     if(op==NULL){
         return;
     }
-    if(op->kind==QO_ID  && op->u.name!=NULL){
+    if((op->kind==QO_ID || op->kind==QO_STR) && op->u.name!=NULL){
+        printf("    free ID/STR: %s\n",op->u.name);
         free(op->u.name);
     }
     free(op);
@@ -113,6 +88,8 @@ void Qfree(quads *q){
     if(q==NULL){
         return;
     }
+    printf("free: ");
+    Qaffiche(q);
 
     QOfree(q->op1);
     QOfree(q->op2);
@@ -144,6 +121,9 @@ void Qaffiche(quads *q){
             break;
         case Q_GOTO:
             printf(" GOTO ");
+            break;
+        case Q_EXIT:
+            printf(" EXIT ");
             break;
     }
     if(q->op1!=NULL){

@@ -35,8 +35,9 @@ extern listQ *Lglobal;
 
 programme: 
 liste_instructions {
-  printf("programme->liste_instruction\n");
+  printf("programme->liste_instruction\n\nAffichage Lglobal:\n");
   Laffiche(Lglobal);
+  printf("\nFree Lglobal:\n");
   Lfree(Lglobal);
   };
 
@@ -50,10 +51,10 @@ liste_instructions ';' instruction {
 
 instruction: 
 ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");
-  quadOP* res= QOcreat_id($1);
-  quadOP* op1=CopieID($3);
+  quadOP* op1=QOcreat($3->kind,$3->u.name,0);
+  quadOP* res= QOcreat(QO_ID,$1,0);
   quads *q=Qcreat(Q_EQUAL,res,op1,NULL);
-
+  free($1);
   Lappend(Lglobal,q);
 }
 | ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
@@ -73,6 +74,8 @@ ID '=' concatenation                                   { printf("instruction-> I
 | RETURN operande_entier                               { printf("instruction-> RETURN operande_entier \n");}
 | EXIT { 
   printf("instruction->EXIT\n");
+  quads *q=Qcreat(Q_EXIT,NULL,NULL,NULL);
+  Lappend(Lglobal,q);
  }
 | EXIT operande_entier { 
   printf("instruction->EXIT operande_entier\n");
@@ -102,10 +105,16 @@ liste_operandes operande      { printf("liste_operandes-> liste_operandes operan
 concatenation:
 concatenation operande { 
   printf("concatenation-> concatenation operande \n");
+  /**/
   quadOP *temp=QOcreat_temp();
-  quadOP* op1=CopieID($1);
-  quadOP* op2=CopieID($2);
-  quads *q=Qcreat(Q_CONCAT,temp,op1,op2);
+
+  quadOP* op1=$1;
+  if($1->kind==QO_ID){
+    op1=QOcreat($1->kind,$1->u.name,0);
+  }
+
+  quads *q=Qcreat(Q_CONCAT,temp,$1,$2);
+
   Lappend(Lglobal,q);
   $$=temp;
 }
@@ -152,28 +161,45 @@ EQ  { printf("operateur2-> -eq\n");}
 operande:
 '$' '{' ID '}' { 
   printf("operande-> $ { ID }\n");
-  $$=QOcreat_id($3);
+  $$=QOcreat(QO_ID,$3,0);
+  free($3);
   }
 | '$' '{' ID '[' operande_entier ']' '}' { printf("operande-> $ { ID [ operande_entier ] }\n");}
 | ID { 
   printf("operande-> MOT\n");
-  $$=QOcreat_str($1);
+  $$=QOcreat(QO_STR,$1,0);;
+  free($1);
   }
 | '$' ID { 
   printf("operande-> $ ENTIER\n");
 
   int entier;
-  if(ToInt(&entier,$2)){
-    $$=QOcreat_cst(entier);
+  if(ToInt(&entier,$2)){ // on vérifie que c'est bien un entier
+
+    int taille=(int)((ceil(log10(entier))+1)*sizeof(char));
+    char id[taille+2];
+    id[taille+1]='\0';
+    sprintf(id,"$%d",entier);
+
+    $$=QOcreat(QO_ID,id,0);
+    free($2);
+
   }else{ // $a ou $1mp
       printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
   }
 } 
-| '$' '*'                                { printf("operande-> $ *\n");}
-| '$' '?'                                { printf("operande-> $ ?\n");}
+| '$' '*' { 
+  printf("operande-> $ *\n");
+  $$=QOcreat(QO_STR,"$*",0);
+  }
+| '$' '?' { 
+  printf("operande-> $ ?\n");
+  $$=QOcreat(QO_STR,"$?",0);
+  }
 | CHAINE { 
   printf("operande-> CHAINE:%s\n",$1); 
-  $$=QOcreat_str($1);
+  $$=QOcreat(QO_STR,$1,0);
+  free($1);
   }
 | '$' '(' EXPR somme_entiere ')'         { printf("operande-> $ ( EXPR somme_entiere )\n");}
 | '$' '(' appel_de_fonction ')'          { printf("operande-> $ ( appel_de_fonction )\n");} ;
