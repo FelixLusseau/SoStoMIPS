@@ -59,7 +59,7 @@ void QOfree(quadOP *op){
         return;
     }
     if((op->kind==QO_ID || op->kind==QO_STR) && op->u.name!=NULL){
-        printf("    free ID/STR: %s\n",op->u.name);
+        printf("    QOfree ID/STR: %s\n",op->u.name);
         free(op->u.name);
     }
     free(op);
@@ -127,6 +127,12 @@ void Qaffiche(quads *q){
             break;
         case Q_MUL:
             printf(" MUL ");
+            break;
+        case Q_DIV:
+            printf(" DIV ");
+            break;
+        case Q_MOD:
+            printf(" MOD ");
             break;
         case Q_CONCAT:
             printf(" CONCAT ");
@@ -215,6 +221,7 @@ void Lfree(listQ *list) {
         QOfree(GC_quadOP[i]);
     }
     for(int j=0;j<I_quad;j++){
+        printf("    Qfree %i: %i\n",j,GC_quad[j]->kind);
         free(GC_quad[j]);
     }
     for(int k=0;k<I_liste;k++){

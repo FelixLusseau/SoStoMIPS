@@ -29,7 +29,7 @@ void QOaffiche(quadOP *op);
 
 /* quad / instruction à 3 addresse*/
 typedef struct quads {
-    enum{Q_ADD=100,Q_LESS,Q_CONCAT,Q_MUL,Q_EQUAL,Q_GOTO,Q_EXIT,Q_TAB}kind;
+    enum{Q_ADD=100,Q_LESS,Q_CONCAT,Q_MUL,Q_DIV,Q_MOD,Q_EQUAL,Q_GOTO,Q_EXIT,Q_TAB}kind;
     quadOP *op1,*op2,*res;
 } quads;
 

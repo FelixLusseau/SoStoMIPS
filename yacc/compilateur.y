@@ -19,13 +19,13 @@ extern listQ *Lglobal;
 
 %type <operateur> concatenation 
 %type <operateur> operande
+%type <operateur> operande_entier
+%type <operateur> somme_entiere
+%type <operateur> produit_entier
 
 %type <listeQ> instruction
 %type <listeQ> liste_instructions
 %type <listeQ> programme
-
-%type <quad> somme_entiere
-%type <quad> produit_entier
 
 %type <intval> plus_ou_moin
 %type <intval> fois_div_mod
@@ -103,7 +103,7 @@ liste_operandes operande      { printf("liste_operandes-> liste_operandes operan
 concatenation:
 concatenation operande { 
   printf("concatenation-> concatenation operande \n");
-  
+
   quadOP *temp=QOcreat_temp();
   quads *q=Qcreat(Q_CONCAT,temp,$1,$2);
 
@@ -199,7 +199,7 @@ operande:
 somme_entiere:
 somme_entiere plus_ou_moin produit_entier { 
   printf("somme_entiere-> somme_entiere plus_ou_moin produit_entier \n");
-/*
+
   quadOP *temp=QOcreat_temp();
 
   quads *q=NULL;
@@ -210,7 +210,7 @@ somme_entiere plus_ou_moin produit_entier {
   }
   Lappend(Lglobal,q);
 
-  $$=q;*/
+  $$=temp;
 }
 | produit_entier { 
   printf("somme_entiere-> produit_entier \n");
@@ -220,22 +220,121 @@ somme_entiere plus_ou_moin produit_entier {
 produit_entier:
 produit_entier fois_div_mod operande_entier { 
   printf("produit_entier-> produit_entier fois_div_mod operande_entier\n");
+
+  quadOP *temp=QOcreat_temp();
+  quads *q=NULL;
+  switch($2){
+    case 1:
+      q=Qcreat(Q_MUL,temp,$1,$3);
+      break;
+    case 2:
+      q=Qcreat(Q_DIV,temp,$1,$3);
+      break;
+    case 3:
+      q=Qcreat(Q_MOD,temp,$1,$3);
+      break;
+  }
+  Lappend(Lglobal,q);
 }
-|operande_entier                            { printf("produit_entier-> operande_entier \n");};
+|operande_entier { 
+  printf("produit_entier-> operande_entier \n");
+  $$=$1;
+  };
 
 
 operande_entier: 
-'$' '{' ID '}'                                        { printf("operande_entier-> $ { ID } \n");}
+'$' '{' ID '}'{ 
+  printf("operande_entier-> $ { ID } \n");
+    quadOP* op=QOcreat(QO_ID,$3,0);
+    $$=op;
+    free($3);
+  }
 | '$' '{' ID '[' operande_entier ']' '}'              { printf("operande_entier-> $ { ID [ operande_entier ] } \n");}
-| '$' ID                                              { printf("operande_entier-> $ ENTIER \n");}
-| plus_ou_moin '$' '{' ID '}'                         { printf("operande_entier-> plus_ou_moin $ { ID } \n");}
+| '$' ID { 
+  printf("operande_entier-> $ ENTIER \n");
+  int entier;
+  if(ToInt(&entier,$2)){ // on vérifie que c'est bien un entier
+
+    int taille=(int)((ceil(log10(entier))+1)*sizeof(char));
+    char id[taille+2];
+    id[taille+1]='\0';
+    sprintf(id,"$%d",entier);
+
+    quadOP* op=QOcreat(QO_ID,id,0);
+    $$=op;
+    free($2);
+
+  }else{ // $a ou $1mp
+      printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
+  }
+  }
+| plus_ou_moin '$' '{' ID '}' { 
+  printf("operande_entier-> plus_ou_moin $ { ID } \n");
+
+    quadOP* temp=QOcreat_temp();
+    quadOP* op2=QOcreat(QO_ID,$4,0);
+    quads* q=NULL;
+    if($1){
+      q=Qcreat(Q_ADD,temp,NULL,op2);
+    }else{
+      q=Qcreat(Q_LESS,temp,NULL,op2);
+    }
+    Lappend(Lglobal,q);
+    free($4);
+  }
 | plus_ou_moin '$' '{' ID '[' operande_entier ']' '}' { printf("operande_entier-> plus_ou_moin $ { ID [ operande_entier ] }\n");}
-| plus_ou_moin '$' ID                                 { printf("operande_entier-> plus_ou_moin $ ENTIER\n");}
+| plus_ou_moin '$' ID  { 
+  printf("operande_entier-> plus_ou_moin $ ENTIER\n");
+  int entier;
+  if(ToInt(&entier,$3)){ // on vérifie que c'est bien un entier
+
+    int taille=(int)((ceil(log10(entier))+1)*sizeof(char));
+    char id[taille+2];
+    id[taille+1]='\0';
+    sprintf(id,"$%d",entier);
+
+    quadOP* temp=QOcreat_temp();
+    quadOP* op2=QOcreat(QO_ID,id,0);
+    quads* q=NULL;
+    if($1){
+      q=Qcreat(Q_ADD,temp,NULL,op2);
+    }else{
+      q=Qcreat(Q_LESS,temp,NULL,op2);
+    }
+    Lappend(Lglobal,q);
+    $$=temp;
+    free($3);
+
+  }else{ // $a ou $1mp
+      printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
+  }
+  }
 | ID { 
   printf("operande_entier-> ENTIER \n");
+  int entier;
+  if(ToInt(&entier,$1)){
+    $$=QOcreat(QO_CST,NULL,entier);
+    free($1);
+  }
 }
-| plus_ou_moin ID                                     { printf("operande_entier-> plus_ou_moin ENTIER\n");}
-| '(' somme_entiere ')'                               { printf("operande_entier-> ( somme_entiere ) \n");};
+| plus_ou_moin ID { 
+  printf("operande_entier-> plus_ou_moin ENTIER\n");
+  int entier;
+  if(ToInt(&entier,$2)){
+    if($1){
+      $$=QOcreat(QO_CST,NULL,entier);
+    }
+    else{
+
+      $$=QOcreat(QO_CST,NULL,-entier);
+    }
+    free($2);
+  }
+  }
+| '(' somme_entiere ')' { 
+  printf("operande_entier-> ( somme_entiere ) \n");
+  $$=$2;
+  };
 
 plus_ou_moin: '+' {$$=1;} | '-' {$$=0;};
 
