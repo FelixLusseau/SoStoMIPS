@@ -193,7 +193,10 @@ operande:
   $$=QOcreat(QO_STR,$1,0);
   free($1);
   }
-| '$' '(' EXPR somme_entiere ')'         { printf("operande-> $ ( EXPR somme_entiere )\n");}
+| '$' '(' EXPR somme_entiere ')' { 
+  printf("operande-> $ ( EXPR somme_entiere )\n");
+  $$=$4;
+  }
 | '$' '(' appel_de_fonction ')'          { printf("operande-> $ ( appel_de_fonction )\n");} ;
 
 somme_entiere:

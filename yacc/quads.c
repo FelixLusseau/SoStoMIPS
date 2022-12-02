@@ -31,7 +31,7 @@ quadOP* QOcreat(int Type, char* str,int val){
     I_quadOP++;
 
     qo->kind=Type;
-    if(!(Type=QO_ID || Type==QO_STR)){
+    if(!(Type==QO_ID || Type==QO_STR)){
         qo->u.cst=val;
     }
     else{
