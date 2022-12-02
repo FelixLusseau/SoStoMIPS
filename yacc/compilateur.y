@@ -238,6 +238,7 @@ produit_entier fois_div_mod operande_entier {
       break;
   }
   Lappend(Lglobal,q);
+  $$=temp;
 }
 |operande_entier { 
   printf("produit_entier-> operande_entier \n");
@@ -252,7 +253,14 @@ operande_entier:
     $$=op;
     free($3);
   }
-| '$' '{' ID '[' operande_entier ']' '}'              { printf("operande_entier-> $ { ID [ operande_entier ] } \n");}
+| '$' '{' ID '[' operande_entier ']' '}' { 
+  printf("operande_entier-> $ { ID [ operande_entier ] } \n");
+  quadOP* tab=QOcreat(QO_TAB,$3,0);
+  quadOP* temp=QOcreat_temp();
+  quads *q=Qcreat(Q_TAB_GIVE,temp,tab,$5);
+  Lappend(Lglobal,q);
+  $$=temp;
+  }
 | '$' ID { 
   printf("operande_entier-> $ ENTIER \n");
   int entier;
@@ -285,7 +293,24 @@ operande_entier:
     Lappend(Lglobal,q);
     free($4);
   }
-| plus_ou_moin '$' '{' ID '[' operande_entier ']' '}' { printf("operande_entier-> plus_ou_moin $ { ID [ operande_entier ] }\n");}
+| plus_ou_moin '$' '{' ID '[' operande_entier ']' '}' {
+ printf("operande_entier-> plus_ou_moin $ { ID [ operande_entier ] }\n");
+
+  quadOP* tab=QOcreat(QO_TAB,$4,0);
+  quadOP* temp1=QOcreat_temp();
+  quads *q=Qcreat(Q_TAB_GIVE,temp1,tab,$6);
+  Lappend(Lglobal,q);
+
+  quadOP* temp2=QOcreat_temp();
+  q=NULL;
+  if($1){
+    q=Qcreat(Q_ADD,temp2,NULL,temp1);
+  }else{
+    q=Qcreat(Q_LESS,temp2,NULL,temp1);
+  }
+  Lappend(Lglobal,q);
+  free($4);
+ }
 | plus_ou_moin '$' ID  { 
   printf("operande_entier-> plus_ou_moin $ ENTIER\n");
   int entier;

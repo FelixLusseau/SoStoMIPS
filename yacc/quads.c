@@ -31,7 +31,7 @@ quadOP* QOcreat(int Type, char* str,int val){
     I_quadOP++;
 
     qo->kind=Type;
-    if(!(Type==QO_ID || Type==QO_STR)){
+    if(!(Type==QO_ID || Type==QO_STR || Type==QO_TAB)){
         qo->u.cst=val;
     }
     else{
@@ -58,7 +58,7 @@ void QOfree(quadOP *op){
     if(op==NULL){
         return;
     }
-    if((op->kind==QO_ID || op->kind==QO_STR) && op->u.name!=NULL){
+    if((op->kind==QO_ID || op->kind==QO_STR || QO_TAB) && op->u.name!=NULL){
         printf("    QOfree ID/STR: %s\n",op->u.name);
         free(op->u.name);
     }
@@ -81,6 +81,9 @@ void QOaffiche(quadOP *op){
             break;
         case QO_BOOL:
             printf("bool:%i ",op->u.cst);
+            break;
+        case QO_TAB:
+            printf("tab:%i ",op->u.cst);
             break;
     }
 }
@@ -145,6 +148,15 @@ void Qaffiche(quads *q){
             break;
         case Q_EXIT:
             printf(" EXIT ");
+            break;
+        case Q_TAB_CREAT:
+            printf(" TAB[]CREAT ");
+            break;
+        case Q_TAB_EQUAL:
+            printf(" TAB[]EQUAL ");
+            break;
+        case Q_TAB_GIVE:
+            printf(" TAB[]GIVE ");
             break;
     }
     if(q->op1!=NULL){
