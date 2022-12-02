@@ -5,6 +5,7 @@
 #include <math.h> 
 #include <string.h>
 
+
 /* vérifie que str est un entier et stocke ça valeur dans i */
 int ToInt( int *i, char * str);
 

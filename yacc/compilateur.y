@@ -51,10 +51,8 @@ liste_instructions ';' instruction {
 
 instruction: 
 ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");
-  quadOP* op1=QOcreat($3->kind,$3->u.name,0);
   quadOP* res= QOcreat(QO_ID,$1,0);
-  quads *q=Qcreat(Q_EQUAL,res,op1,NULL);
-  free($1);
+  quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
   Lappend(Lglobal,q);
 }
 | ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
@@ -105,14 +103,8 @@ liste_operandes operande      { printf("liste_operandes-> liste_operandes operan
 concatenation:
 concatenation operande { 
   printf("concatenation-> concatenation operande \n");
-  /**/
+  
   quadOP *temp=QOcreat_temp();
-
-  quadOP* op1=$1;
-  if($1->kind==QO_ID){
-    op1=QOcreat($1->kind,$1->u.name,0);
-  }
-
   quads *q=Qcreat(Q_CONCAT,temp,$1,$2);
 
   Lappend(Lglobal,q);
@@ -167,7 +159,7 @@ operande:
 | '$' '{' ID '[' operande_entier ']' '}' { printf("operande-> $ { ID [ operande_entier ] }\n");}
 | ID { 
   printf("operande-> MOT\n");
-  $$=QOcreat(QO_STR,$1,0);;
+  $$=QOcreat(QO_STR,$1,0);
   free($1);
   }
 | '$' ID { 

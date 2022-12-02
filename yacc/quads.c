@@ -2,6 +2,14 @@
 #include <math.h>
 extern int nb_temp;
 
+#define GC_TAILLE 20000
+int I_quad=0;
+int I_quadOP=0;
+int I_liste=0;
+quads * GC_quad[GC_TAILLE];
+quadOP* GC_quadOP[GC_TAILLE];
+listQ* GC_liste[GC_TAILLE];
+
 int ToInt( int *i, char * str){
     *i=atoi(str); // atoi renvoit 0 si str n'est pas un entier
     printf("ToInt: %i\n",*i);
@@ -19,6 +27,9 @@ int ToInt( int *i, char * str){
 /******************************** QUADOP ********************************************/
 quadOP* QOcreat(int Type, char* str,int val){
     quadOP * qo=malloc(sizeof(quadOP));
+    GC_quadOP[I_quadOP]=qo;
+    I_quadOP++;
+
     qo->kind=Type;
     if(!(Type=QO_ID || Type==QO_STR)){
         qo->u.cst=val;
@@ -77,6 +88,10 @@ void QOaffiche(quadOP *op){
 /******************************** QUADS ********************************************/
 quads * Qcreat(int type, quadOP *res,quadOP* op1, quadOP* op2){
     quads *q=malloc(sizeof(quads));
+
+    GC_quad[I_quad]=q;
+    I_quad++;
+
     q->op1=op1;
     q->op2=op2;
     q->res=res;
@@ -138,6 +153,9 @@ void Qaffiche(quads *q){
 /******************************** LISTE ********************************************/
 listQ * Lcreat(void) {
     listQ * list = malloc(sizeof(listQ));
+    GC_liste[I_liste]=list;
+    I_liste++;
+
     if(list==NULL)
         return NULL;
     list->quad = NULL;
@@ -193,6 +211,16 @@ listQ * Lconcat(listQ *list, listQ *list2){
 }
 
 void Lfree(listQ *list) {
+    for(int i=0;i<I_quadOP;i++){
+        QOfree(GC_quadOP[i]);
+    }
+    for(int j=0;j<I_quad;j++){
+        free(GC_quad[j]);
+    }
+    for(int k=0;k<I_liste;k++){
+        free(GC_liste[k]);
+    }
+    /*
     if (list==NULL)
         return ;
     if (list->next==NULL){
@@ -212,7 +240,7 @@ void Lfree(listQ *list) {
         Qfree(noeud->quad);
         free(noeud);
         return ;
-    }
+    }*/
 }
 
 void Laffiche (listQ* list){
