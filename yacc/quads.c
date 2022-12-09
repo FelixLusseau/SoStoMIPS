@@ -27,16 +27,21 @@ int ToInt( int *i, char * str){
 /******************************** QUADOP ********************************************/
 quadOP* QOcreat(int Type, char* str,int val){
     quadOP * qo=malloc(sizeof(quadOP));
+
     GC_quadOP[I_quadOP]=qo;
+    printf("        créer quadOP:%i",I_quadOP);
     I_quadOP++;
 
     qo->kind=Type;
     if(!(Type==QO_ID || Type==QO_STR || Type==QO_TAB)){
+        printf("  cst:%i\n",val);
         qo->u.cst=val;
     }
     else{
+        printf("  str:%s\n",str);
         qo->u.name=strdup(str);
     }
+
     return qo;
 }
 
@@ -58,9 +63,11 @@ void QOfree(quadOP *op){
     if(op==NULL){
         return;
     }
-    if((op->kind==QO_ID || op->kind==QO_STR || QO_TAB) && op->u.name!=NULL){
+    if((op->kind==QO_ID || op->kind==QO_STR || op->kind==QO_TAB)){
         printf("    QOfree ID/STR: %s\n",op->u.name);
         free(op->u.name);
+    }else{
+        printf("    QOfree CST: %i\n",op->u.cst);
     }
     free(op);
 }
@@ -81,9 +88,6 @@ void QOaffiche(quadOP *op){
             break;
         case QO_BOOL:
             printf("bool:%i ",op->u.cst);
-            break;
-        case QO_TAB:
-            printf("tab:%i ",op->u.cst);
             break;
     }
 }
@@ -106,12 +110,6 @@ void Qfree(quads *q){
     if(q==NULL){
         return;
     }
-    printf("free: ");
-    Qaffiche(q);
-
-    QOfree(q->op1);
-    QOfree(q->op2);
-    QOfree(q->res);
 
     free(q);
 }
@@ -157,6 +155,39 @@ void Qaffiche(quads *q){
             break;
         case Q_TAB_GIVE:
             printf(" TAB[]GIVE ");
+            break;
+        case Q_IF_EQ:
+            printf(" IF == ");
+            break;
+        case Q_IF_NE:
+            printf(" IF != ");
+            break;
+        case Q_IF_GT:
+            printf(" IF > ");
+            break;
+        case Q_IF_GE:
+            printf(" IF >= ");
+            break;
+        case Q_IF_LT:
+            printf(" IF < ");
+            break;
+        case Q_IF_LE:
+            printf(" IF <= ");
+            break;
+        case Q_IF_N:
+            printf(" IF NOT EMPTY");
+            break;
+        case Q_IF_Z:
+            printf(" IF EMPTY ");
+            break;
+        case Q_IF_NOT:
+            printf(" NOT ");
+            break;
+        case Q_AND:
+            printf(" AND ");
+            break;
+        case Q_OR:
+            printf(" OR");
             break;
     }
     if(q->op1!=NULL){
@@ -230,13 +261,15 @@ listQ * Lconcat(listQ *list, listQ *list2){
 
 void Lfree(listQ *list) {
     for(int i=0;i<I_quadOP;i++){
+        printf("QOfree %i/%i",i,I_quadOP);
         QOfree(GC_quadOP[i]);
     }
     for(int j=0;j<I_quad;j++){
-        printf("    Qfree %i: %i\n",j,GC_quad[j]->kind);
-        free(GC_quad[j]);
+        printf("Qfree %i/%i\n",j,I_quad);
+        Qfree(GC_quad[j]);
     }
     for(int k=0;k<I_liste;k++){
+        printf("Lfree %i/%i\n",k,I_liste);
         free(GC_liste[k]);
     }
     /*
