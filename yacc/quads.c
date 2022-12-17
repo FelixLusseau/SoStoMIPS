@@ -6,9 +6,12 @@ extern int nb_temp;
 int I_quad=0;
 int I_quadOP=0;
 int I_liste=0;
+int I_embranchment=0;
 quads * GC_quad[GC_TAILLE];
 quadOP* GC_quadOP[GC_TAILLE];
 listQ* GC_liste[GC_TAILLE];
+embranchment* GC_embranchment[GC_TAILLE];
+
 
 int ToInt( int *i, char * str){
     *i=atoi(str); // atoi renvoit 0 si str n'est pas un entier
@@ -25,6 +28,7 @@ int ToInt( int *i, char * str){
 
 
 /******************************** QUADOP ********************************************/
+
 quadOP* QOcreat(int Type, char* str,int val){
     quadOP * qo=malloc(sizeof(quadOP));
 
@@ -93,6 +97,7 @@ void QOaffiche(quadOP *op){
 }
 
 /******************************** QUADS ********************************************/
+
 quads * Qcreat(int type, quadOP *res,quadOP* op1, quadOP* op2){
     quads *q=malloc(sizeof(quads));
 
@@ -200,6 +205,7 @@ void Qaffiche(quads *q){
 }
 
 /******************************** LISTE ********************************************/
+
 listQ * Lcreat(void) {
     listQ * list = malloc(sizeof(listQ));
     GC_liste[I_liste]=list;
@@ -272,6 +278,9 @@ void Lfree(listQ *list) {
         printf("Lfree %i/%i\n",k,I_liste);
         free(GC_liste[k]);
     }
+    for(int k=0;k<I_embranchment;k++){
+        free(GC_embranchment[k]);
+    }
     /*
     if (list==NULL)
         return ;
@@ -312,5 +321,29 @@ void Laffiche (listQ* list){
     }
 }
 
+embranchment *EMcreat(void){
+    embranchment * embr = malloc(sizeof(embranchment));
+    GC_embranchment[I_embranchment]=embr;
+    I_embranchment++;
 
+    embr->False=Lcreat();
+    embr->False=Lcreat();
+    return embr;
+}
+
+
+void complete(listQ *listGT, int addresse){
+    listQ *it=listGT;
+
+    while(it != NULL) {
+        if(it->quad->kind!=Q_GOTO || it->quad->kind!=Q_IF){
+            printf("ERREUR COMPLETION D'UN GOTO\n");
+        }else if(it->quad->res==NULL){
+            quadOP *add=QOcreat(QO_ADDR,NULL,addresse);
+            it->quad->res=add;
+        }
+        it=it->next;
+    }
+    
+}
 
