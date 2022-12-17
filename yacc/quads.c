@@ -2,7 +2,7 @@
 #include <math.h>
 extern int nb_temp;
 
-#define GC_TAILLE 20000
+#define GC_TAILLE 2000
 int I_quad=0;
 int I_quadOP=0;
 int I_liste=0;
