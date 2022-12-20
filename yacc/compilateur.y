@@ -4,6 +4,7 @@
 #endif
 
 #include "quads.h"
+#include "tos.h"
 #include <stdio.h>
 
 extern int yylex(); 
