@@ -14,18 +14,16 @@ extern listQ *Lglobal;
 %}
 %union{char *strval; 
        int intval; 
-       listQ* listeQ; 
+       listQ* listQ; 
        quads *quad; 
-       quadOP *operateur;}
+       quadOP *operateur;
+       embranchment *branchement;
+       }
 
 %token IF THEN FOR DO DONE IN WHILE UNTIL CASE ESAC MYECHO READ RETURN EXIT LOCAL ELIF ELSE FI DECLARE TEST EXPR O A N Z EQ NE GT GE LT LE
 %token <strval> ID 
 %token <strval> CHAINE 
 
-%type <operateur> test_expr3
-%type <operateur> test_expr2
-%type <operateur> test_expr
-%type <operateur> test_bloc
 %type <operateur> test_instruction
 %type <operateur> concatenation 
 %type <operateur> operande
@@ -33,17 +31,26 @@ extern listQ *Lglobal;
 %type <operateur> somme_entiere
 %type <operateur> produit_entier
 
-%type <listeQ> instruction
-%type <listeQ> liste_instructions
-%type <listeQ> programme
+%type <listQ> instruction
+
+%type <operateur> liste_instructions
+%type <branchement> test_bloc
+%type <branchement> test_expr
+%type <branchement> test_expr2
+%type <operateur> test_expr3
+
 
 %type <intval> plus_ou_moin
 %type <intval> fois_div_mod
 %type <intval> operateur1
 %type <intval> operateur2
+%type <intval> M
+
 %start programme
 
 %%
+
+M: %empty {$$=Lglobal->taille;}
 
 programme: 
 liste_instructions {
@@ -56,9 +63,20 @@ liste_instructions {
 liste_instructions: 
 liste_instructions ';' instruction {
   printf("liste_instruction->liste_instructions ; instruction\n");
+
+  quadOP *addr=QOcreat(QO_ADDR,NULL,0);
+  quads *nextQuad=Qcreat(Q_GOTO,addr,NULL,NULL);
+  addr->u.cst=Lglobal->taille+1;
+  $$=addr;
 }
 |instruction {
   printf("liste_instruction->instruction\n");
+
+  quadOP *addr=QOcreat(QO_ADDR,NULL,0);
+  quads *nextQuad=Qcreat(Q_GOTO,addr,NULL,NULL);
+  addr->u.cst=Lglobal->taille+1;
+  $$=addr;
+
 };
 
 instruction: 
@@ -70,13 +88,45 @@ ID '=' concatenation                                   { printf("instruction-> I
 }
 | ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
 | DECLARE ID '[' ID ']'                                { printf("instruction-> DECLARE ID [ ENTIER ] \n");}
-| IF test_bloc THEN liste_instructions else_part FI    { printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");
+| IF test_bloc M THEN liste_instructions M else_part FI    { 
+  printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");
+
+  int addrM1=$3;
+  int addrM2=$6;
+
+  complete($2->True,addrM1+1);
+  complete($2->False,addrM2+1);
  
 }
 | FOR ID DO IN liste_instructions DONE                 { printf("instruction->FOR ID DO IN liste_instructions DONE \n");}
 | FOR ID IN liste_operandes DO liste_instructions DONE { printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");}
-| WHILE test_bloc DO liste_instructions DONE           { printf("instruction-> WHILE test_bloc DO liste_instructions DONE \n");}
-| UNTIL test_bloc DO liste_instructions DONE           { printf("instruction-> UNTIL test_bloc DO liste_instructions DONE \n");}
+
+| WHILE M test_bloc M DO liste_instructions M DONE { 
+  printf("instruction-> WHILE test_bloc DO liste_instructions DONE \n");
+
+  int addrM0=$2;
+  int addrM1=$4;
+  int addrM2=$7;
+
+  complete($3->True,addrM1+1);
+  complete($3->False,addrM2+1);
+
+  $6->u.cst=addrM0+1;
+
+  }
+| UNTIL M test_bloc M DO liste_instructions M DONE { 
+  printf("instruction-> UNTIL test_bloc DO liste_instructions DONE \n");
+
+  int addrM0=$2;
+  int addrM1=$4;
+  int addrM2=$7;
+
+  complete($3->True,addrM2+1);
+  complete($3->False,addrM1+1);
+
+  $6->u.cst=addrM0+1;
+  
+  }
 | CASE operande IN liste_cas ESAC                      { printf("instruction-> CASE operande IN liste_cas ESAC \n");}
 | MYECHO liste_operandes                               { printf("instruction-> MYECHO liste_operandes \n");}
 | READ ID                                              { printf("instruction-> READ ID \n");}
@@ -95,7 +145,18 @@ ID '=' concatenation                                   { printf("instruction-> I
   }; 
 
 else_part:
-ELIF test_bloc THEN liste_instructions else_part  { printf("else_part->ELIF test_bloc THEN liste_instructions else_part\n");}
+ELIF M test_bloc M THEN liste_instructions M else_part  { 
+  printf("else_part->ELIF test_bloc THEN liste_instructions else_part\n");
+
+  int addrM0=$2;
+  int addrM1=$4;
+  int addrM2=$7;
+
+  complete($3->True,addrM1+1);
+  complete($3->False,addrM2+1);
+  
+  $6->u.cst=addrM2+1;
+  }
 | ELSE liste_instructions                         { printf("else_part->ELSE liste_instructions\n");}
 | %empty                                          { printf("else_part->empty\n");};
 
@@ -131,26 +192,57 @@ concatenation operande {
 } ;
 
 test_bloc:
-TEST test_expr  { printf("test_bloc-> TEST test_expr \n"); $$=$2;};
+TEST test_expr  { 
+  printf("test_bloc-> TEST test_expr \n"); 
+  $$=$2;
+
+  };
 
 test_expr:
-test_expr O test_expr2 { 
+test_expr O M test_expr2 { 
   printf("test_expr-> test_expr O test_expr2 \n");
-  quadOP *temp=QOcreat_temp();
-  quads *q=Qcreat(Q_OR,temp,$1,$3);
-  $$=temp;
+
+  complete($1->False,$3+1);
+  $$=$4;
+  listQ *T=Lconcat($1->True,$$->True);
+  $$->True=T;
+
   }
-| test_expr2 {  printf("test_expr-> test_expr2 \n"); $$=$1;} ;
+| test_expr2 {  printf("test_expr-> test_expr2 \n"); $$=$1; } ;
 
 test_expr2:
-test_expr2 A test_expr3 { 
+test_expr2 A M test_expr3 { 
   printf("test_expr2-> test_expr2 A test_expr3 \n");
 
-  quadOP *temp=QOcreat_temp();
-  quads *q=Qcreat(Q_AND,temp,$1,$3);
-  $$=temp;
+ // test_expr3
+  quads *if_true3=Qcreat(Q_IF,NULL,$4,NULL);
+  Lappend(Lglobal,if_true3);
+
+  quads *if_false3=Qcreat(Q_GOTO,NULL,NULL,NULL);
+  Lappend(Lglobal,if_false3);
+
+  complete($1->True,$3+1);
+  Lappend($1->False,if_false3);
+
+  $$=EMcreat();
+  Lappend($$->True,if_true3);
+  $$->False=$1->False;
+
   } 
-| test_expr3            { printf("test_expr2-> test_expr3 \n"); $$=$1;} ;
+| test_expr3 { 
+  printf("test_expr2-> test_expr3 \n"); 
+  
+ // test_expr3
+  quads *if_true3=Qcreat(Q_IF,NULL,$1,NULL);
+  Lappend(Lglobal,if_true3);
+
+  quads *if_false3=Qcreat(Q_GOTO,NULL,NULL,NULL);
+  Lappend(Lglobal,if_false3);
+
+  $$=EMcreat();
+  Lappend($$->True,if_true3);
+  Lappend($$->False,if_false3);
+  } ;
 
 test_expr3:
 '(' test_expr ')'       { printf("test_expr3-> ( test_expr ) \n"); $$=$2;}
@@ -158,6 +250,7 @@ test_expr3:
   printf("test_expr3-> ! ( test_expr ) \n");
   quadOP *temp=QOcreat_temp();
   quads *q=Qcreat(Q_IF_NOT,temp,$3,NULL);
+  Lappend(Lglobal,q);
   $$=temp;
   }
 | test_instruction      { printf("test_expr3-> test_instruction \n"); $$=$1;}
@@ -165,6 +258,7 @@ test_expr3:
   printf("test_expr3-> ! test_instruction \n");
   quadOP *temp=QOcreat_temp();
   quads *q=Qcreat(Q_IF_NOT,temp,$2,NULL);
+  Lappend(Lglobal,q);
   $$=temp;
   };
 

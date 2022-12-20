@@ -12,7 +12,13 @@ int ToInt( int *i, char * str);
 
 /* opérande d'une instruction à 3 addresse: entier/variable/addresse goto*/
 typedef struct quadOP {
-    enum{QO_CST=1,QO_STR,QO_ID,QO_ADDR,QO_BOOL,QO_TAB}kind;
+    enum{QO_CST=1, // constante (int)
+         QO_STR,   // chaine/mot (string)
+         QO_ID,    // identificateur
+         QO_ADDR,  // addresse (goto)
+         QO_BOOL,  // booléens
+         QO_TAB    // tableau
+         }kind;
     union{int cst;char *name;}u;
 } quadOP;
 
@@ -29,11 +35,31 @@ void QOaffiche(quadOP *op);
 
 /* quad / instruction à 3 addresse*/
 typedef struct quads {
-    enum{Q_ADD=100,Q_LESS,Q_CONCAT,Q_MUL,Q_DIV,Q_MOD,
-         Q_EQUAL,Q_GOTO,Q_EXIT,Q_TAB_CREAT,Q_TAB_EQUAL,
-         Q_TAB_GIVE, Q_IF_EQ, Q_IF_NE, Q_IF_GT, Q_IF_GE,
-         Q_IF_LT, Q_IF_LE , Q_IF_N , Q_IF_Z, Q_IF_NOT, Q_AND,
-         Q_OR }kind;
+    enum{Q_ADD=100,   // +
+         Q_LESS,      // -
+         Q_CONCAT,    // concaténation
+         Q_MUL,       // *
+         Q_DIV,       // ./.
+         Q_MOD,       // %
+         Q_EQUAL,     // a = val
+         Q_GOTO,      // goto addresse
+         Q_EXIT,      // exit
+         Q_TAB_CREAT, // créer []
+         Q_TAB_EQUAL, // tab[i]=val
+         Q_TAB_GIVE,  // tab[i]
+         Q_IF,        // if (booléen) goto ... res=addr, op1=bool
+         Q_IF_EQ,     // if equal
+         Q_IF_NE,     // if not equal
+         Q_IF_GT,     // if (>)
+         Q_IF_GE,     // if (>=)
+         Q_IF_LT,     // if (<)
+         Q_IF_LE ,    // if (<=)
+         Q_IF_N ,     // if CHAINE non vide
+         Q_IF_Z,      // if CHAINE vide
+         Q_IF_NOT,    // if !(...)
+         Q_AND,       // if ... and ...
+         Q_OR         // if ... or ...
+         }kind;
     quadOP *op1,*op2,*res;
 } quads;
 
@@ -62,8 +88,18 @@ void Laffiche (listQ* list);
 
 void Lfree(listQ *list);
 
-
 /* renvoit le dernier node de la liste */
 listQ* Llast(listQ *list);
+
+/* brachment des if bool: contient le cas true et le cas false */
+typedef struct embranchment {
+    listQ *True; // goto dans le cas ou le bool=true
+    listQ *False; // goto dans le cas ou le bool=false
+} embranchment;
+
+embranchment *EMcreat(void);
+
+/* remplie les goto vide de la liste */
+void complete(listQ *listGT, int addresse);
 
 #endif
