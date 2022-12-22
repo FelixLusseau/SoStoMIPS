@@ -245,14 +245,8 @@ test_expr2 A M test_expr3 {
   } ;
 
 test_expr3:
-'(' test_expr ')'       { printf("test_expr3-> ( test_expr ) \n"); $$=$2;}
-| '!' '(' test_expr ')' { 
-  printf("test_expr3-> ! ( test_expr ) \n");
-  quadOP *temp=QOcreat_temp();
-  quads *q=Qcreat(Q_IF_NOT,temp,$3,NULL);
-  Lappend(Lglobal,q);
-  $$=temp;
-  }
+'(' test_expr ')'       { printf("test_expr3-> ( test_expr ) \n");}
+| '!' '(' test_expr ')' { printf("test_expr3-> ! ( test_expr ) \n");}
 | test_instruction      { printf("test_expr3-> test_instruction \n"); $$=$1;}
 | '!' test_instruction  { 
   printf("test_expr3-> ! test_instruction \n");
