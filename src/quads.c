@@ -90,7 +90,8 @@ void QOaffiche(quadOP *op) {
     case QO_BOOL:
         printf("bool:%i ", op->u.cst);
         break;
-    case QO_TAB: // TODO
+    case QO_TAB:
+        printf("tableau:%s ", op->u.name);
         break;
     }
 }
@@ -159,7 +160,8 @@ void Qaffiche(quads *q) {
     case Q_TAB_GIVE:
         printf(" TAB[]GIVE ");
         break;
-    case Q_IF: // TODO
+    case Q_IF:
+        printf(" IF _ GOTO ");
         break;
     case Q_IF_EQ:
         printf(" IF == ");
@@ -250,15 +252,17 @@ void Lappend(listQ *list, quads *new_element) {
     last->next = new_list;
 }
 
-quads *LgetQuad(listQ *list, unsigned int value_idx) {
-    (void)value_idx; // TODO
+quads *LgetQuad(listQ *list, int value_idx) {
+
     if (list->next == NULL) {
         return list->quad;
     }
 
+    int index=0;
     listQ *it = list->next;
-    while (it->next != NULL) {
+    while (it->next != NULL && index<value_idx) {
         it = it->next;
+        index+=1;
     }
     return it->quad;
 }
@@ -270,8 +274,7 @@ listQ *Lconcat(listQ *list, listQ *list2) {
     return list;
 }
 
-void Lfree(listQ *list) {
-    (void)list; // TODO
+void Lfree() {
     for (int i = 0; i <= I_quadOP; i++) {
         printf("QOfree %i/%i", i, I_quadOP);
         QOfree(GC_quadOP[i]);

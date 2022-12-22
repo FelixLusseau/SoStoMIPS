@@ -58,7 +58,7 @@ liste_instructions {
   printf("programme->liste_instruction\n\nAffichage Lglobal:\n");
   Laffiche(Lglobal);
   printf("\nFree Lglobal:\n");
-  Lfree(Lglobal);
+  Lfree();
   };
 
 liste_instructions: 
@@ -67,6 +67,7 @@ liste_instructions ';' instruction {
 
   quadOP *addr=QOcreat(QO_ADDR,NULL,0);
   quads *nextQuad=Qcreat(Q_GOTO,addr,NULL,NULL);
+  Lappend(Lglobal,nextQuad);
   addr->u.cst=Lglobal->taille+1;
   $$=addr;
 }
@@ -75,6 +76,7 @@ liste_instructions ';' instruction {
 
   quadOP *addr=QOcreat(QO_ADDR,NULL,0);
   quads *nextQuad=Qcreat(Q_GOTO,addr,NULL,NULL);
+  Lappend(Lglobal,nextQuad);
   addr->u.cst=Lglobal->taille+1;
   $$=addr;
 
@@ -146,17 +148,16 @@ ID '=' concatenation                                   { printf("instruction-> I
   }; 
 
 else_part:
-ELIF M test_bloc M THEN liste_instructions M else_part  { 
+ELIF test_bloc M THEN liste_instructions M else_part  { 
   printf("else_part->ELIF test_bloc THEN liste_instructions else_part\n");
 
-  int addrM0=$2;
-  int addrM1=$4;
-  int addrM2=$7;
+  int addrM1=$3;
+  int addrM2=$6;
 
-  complete($3->True,addrM1+1);
-  complete($3->False,addrM2+1);
+  complete($2->True,addrM1+1);
+  complete($2->False,addrM2+1);
   
-  $6->u.cst=addrM2+1;
+  $5->u.cst=addrM2+1;
   }
 | ELSE liste_instructions                         { printf("else_part->ELSE liste_instructions\n");}
 | %empty                                          { printf("else_part->empty\n");};

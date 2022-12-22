@@ -80,13 +80,13 @@ listQ * Lcreat(void);
 
 void Lappend(listQ *list,  quads * new_element);
 
-quads* LgetQuad(listQ *list, unsigned int value_idx) ;
+quads* LgetQuad(listQ *list, int value_idx) ;
 
 listQ * Lconcat(listQ *list, listQ *list2) ;
 
 void Laffiche (listQ* list);
 
-void Lfree(listQ *list);
+void Lfree(void);
 
 /* renvoit le dernier node de la liste */
 listQ* Llast(listQ *list);
@@ -101,5 +101,16 @@ embranchment *EMcreat(void);
 
 /* remplie les goto vide de la liste */
 void complete(listQ *listGT, int addresse);
+
+/* utilisé pour CASE ESAC: contient les test + les branchements */
+typedef struct case_test {
+    listQ *test;
+    embranchment *branch;
+} case_test;
+
+case_test *CTcreat(void);
+
+/* remplie les goto vide des liste et des tests */
+void CTcomplete(case_test *Case, quadOP *id_test ,int addresse);
 
 #endif
