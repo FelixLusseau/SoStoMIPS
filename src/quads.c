@@ -266,15 +266,15 @@ listQ * Lconcat(listQ *list, listQ *list2){
 }
 
 void Lfree(listQ *list) {
-    for(int i=0;i<I_quadOP;i++){
+    for(int i=0;i<=I_quadOP;i++){
         printf("QOfree %i/%i",i,I_quadOP);
         QOfree(GC_quadOP[i]);
-    }
-    for(int j=0;j<I_quad;j++){
+    }printf("\n");
+    for(int j=0;j<=I_quad;j++){
         printf("Qfree %i/%i\n",j,I_quad);
         Qfree(GC_quad[j]);
     }
-    for(int k=0;k<I_liste;k++){
+    for(int k=0;k<=I_liste;k++){
         printf("Lfree %i/%i\n",k,I_liste);
         free(GC_liste[k]);
     }

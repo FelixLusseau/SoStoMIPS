@@ -37,6 +37,7 @@ extern listQ *Lglobal;
 %type <branchement> test_bloc
 %type <branchement> test_expr
 %type <branchement> test_expr2
+%type <branchement> test_expr3_0
 %type <operateur> test_expr3
 
 
@@ -229,6 +230,15 @@ test_expr2 A M test_expr3 {
   $$->False=$1->False;
 
   } 
+| test_expr2 A M test_expr3_0 { 
+  printf("test_expr2-> test_expr2 A test_expr3 \n"); 
+
+  complete($1->True,$3+1);
+
+  $$=EMcreat();
+  $$->True = $1->True;
+  $$->False = Lconcat($1->False,$4->False);
+  }
 | test_expr3 { 
   printf("test_expr2-> test_expr3 \n"); 
   
@@ -242,12 +252,20 @@ test_expr2 A M test_expr3 {
   $$=EMcreat();
   Lappend($$->True,if_true3);
   Lappend($$->False,if_false3);
+  }
+| test_expr3_0 { printf("test_expr2-> test_expr3_0 \n"); $$=$1;};
+
+test_expr3_0:
+'(' test_expr ')'       { printf("test_expr3_0 -> ( test_expr ) \n"); $$=$2; }
+| '!' '(' test_expr ')' { 
+  printf("test_expr3_0 -> ! ( test_expr ) \n"); 
+  $$=EMcreat(); 
+  $$->True = $3->False;
+  $$->False = $3->True;
   } ;
 
 test_expr3:
-'(' test_expr ')'       { printf("test_expr3-> ( test_expr ) \n");}
-| '!' '(' test_expr ')' { printf("test_expr3-> ! ( test_expr ) \n");}
-| test_instruction      { printf("test_expr3-> test_instruction \n"); $$=$1;}
+test_instruction      { printf("test_expr3 -> test_instruction \n"); $$=$1;}
 | '!' test_instruction  { 
   printf("test_expr3-> ! test_instruction \n");
   quadOP *temp=QOcreat_temp();
