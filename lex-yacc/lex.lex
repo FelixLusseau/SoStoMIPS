@@ -1,6 +1,6 @@
 %{
 #include "quads.h"
-#include "compilateur.tab.h" 
+#include "yacc.h" 
 #include <stdio.h>
 
 char *text;
