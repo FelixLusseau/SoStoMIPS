@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -g # -Wall -Wextra -Werror
+CFLAGS = -g -Wall -Wextra -Werror -Wno-unused-function
 LDLIBS = -lm
 
 LEXYACC_PATH = ./lex-yacc
@@ -57,8 +57,12 @@ $(YACCOBJ): $(OBJDIR)/%.o : $(SRCDIR)/%.c $(INCLUDES) $(YACCC)
 	$(CC) -o $@ -c $< $(CFLAGS) -I$(INCLUDE_PATH)
 	@echo "\033[92mCompiling yacc complete !\033[0m"
 
-test : $(OUTPUT)
-	./$(OUTPUT) < tests/test1.txt 
+TESTDIR = tests
+test :  $(OUTPUT)
+		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
+			echo "\033[92mHello\033[0m" $${file} ; \
+			./$(OUTPUT) < $${file} ; \
+        done
 
 #doc:
 #	bison --report=all --report-file=yacc.output \
