@@ -233,11 +233,15 @@ listQ* Llast(listQ *list){
 }
 
 void Lappend(listQ *list, quads * new_element) {
-    list->taille=1;
+    printf("entrée\n");
+    list->taille+=1;
+    printf("taille\n");
     if(list->quad==NULL){
+        printf("L->quad==NULL\n");
         list->quad=new_element;
         return;
     }
+    printf("L->quad!=NULL\n");
 
     listQ *new_list=Lcreat();
     new_list->quad=new_element;
@@ -278,30 +282,9 @@ void Lfree(listQ *list) {
         printf("Lfree %i/%i\n",k,I_liste);
         free(GC_liste[k]);
     }
-    for(int k=0;k<I_embranchment;k++){
+    for(int k=0;k<=I_embranchment;k++){
         free(GC_embranchment[k]);
     }
-    /*
-    if (list==NULL)
-        return ;
-    if (list->next==NULL){
-        Qfree(list->quad);
-        free(list);
-        return ;
-    }
-    else{
-        listQ *noeud = list;
-        listQ *noeud2;
-        while(noeud->next != NULL) {
-            noeud2=noeud;
-            noeud = noeud->next;
-            Qfree(noeud2->quad);
-            free(noeud2);
-        }
-        Qfree(noeud->quad);
-        free(noeud);
-        return ;
-    }*/
 }
 
 void Laffiche (listQ* list){
@@ -327,7 +310,7 @@ embranchment *EMcreat(void){
     I_embranchment++;
 
     embr->False=Lcreat();
-    embr->False=Lcreat();
+    embr->True=Lcreat();
     return embr;
 }
 

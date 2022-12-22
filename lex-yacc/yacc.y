@@ -250,8 +250,10 @@ test_expr2 A M test_expr3 {
   Lappend(Lglobal,if_false3);
 
   $$=EMcreat();
+  printf("2\n");
   Lappend($$->True,if_true3);
   Lappend($$->False,if_false3);
+  printf("3\n");
   }
 | test_expr3_0 { printf("test_expr2-> test_expr3_0 \n"); $$=$1;};
 

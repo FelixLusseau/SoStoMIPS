@@ -71,7 +71,7 @@ AUTORISER ([[:alnum:]ëËàéçèùêÊ&#~_^€@£µ§:\.?,]*)
 
 [[:space:]\n]* {/*printf("    tabulation\n");*/};
 
-\".*\"|\'.*\' {
+\"[^\'\"]*\"|\'[^\'\"]*\' {
     printf("    chaine:%s\n",yytext);
     yylval.strval=strdup(yytext);
     return CHAINE;

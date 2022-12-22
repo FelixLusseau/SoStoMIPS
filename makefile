@@ -58,7 +58,7 @@ $(YACCOBJ): $(OBJDIR)/%.o : $(SRCDIR)/%.c $(INCLUDES) $(YACCC)
 	@echo "\033[92mCompiling yacc complete !\033[0m"
 
 test : $(OUTPUT)
-	./$(OUTPUT) < tests/test2.txt 
+	./$(OUTPUT) < tests/test1.txt 
 
 #doc:
 #	bison --report=all --report-file=yacc.output \

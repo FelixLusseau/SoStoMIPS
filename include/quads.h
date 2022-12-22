@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-/* vérifie que str est un entier et stocke ça valeur dans i */
+/* vérifie que str est un entier et stocke ça valeur dans i, renvoit 1 ou 0 */
 int ToInt( int *i, char * str);
 
 
@@ -91,7 +91,7 @@ void Lfree(listQ *list);
 /* renvoit le dernier node de la liste */
 listQ* Llast(listQ *list);
 
-/* brachment des if bool: contient le cas true et le cas false */
+/* brachement des if bool: contient le cas true et le cas false */
 typedef struct embranchment {
     listQ *True; // goto dans le cas ou le bool=true
     listQ *False; // goto dans le cas ou le bool=false
