@@ -8,10 +8,10 @@ build:       # This job runs in the build stage, which runs first.
   stage: build
   script:
     - cd /builds/flusseau/projet-compilation-2022/
-    - bash make
+    - make
 
 test:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - cd /builds/flusseau/projet-compilation-2022/
-    - bash -c "make test"
+    - make test
