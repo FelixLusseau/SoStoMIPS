@@ -60,7 +60,7 @@ $(YACCOBJ): $(OBJDIR)/%.o : $(SRCDIR)/%.c $(INCLUDES) $(YACCC)
 TESTDIR = tests
 test :  $(OUTPUT)
 		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
-			echo "\033[92mHello\033[0m" $${file} ; \
+			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			./$(OUTPUT) < $${file} ; \
         done
 

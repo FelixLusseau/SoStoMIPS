@@ -48,19 +48,19 @@ typedef struct quads {
          Q_TAB_EQUAL, // tab[i]=val
          Q_TAB_GIVE,  // tab[i]
          Q_IF,        // if (booléen) goto ... res=addr, op1=bool
-         Q_IF_EQ,     // if equal
-         Q_IF_NE,     // if not equal
-         Q_IF_GT,     // if (>)
-         Q_IF_GE,     // if (>=)
-         Q_IF_LT,     // if (<)
-         Q_IF_LE ,    // if (<=)
-         Q_IF_N ,     // if CHAINE non vide
-         Q_IF_Z,      // if CHAINE vide
-         Q_IF_NOT,    // if !(...)
-         Q_AND,       // if ... and ...
-         Q_OR         // if ... or ...
+         Q_IF_EQ,     // if equal           res=bool
+         Q_IF_NE,     // if not equal       res=bool
+         Q_IF_GT,     // if (>)             res=bool
+         Q_IF_GE,     // if (>=)            res=bool
+         Q_IF_LT,     // if (<)             res=bool
+         Q_IF_LE ,    // if (<=)            res=bool
+         Q_IF_N ,     // if CHAINE non vide res=bool
+         Q_IF_Z,      // if CHAINE vide     res=bool
+         Q_IF_NOT,    // if !(...)          res=bool
+         Q_AND,       // if ... and ...  inutilisé normalement
+         Q_OR         // if ... or ...   inutilisé normalement
          }kind;
-    quadOP *op1,*op2,*res;
+    quadOP *op1,*op2,*res; // res=resultat -> rarement égale à NULL, op1 et op2 les 2 opérateur de l'opérations
 } quads;
 
 void Qfree(quads *q);
@@ -110,7 +110,7 @@ typedef struct case_test {
 
 case_test *CTcreat(void);
 
-/* remplie les goto vide des liste et des tests */
-void CTcomplete(case_test *Case, quadOP *id_test ,int addresse);
+/* remplie les quadOP vide des tests */
+void CTcomplete(case_test *Case, quadOP *id_test);
 
 #endif
