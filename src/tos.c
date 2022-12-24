@@ -23,7 +23,7 @@ int add_to_table(char **table, char *str) {
     unsigned int hash1 = hash((unsigned char *)str);
     if (table[hash1] == NULL) {
         if ((table[hash1] = malloc(MAX_LENGTH)) == NULL)
-            return 1;
+            return -1;
     }
     sprintf(table[hash1], "%s", str);
     return hash1;
