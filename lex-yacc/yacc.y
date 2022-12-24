@@ -102,7 +102,11 @@ ID '=' concatenation                                   { printf("instruction-> I
  
 }
 | FOR ID DO IN liste_instructions DONE                 { printf("instruction->FOR ID DO IN liste_instructions DONE \n");}
-| FOR ID IN liste_operandes DO liste_instructions DONE { printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");}
+| FOR ID IN liste_operandes DO liste_instructions DONE { 
+  
+
+
+  printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");}
 
 | WHILE M test_bloc M DO liste_instructions M DONE { 
   printf("instruction-> WHILE test_bloc DO liste_instructions DONE \n");
