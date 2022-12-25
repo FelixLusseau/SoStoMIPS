@@ -18,9 +18,11 @@ extern listQ *Lglobal;
        quads *quad; 
        quadOP *operateur;
        embranchment *branchement;
+       case_test *Case;
        }
 
 %token IF THEN FOR DO DONE IN WHILE UNTIL CASE ESAC MYECHO READ RETURN EXIT LOCAL ELIF ELSE FI DECLARE TEST EXPR O A N Z EQ NE GT GE LT LE
+
 %token <strval> ID 
 %token <strval> CHAINE 
 
@@ -30,6 +32,7 @@ extern listQ *Lglobal;
 %type <operateur> operande_entier
 %type <operateur> somme_entiere
 %type <operateur> produit_entier
+%type <operateur> liste_operandes
 
 %type <listQ> instruction
 
@@ -40,6 +43,8 @@ extern listQ *Lglobal;
 %type <branchement> test_expr3_0
 %type <operateur> test_expr3
 
+%type <Case> filtre
+%type <Case> liste_cas
 
 %type <intval> plus_ou_moin
 %type <intval> fois_div_mod
@@ -51,7 +56,7 @@ extern listQ *Lglobal;
 
 %%
 
-M: %empty {$$=Lglobal->taille;}
+M: %empty {printf("M->empty\n");$$=Lglobal->taille;}
 
 programme: 
 liste_instructions {
@@ -65,11 +70,6 @@ liste_instructions:
 liste_instructions ';' instruction {
   printf("liste_instruction->liste_instructions ; instruction\n");
 
-  quadOP *addr=QOcreat(QO_ADDR,NULL,0);
-  quads *nextQuad=Qcreat(Q_GOTO,addr,NULL,NULL);
-  Lappend(Lglobal,nextQuad);
-  addr->u.cst=Lglobal->taille+1;
-  $$=addr;
 }
 |instruction {
   printf("liste_instruction->instruction\n");
@@ -134,7 +134,12 @@ ID '=' concatenation                                   { printf("instruction-> I
   $6->u.cst=addrM0+1;
   
   }
-| CASE operande IN liste_cas ESAC                      { printf("instruction-> CASE operande IN liste_cas ESAC \n");}
+| CASE operande IN liste_cas ESAC { 
+  printf("instruction-> CASE operande IN liste_cas ESAC \n");
+
+  CTcomplete($4,$2);
+
+  }
 | MYECHO liste_operandes                               { printf("instruction-> MYECHO liste_operandes \n");}
 | READ ID                                              { printf("instruction-> READ ID \n");}
 | READ ID '[' operande_entier ']'                      { printf("instruction-> READ ID [ operande_entier ] \n");}
@@ -167,15 +172,146 @@ ELIF test_bloc M THEN liste_instructions M else_part  {
 | %empty                                          { printf("else_part->empty\n");};
 
 liste_cas:
-liste_cas filtre ')' liste_instructions ';' ';'  { printf("liste_cas->liste_cas filtre ) liste_instructions ; ; \n");}
-| filtre ')' liste_instructions ';' ';'          { printf("liste_cas->filtre ) liste_instructions ; ; \n");};
+liste_cas filtre ')' M liste_instructions  ';' ';'  { 
+  printf("liste_cas->liste_cas filtre ) liste_instructions ; ; \n");
+
+  int M1=$4+1;
+  int M2=Lglobal->taille+1;
+
+  if($1!=NULL && $2!=NULL){
+    $$=$1;
+    $$->branch->True=Lconcat($$->branch->True,$2->branch->True);
+    $$->branch->False=Lconcat($$->branch->False,$2->branch->False);
+    $$->test=Lconcat($$->test,$2->test);
+
+    complete($$->branch->True,M1);
+    complete($$->branch->False,M2);
+  }else if($1!=NULL){
+    $$=$1;
+  }else if($2!=NULL){
+    $$=$2;
+  }
+
+  }
+| filtre ')' M liste_instructions  ';' ';'          { 
+  printf("liste_cas->filtre ) liste_instructions ; ; \n");
+  
+  if($1!=NULL){
+    $$=$1;
+    int M1=$3+1;
+    int M2=Lglobal->taille+1;
+    complete($$->branch->True,M1);
+    complete($$->branch->False,M2);
+  }else{ /* $1 = "*"  */  
+    $$=NULL;
+  }
+
+  };
 
 filtre:
-ID                   { printf("filtre->MOT\n");}
-| CHAINE             { printf("filtre->CHAINE\n");}
-| filtre '|' ID      { printf("filtre->filtre | MOT\n");}
-| filtre '|' CHAINE  { printf("filtre->filtre | CHAINE\n");}
-| '*'                { printf("filtre-> *\n");};
+ID { 
+  printf("filtre->MOT\n");
+
+  quadOP *str=QOcreat(QO_STR,$1,0);
+  quadOP *temp=QOcreat_temp();
+  quads *test=Qcreat(Q_IF_EQ,temp,NULL,str);
+  Lappend(Lglobal,test);
+
+  quads *True=Qcreat(Q_IF,NULL,temp,NULL);
+  Lappend(Lglobal,True);
+  quads *False=Qcreat(Q_GOTO,NULL,NULL,NULL);
+  Lappend(Lglobal,False);
+
+  $$=CTcreat();
+  Lappend($$->branch->True,True);
+  Lappend($$->branch->False,False);
+  Lappend($$->test,test);
+
+  }
+| CHAINE { 
+
+  printf("filtre->CHAINE\n");
+
+  quadOP *str=QOcreat(QO_STR,$1,0);
+  quadOP *temp=QOcreat_temp();
+  quads *test=Qcreat(Q_IF_EQ,temp,NULL,str);
+  Lappend(Lglobal,test);
+
+  quads *True=Qcreat(Q_IF,NULL,temp,NULL);
+  Lappend(Lglobal,True);
+  quads *False=Qcreat(Q_GOTO,NULL,NULL,NULL);
+  Lappend(Lglobal,False);
+
+  $$=CTcreat();
+  Lappend($$->branch->True,True);
+  Lappend($$->branch->False,False);
+  Lappend($$->test,test);
+  }
+| filtre '|' M ID  { 
+  printf("filtre->filtre | MOT\n");
+
+  int M=$3+1;
+
+  complete($1->branch->False,M);
+
+  quadOP *str=QOcreat(QO_STR,$4,0);
+  quadOP *temp=QOcreat_temp();
+  quads *test=Qcreat(Q_IF_EQ,temp,NULL,str);
+  Lappend(Lglobal,test);
+
+  quads *True=Qcreat(Q_IF,NULL,temp,NULL);
+  Lappend(Lglobal,True);
+  quads *False=Qcreat(Q_GOTO,NULL,NULL,NULL);
+  Lappend(Lglobal,False);
+
+  $$=$1;
+  Lappend($$->branch->True,True);
+  Lappend($$->branch->False,False);
+  Lappend($$->test,test);
+
+  if($1!=NULL){
+    $$=$1;
+    Lappend($$->branch->True,True);
+    Lappend($$->branch->False,False);
+    Lappend($$->test,test);
+  }else{
+  $$=CTcreat();
+  Lappend($$->branch->True,True);
+  Lappend($$->branch->False,False);
+  Lappend($$->test,test);
+  }
+
+  }
+| filtre '|' M CHAINE { 
+  printf("filtre->filtre | CHAINE\n");
+
+  int M=$3+1;
+
+  complete($1->branch->False,M);
+
+  quadOP *str=QOcreat(QO_STR,$4,0);
+  quadOP *temp=QOcreat_temp();
+  quads *test=Qcreat(Q_IF_EQ,temp,NULL,str);
+  Lappend(Lglobal,test);
+
+  quads *True=Qcreat(Q_IF,NULL,temp,NULL);
+  Lappend(Lglobal,True);
+  quads *False=Qcreat(Q_GOTO,NULL,NULL,NULL);
+  Lappend(Lglobal,False);
+
+  if($1!=NULL){
+    $$=$1;
+    Lappend($$->branch->True,True);
+    Lappend($$->branch->False,False);
+    Lappend($$->test,test);
+  }else{
+  $$=CTcreat();
+  Lappend($$->branch->True,True);
+  Lappend($$->branch->False,False);
+  Lappend($$->test,test);
+  }
+  }
+| '*'                { printf("filtre-> *\n"); $$=NULL;};
 
 liste_operandes:
 liste_operandes operande      { printf("liste_operandes-> liste_operandes operande \n");}

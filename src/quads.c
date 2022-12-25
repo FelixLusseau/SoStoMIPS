@@ -3,14 +3,18 @@
 extern int nb_temp;
 
 #define GC_TAILLE 2000
+
 int I_quad = 0;
 int I_quadOP = 0;
 int I_liste = 0;
 int I_embranchment = 0;
+int I_case_test=0;
+
 quads *GC_quad[GC_TAILLE];
 quadOP *GC_quadOP[GC_TAILLE];
 listQ *GC_liste[GC_TAILLE];
 embranchment *GC_embranchment[GC_TAILLE];
+case_test *GC_case_test[GC_TAILLE];
 
 int ToInt(int *i, char *str) {
     *i = atoi(str); // atoi renvoit 0 si str n'est pas un entier
@@ -35,7 +39,7 @@ quadOP *QOcreat(int Type, char *str, int val) {
     I_quadOP++;
 
     qo->kind = Type;
-    if (!(Type == QO_ID || Type == QO_STR || Type == QO_TAB)) {
+    if ( !(Type == QO_ID || Type == QO_STR || Type == QO_TAB) ) {
         printf("  cst:%i\n", val);
         qo->u.cst = val;
     } else {
@@ -52,7 +56,6 @@ quadOP *QOcreat_temp(void) {
     temp[taille + 9] = '\0';
 
     sprintf(temp, "__TEMP__%d", nb_temp);
-    printf("temp créer:%s\n\n", temp);
 
     quadOP *Qtemp = QOcreat(QO_ID, temp, 0);
 
@@ -65,10 +68,10 @@ void QOfree(quadOP *op) {
         return;
     }
     if ((op->kind == QO_ID || op->kind == QO_STR || op->kind == QO_TAB)) {
-        printf("    QOfree ID/STR: %s\n", op->u.name);
+        //printf("    QOfree ID/STR: %s\n", op->u.name);
         free(op->u.name);
     } else {
-        printf("    QOfree CST: %i\n", op->u.cst);
+        //printf("    QOfree CST: %i\n", op->u.cst);
     }
     free(op);
 }
@@ -120,9 +123,14 @@ void Qfree(quads *q) {
 }
 
 void Qaffiche(quads *q) {
+
+    printf(" res: ");
     if (q->res != NULL) {
         QOaffiche(q->res);
+    }else{
+        printf("NULL ");
     }
+    
     switch (q->kind) {
     case Q_ADD:
         printf(" ADD ");
@@ -197,12 +205,21 @@ void Qaffiche(quads *q) {
         printf(" OR");
         break;
     }
+
+    printf(" op1: ");
     if (q->op1 != NULL) {
         QOaffiche(q->op1);
+    }else{
+        printf("NULL ");
     }
+
+    printf(" op2: ");
     if (q->op2 != NULL) {
         QOaffiche(q->op2);
+    }else{
+        printf("NULL ");
     }
+
     printf("\n");
 }
 
@@ -235,15 +252,11 @@ listQ *Llast(listQ *list) {
 }
 
 void Lappend(listQ *list, quads *new_element) {
-    printf("entrée\n");
     list->taille += 1;
-    printf("taille\n");
     if (list->quad == NULL) {
-        printf("L->quad==NULL\n");
         list->quad = new_element;
         return;
     }
-    printf("L->quad!=NULL\n");
 
     listQ *new_list = Lcreat();
     new_list->quad = new_element;
@@ -276,20 +289,23 @@ listQ *Lconcat(listQ *list, listQ *list2) {
 
 void Lfree() {
     for (int i = 0; i <= I_quadOP; i++) {
-        printf("QOfree %i/%i", i, I_quadOP);
+        //printf("QOfree %i/%i", i, I_quadOP);
         QOfree(GC_quadOP[i]);
     }
     printf("\n");
     for (int j = 0; j <= I_quad; j++) {
-        printf("Qfree %i/%i\n", j, I_quad);
+        //printf("Qfree %i/%i\n", j, I_quad);
         Qfree(GC_quad[j]);
     }
     for (int k = 0; k <= I_liste; k++) {
-        printf("Lfree %i/%i\n", k, I_liste);
+        //printf("Lfree %i/%i\n", k, I_liste);
         free(GC_liste[k]);
     }
     for (int k = 0; k <= I_embranchment; k++) {
         free(GC_embranchment[k]);
+    }
+    for (int k = 0; k <= I_case_test; k++) {
+        free(GC_case_test[k]);
     }
 }
 
@@ -324,11 +340,32 @@ void complete(listQ *listGT, int addresse) {
     listQ *it = listGT;
 
     while (it != NULL) {
-        if (it->quad->kind != Q_GOTO || it->quad->kind != Q_IF) {
-            printf("ERREUR COMPLETION D'UN GOTO\n");
+        if (it->quad->kind != Q_GOTO && it->quad->kind != Q_IF) {
+            printf("ERREUR COMPLETION D'UN GOTO: %i/%i/%i \n",it->quad->kind,Q_IF,Q_GOTO);
         } else if (it->quad->res == NULL) {
             quadOP *add = QOcreat(QO_ADDR, NULL, addresse);
             it->quad->res = add;
+        }
+        it = it->next;
+    }
+}
+
+case_test *CTcreat(void) {
+    case_test *Case = malloc(sizeof(case_test));
+    GC_case_test[I_case_test] = Case;
+    I_case_test++;
+
+    Case->branch=EMcreat();
+    Case->test=Lcreat();
+    return Case;
+}
+
+void CTcomplete(case_test *Case, quadOP *id_test){
+    listQ *it = Case->test;
+
+    while (it != NULL) {
+        if (it->quad->op1 == NULL) {
+            it->quad->op1 = id_test;
         }
         it = it->next;
     }
