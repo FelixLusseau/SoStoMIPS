@@ -9,7 +9,7 @@
 extern int yyparse();
 extern int yylex();
 extern char *yytext;
-char **tos;
+struct tos **tos;
 
 int nb_temp = 1; // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur création
 listQ *Lglobal;  // liste des quads
@@ -51,11 +51,6 @@ int main(int argc, char **argv) {
     if ((tos = create_table()) == NULL) {
         return 1;
     }
-    // printf("Table of symboles created\n");
-    /* if (add_to_table(tos, "toto") == -1) {
-        return 1;
-    }
-    printf("Added to table of symboles\n"); */
 
     Lglobal = Lcreat();
 
@@ -65,7 +60,6 @@ int main(int argc, char **argv) {
 
     show_table(tos);
     free_table(tos);
-    // printf("Table of symboles freed\n");
 
     return r;
 }
