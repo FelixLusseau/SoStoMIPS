@@ -97,7 +97,7 @@ void QOaffiche(quadOP *op) {
         printf("bool:%i ", op->u.cst);
         break;
     case QO_TAB:
-        printf("tableau:%s ", op->u.name);
+        printf("tosau:%s ", op->u.name);
         break;
     }
 }

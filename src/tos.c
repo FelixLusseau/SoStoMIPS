@@ -11,75 +11,56 @@ unsigned int hash(unsigned char *str) {
     return hash;
 }
 
-char **create_table() {
-    char **table = calloc(HT_SIZE, sizeof(char *));
+struct tos **create_table() {
+    struct tos **table = calloc(HT_SIZE, sizeof(struct tos));
     if (table == NULL) {
         return NULL;
     }
     return table;
 }
 
-int add_to_table(char **table, char *str) {
+int add_to_table(struct tos **table, char *str, int type, int tab_length) {
     unsigned int hash1 = hash((unsigned char *)str);
     if (table[hash1] == NULL) {
-        if ((table[hash1] = malloc(MAX_LENGTH)) == NULL)
-            return 1;
+        if ((table[hash1] = malloc(sizeof(struct tos))) == NULL)
+            return -1;
+        if ((table[hash1]->str = malloc(sizeof(char) * MAX_LENGTH)) == NULL)
+            return -1;
     }
-    sprintf(table[hash1], "%s", str);
+    sprintf(table[hash1]->str, "%s", str);
+    table[hash1]->type = type;
+    table[hash1]->tab_length = tab_length;
     return hash1;
 }
 
-void free_table(char **table) {
+void free_table(struct tos **table) {
     for (unsigned int i = 0; i < HT_SIZE; i++) {
         if (table[i] != NULL) {
+            free(table[i]->str);
             free(table[i]);
         }
     }
     free(table);
 }
 
-void show_table(char **table) {
+void show_table(struct tos **table) {
     printf("\n### Table of symboles : ###\n\n");
 
     for (unsigned int i = 0; i < HT_SIZE; i++) {
         if (table[i] != NULL) {
-            printf("%d : %s\n", i, table[i]);
+            printf("n°%d : ", i);
+            switch (table[i]->type) {
+            case IDENTIFIER:
+                printf("ID\t\t\t");
+                break;
+            case FUNCTION:
+                printf("Function\t\t");
+                break;
+            case ARRAY:
+                printf("Array of %d elements\t", table[i]->tab_length);
+                break;
+            }
+            printf("%s\n", table[i]->str);
         }
     }
 }
-
-/* int main() {
-    int t;
-    char **hashTable = calloc(HT_SIZE, sizeof(char *));
-    if (hashTable == NULL) {
-        return 1;
-    }
-
-    unsigned int hash1 = 0;
-    while ((t = yylex()) != 0) {
-        if (t == IDENTIFICATEUR || t == CSTE_ENT || t == CSTE_REEL || t == CSTE_CAR ||
-            t == CSTE_CHAINE || t == CSTE_LIB) {
-            hash1 = hash((unsigned char *)yytext);
-            if (hashTable[hash1] == NULL) {
-                if ((hashTable[hash1] = malloc(MAX_LENGTH)) == NULL)
-                    return 1;
-            }
-            sprintf(hashTable[hash1], "%s", yytext);
-            printf("%d %u ", t, hash1);
-        } else
-            printf("%d ", t);
-    }
-    printf("\n");
-
-    printf("\n### Table des symboles : ###\n\n");
-
-    for (unsigned int i = 0; i < HT_SIZE; i++) {
-        if (hashTable[i] != NULL) {
-            printf("%d : %s\n", i, hashTable[i]);
-            free(hashTable[i]);
-        }
-    }
-
-    free(hashTable);
-    return 0;
-} */

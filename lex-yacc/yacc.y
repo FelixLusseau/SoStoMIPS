@@ -11,6 +11,8 @@ extern int yylex();
 extern char* text;
 extern void yyerror(const char * msg);
 extern listQ *Lglobal;
+extern struct tos ** tos;
+int tos_level=1;
 %}
 %union{char *strval; 
        int intval; 
@@ -83,13 +85,17 @@ liste_instructions ';' instruction {
 };
 
 instruction: 
-ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");
+ID '=' concatenation                                   
+{ printf("instruction-> ID = concatenation\n");
+add_to_table(tos, $1, IDENTIFIER, 0);
   quadOP* res= QOcreat(QO_ID,$1,0);
   quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
   Lappend(Lglobal,q);
   free($1);
 }
 | ID '[' operande_entier ']' '=' concatenation { 
+  add_to_table(tos, $1, ARRAY, atoi((char*)$3));
+
   printf("instruction-> ID [ operande_entier ] = concatenation\n");
 
 
@@ -100,6 +106,7 @@ ID '=' concatenation                                   { printf("instruction-> I
   }
 | DECLARE ID '[' ID ']' { 
   printf("instruction-> DECLARE ID [ ENTIER ] \n");
+  add_to_table(tos, $2, ARRAY, atoi((char*)$4));
 
   int index=0;
   if(!ToInt(&index,$4)){
@@ -122,8 +129,10 @@ ID '=' concatenation                                   { printf("instruction-> I
   complete($2->False,addrM2+1);
  
 }
-| FOR ID DO IN liste_instructions DONE                 { printf("instruction->FOR ID DO IN liste_instructions DONE \n");}
-| FOR ID IN liste_operandes DO liste_instructions DONE { printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");}
+| FOR ID DO IN liste_instructions DONE                 { printf("instruction->FOR ID DO IN liste_instructions DONE \n");
+add_to_table(tos, $2, IDENTIFIER, 0);}
+| FOR ID IN liste_operandes DO liste_instructions DONE { printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");
+add_to_table(tos, $2, IDENTIFIER, 0);}
 
 | WHILE M test_bloc M DO liste_instructions M DONE { 
   printf("instruction-> WHILE test_bloc DO liste_instructions DONE \n");
@@ -768,10 +777,12 @@ plus_ou_moin: '+' {$$=1;} | '-' {$$=0;};
 fois_div_mod: '*' {$$=1;}| '/' {$$=2;}| '%' {$$=3;};
 
 declaration_de_fonction:
-ID '(' ')' '{' decl_loc liste_instructions '}' { printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");} ;
+ID '(' ')' '{' decl_loc liste_instructions '}' { printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");
+add_to_table(tos, $1, FUNCTION, 0);} ;
 
 decl_loc:
-decl_loc LOCAL ID '=' concatenation ';' { printf("decl_loc-> decl_loc LOCAL ID = concatenation \n");}
+decl_loc LOCAL ID '=' concatenation ';' { printf("decl_loc-> decl_loc LOCAL ID = concatenation \n");
+add_to_table(tos, $3, IDENTIFIER, 0);}
 | %empty                                { printf("decl_loc-> empty \n");};
 
 appel_de_fonction:
