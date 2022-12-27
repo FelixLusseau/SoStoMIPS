@@ -353,15 +353,15 @@ liste_operandes:
 liste_operandes operande      { 
   printf("liste_operandes-> liste_operandes operande \n");
   
-  quadOP *temp=QOcreat();
+  quadOP *temp=QOcreat_temp();
   quads *q=Qcreat(Q_CONCAT_OP,temp,$1,$2);
-  Lappend(Lglobal);
+  Lappend(Lglobal,q);
 
   $$=temp;
   }
 | operande                    { 
   printf("liste_operandes-> operande \n");
-  $$=$1
+  $$=$1;
   }
 | '$' '{' ID '[' '*' ']' '}'  { 
   printf("liste_operandes-> $ { ID [ * ] } \n");
