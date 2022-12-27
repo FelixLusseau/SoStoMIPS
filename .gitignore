@@ -4,3 +4,4 @@ src/lex.c
 src/yacc.c
 src/yacc.h
 mips.asm
+mars/mips.asm
