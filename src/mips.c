@@ -1,5 +1,3 @@
-#ifndef MIPS_H
-#define MIPS_H
 #include "mips.h"
 
 #define CHK(op)            \
@@ -154,5 +152,3 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
 
     printf("\n");
 }
-
-#endif

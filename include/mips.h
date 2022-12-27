@@ -1,3 +1,5 @@
+#ifndef MIPS_H
+#define MIPS_H
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -17,3 +19,5 @@ extern struct tos **tos[MAX_DEPTH];
 void mips(void);
 
 void QuadToMips(int file, listQ *liste, char *buffer);
+
+#endif

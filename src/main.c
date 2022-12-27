@@ -57,7 +57,8 @@ int main(int argc, char **argv) {
 
     printf("->%d\n", r);
 
-    // mips();
+    printf("MIPS :\n");
+    mips();
 
     int i = 0;
     while (tos[i] != NULL) {
