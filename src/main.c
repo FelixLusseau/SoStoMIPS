@@ -1,10 +1,8 @@
 #include "quads.h"
 #include "tos.h"
+#include "mips.h"
 #include <getopt.h>
 #include <stdio.h>
-
-#define RED "\x1B[31m"
-#define reset "\x1B[0m"
 
 extern int yyparse();
 extern int yylex();
@@ -17,7 +15,7 @@ listQ *Lglobal;  // liste des quads
 
 int main(int argc, char **argv) {
     if (argc < 1) {
-        printf(RED "Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n" reset, argv[0]);
+        printf( "Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n" , argv[0]);
         return 1;
     }
 
@@ -25,7 +23,10 @@ int main(int argc, char **argv) {
     char *output = NULL;
 
     static struct option long_options[] = {
-        {"output", required_argument, 0, 'o'}, {"version", no_argument, 0, 'v'}, {"tos", no_argument, 0, 't'}, {0, 0, 0, 0}};
+        {"output", required_argument, 0, 'o'}, 
+        {"version", no_argument, 0, 'v'}, 
+        {"tos", no_argument, 0, 't'}, {0, 0, 0, 0}
+    };
     int option_index = 0;
 
     while ((c = getopt_long_only(argc, argv, "o:vt", long_options, &option_index)) != -1) {
@@ -40,7 +41,7 @@ int main(int argc, char **argv) {
             printf("TOS\n");
             return 0;
         default:
-            printf(RED "Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n" reset, argv[0]);
+            printf( "Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n" , argv[0]);
             return 1;
         }
     }
@@ -68,5 +69,8 @@ int main(int argc, char **argv) {
     }
     printf("\n");
 
+    mips();
+
     return r;
 }
+

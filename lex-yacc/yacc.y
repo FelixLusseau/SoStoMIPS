@@ -34,6 +34,7 @@ extern int depth;
 %type <operateur> operande_entier
 %type <operateur> somme_entiere
 %type <operateur> produit_entier
+%type <operateur> liste_operandes
 
 %type <listQ> instruction
 
@@ -92,10 +93,32 @@ ID '=' concatenation
   Lappend(Lglobal,q);
   free($1);
 }
-| ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");
-add_to_table(tos[0], $1, ARRAY, atoi((char*)$3));}
-| DECLARE ID '[' ID ']'                                { printf("instruction-> DECLARE ID [ ENTIER ] \n");
-add_to_table(tos[0], $2, ARRAY, atoi((char*)$4));}
+| ID '[' operande_entier ']' '=' concatenation { 
+  add_to_table(tos[0], $1, ARRAY, atoi((char*)$3));
+
+  printf("instruction-> ID [ operande_entier ] = concatenation\n");
+
+
+  quadOP *tab=QOcreat(QO_TAB,$1,0);
+  quads *q=Qcreat(Q_TAB_EQUAL,tab,$3,$6);
+  Lappend(Lglobal,q);
+
+  }
+| DECLARE ID '[' ID ']' { 
+  printf("instruction-> DECLARE ID [ ENTIER ] \n");
+  add_to_table(tos[0], $2, ARRAY, atoi((char*)$4));
+
+  int index=0;
+  if(!ToInt(&index,$4)){
+    printf("ERROR: ToInt MOT N'EST PAS ENTIER\n");
+  }
+
+  quadOP *tab=QOcreat(QO_TAB,$2,0);
+  quadOP *idx=QOcreat(QO_CST,NULL,index);
+  quads *q=Qcreat(Q_TAB_CREAT,tab,idx,NULL);
+  Lappend(Lglobal,q);
+
+  }
 | IF test_bloc M THEN liste_instructions M else_part FI    { 
   printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");
 
@@ -148,8 +171,16 @@ add_to_table(tos[0], $2, IDENTIFIER, 0);}
 | READ ID '[' operande_entier ']'                      { printf("instruction-> READ ID [ operande_entier ] \n");}
 | declaration_de_fonction                              { printf("instruction-> declaration_de_fonction \n");}
 | appel_de_fonction                                    { printf("instruction-> appel_de_fonction \n");}
-| RETURN                                               { printf("instruction-> RETURN \n");}
-| RETURN operande_entier                               { printf("instruction-> RETURN operande_entier \n");}
+| RETURN { 
+  printf("instruction-> RETURN \n");
+  quads *q=Qcreat(Q_RETURN,NULL,NULL,NULL);
+  Lappend(Lglobal,q);
+  }
+| RETURN operande_entier { 
+  printf("instruction-> RETURN operande_entier \n");
+  quads *q=Qcreat(Q_RETURN,$2,NULL,NULL);
+  Lappend(Lglobal,q);
+  }
 | EXIT { 
   printf("instruction->EXIT\n");
   quads *q=Qcreat(Q_EXIT,NULL,NULL,NULL);
@@ -157,6 +188,8 @@ add_to_table(tos[0], $2, IDENTIFIER, 0);}
  }
 | EXIT operande_entier { 
   printf("instruction->EXIT operande_entier\n");
+  quads *q=Qcreat(Q_EXIT,$2,NULL,NULL);
+  Lappend(Lglobal,q);
   }; 
 
 else_part:
@@ -317,9 +350,24 @@ ID {
 | '*'                { printf("filtre-> *\n"); $$=NULL;};
 
 liste_operandes:
-liste_operandes operande      { printf("liste_operandes-> liste_operandes operande \n");}
-| operande                    { printf("liste_operandes-> operande \n");}
-| '$' '{' ID '[' '*' ']' '}'  { printf("liste_operandes-> $ { ID [ * ] } \n");} ;
+liste_operandes operande      { 
+  printf("liste_operandes-> liste_operandes operande \n");
+  
+  quadOP *temp=QOcreat();
+  quads *q=Qcreat(Q_CONCAT_OP,temp,$1,$2);
+  Lappend(Lglobal);
+
+  $$=temp;
+  }
+| operande                    { 
+  printf("liste_operandes-> operande \n");
+  $$=$1
+  }
+| '$' '{' ID '[' '*' ']' '}'  { 
+  printf("liste_operandes-> $ { ID [ * ] } \n");
+
+  $$=QOcreat(QO_ID,$3,0);
+  } ;
 
 concatenation:
 concatenation operande { 
@@ -335,6 +383,7 @@ concatenation operande {
   printf("concatenation-> operande \n");  
   $$=$1;
 } ;
+
 
 test_bloc:
 TEST test_expr  { 
@@ -354,6 +403,7 @@ test_expr O M test_expr2 {
 
   }
 | test_expr2 {  printf("test_expr-> test_expr2 \n"); $$=$1; } ;
+
 
 test_expr2:
 test_expr2 A M test_expr3 { 
@@ -481,9 +531,11 @@ concatenation '=' concatenation       {
   Lappend(Lglobal,q);
   };
 
+
 operateur1:
 N {$$=1;}
 |Z  {$$=2;};
+
 
 operateur2:
 EQ  { printf("operateur2-> -eq\n"); $$=1;}
@@ -492,6 +544,7 @@ EQ  { printf("operateur2-> -eq\n"); $$=1;}
 |GE { printf("operateur2-> -ge\n"); $$=4;}
 |LT { printf("operateur2-> -lt\n"); $$=5;}
 |LE { printf("operateur2-> -le\n"); $$=6;};
+
 
 operande:
 '$' '{' ID '}' { 
@@ -551,6 +604,7 @@ operande:
   }
 | '$' '(' appel_de_fonction ')'          { printf("operande-> $ ( appel_de_fonction )\n");} ;
 
+
 somme_entiere:
 somme_entiere plus_ou_moin produit_entier { 
   printf("somme_entiere-> somme_entiere plus_ou_moin produit_entier \n");
@@ -571,6 +625,7 @@ somme_entiere plus_ou_moin produit_entier {
   printf("somme_entiere-> produit_entier \n");
   $$=$1;
 };
+
 
 produit_entier:
 produit_entier fois_div_mod operande_entier { 

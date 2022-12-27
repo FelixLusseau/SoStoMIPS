@@ -39,7 +39,7 @@ quadOP *QOcreat(int Type, char *str, int val) {
     I_quadOP++;
 
     qo->kind = Type;
-    if ( !(Type == QO_ID || Type == QO_STR || Type == QO_TAB) ) {
+    if ( !(Type == QO_ID || Type == QO_STR || Type == QO_TAB || Type == QO_FCT) ) {
         printf("  cst:%i\n", val);
         qo->u.cst = val;
     } else {
@@ -87,6 +87,9 @@ void QOaffiche(quadOP *op) {
     case QO_ID:
         printf("id:%s ", op->u.name);
         break;
+    case QO_FCT:
+        printf("fct:%s ", op->u.name);
+        break;
     case QO_ADDR:
         printf("addr:%i ", op->u.cst);
         break;
@@ -94,7 +97,7 @@ void QOaffiche(quadOP *op) {
         printf("bool:%i ", op->u.cst);
         break;
     case QO_TAB:
-        printf("tableau:%s ", op->u.name);
+        printf("tosau:%s ", op->u.name);
         break;
     }
 }
@@ -130,7 +133,7 @@ void Qaffiche(quads *q) {
     }else{
         printf("NULL ");
     }
-    
+
     switch (q->kind) {
     case Q_ADD:
         printf(" ADD ");
@@ -148,6 +151,9 @@ void Qaffiche(quads *q) {
         printf(" MOD ");
         break;
     case Q_CONCAT:
+        printf(" CONCAT OPERANDE ");
+        break;
+    case Q_CONCAT_OP:
         printf(" CONCAT ");
         break;
     case Q_EQUAL:

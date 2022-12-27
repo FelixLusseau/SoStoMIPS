@@ -14,10 +14,11 @@ int ToInt( int *i, char * str);
 typedef struct quadOP {
     enum{QO_CST=1, // constante (int)
          QO_STR,   // chaine/mot (string)
-         QO_ID,    // identificateur
-         QO_ADDR,  // addresse (goto)
-         QO_BOOL,  // booléens
-         QO_TAB    // tableau
+         QO_ID,    // identificateur (string)
+         QO_FCT,   // fonctions (string)
+         QO_ADDR,  // addresse (goto) (int)
+         QO_BOOL,  // booléens 
+         QO_TAB    // tableau (string)
          }kind;
     union{int cst;char *name;}u;
 } quadOP;
@@ -38,12 +39,14 @@ typedef struct quads {
     enum{Q_ADD=100,   // +
          Q_LESS,      // -
          Q_CONCAT,    // concaténation
+         Q_CONCAT_OP, // concaténation d'opérande ( appel de fonction )
          Q_MUL,       // *
          Q_DIV,       // ./.
          Q_MOD,       // %
          Q_EQUAL,     // a = val
          Q_GOTO,      // goto addresse
          Q_EXIT,      // exit
+         Q_RETURN,    // return
          Q_TAB_CREAT, // créer []
          Q_TAB_EQUAL, // tab[i]=val
          Q_TAB_GIVE,  // tab[i]
