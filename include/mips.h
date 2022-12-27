@@ -1,12 +1,11 @@
 #ifndef MIPS_H
 #define MIPS_H
 
+#include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdnoreturn.h>
-// kill -9 `ps eaux | grep ordonnanceur | tr -s ' ' | cut -d ' ' -f2`
-#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
