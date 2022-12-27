@@ -39,6 +39,7 @@ void mips(void){
     sprintf(buffer, "      .data\n");
     Woctet = write(file, &buffer, 1000);
     CHK(Woctet);
+    
     for (unsigned int i = 0; i < HT_SIZE; i++) { // table des symboles
         if (tos[i] != NULL) {
             printf("n°%d : ", i);
@@ -60,6 +61,9 @@ void mips(void){
     }
     /********************************* Traduction des quads en MIPS ****************************************/
     while (liste != NULL ) {
+
+        //QuadToMips();
+
         Woctet = write(file, &buffer, 1000);
         CHK(Woctet);
 
