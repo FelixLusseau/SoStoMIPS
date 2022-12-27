@@ -2,7 +2,6 @@
 #define MIPS_H
 #include "mips.h"
 
-
 #define CHK(op)            \
     do {                   \
         if ((op) == -1)    \
@@ -23,9 +22,9 @@ noreturn void raler(int syserr, const char *msg, ...) {
     exit(EXIT_FAILURE);
 }
 
-void mips(void){
+void mips(void) {
 
-    listQ *liste=Lglobal;
+    listQ *liste = Lglobal;
 
     int file = open("mips.asm", O_WRONLY | O_CREAT | O_TRUNC, 0666);
     CHK(file);
@@ -39,19 +38,19 @@ void mips(void){
     sprintf(buffer, "      .data\n");
     Woctet = write(file, &buffer, 1000);
     CHK(Woctet);
-    
+
     for (unsigned int i = 0; i < HT_SIZE; i++) { // table des symboles
-        if (tos[i] != NULL) {
+        if (tos[0][i] != NULL) {
             printf("n°%d : ", i);
-            switch (tos[i]->type) {
+            switch (tos[0][i]->type) {
             case IDENTIFIER:
-                sprintf(buffer, "%s:   .space 4\n", tos[i]->str);
+                sprintf(buffer, "%s:   .space 4\n", tos[0][i]->str);
                 break;
             case FUNCTION:
                 printf("Function\t\t");
                 break;
             case ARRAY:
-                sprintf(buffer, "%s:   .space %d\n", tos[i]->str,tos[i]->tab_length);
+                sprintf(buffer, "%s:   .space %d\n", tos[0][i]->str, tos[0][i]->tab_length);
                 break;
             }
 
@@ -60,9 +59,9 @@ void mips(void){
         }
     }
     /********************************* Traduction des quads en MIPS ****************************************/
-    while (liste != NULL ) {
+    while (liste != NULL) {
 
-        //QuadToMips();
+        // QuadToMips();
 
         Woctet = write(file, &buffer, 1000);
         CHK(Woctet);
@@ -73,7 +72,7 @@ void mips(void){
     close(file);
 }
 
-void QuadToMips( int file ,listQ *liste ,char * buffer){
+void QuadToMips(int file, listQ *liste, char *buffer) {
 
     switch (liste->quad->kind) {
     case Q_ADD:

@@ -777,7 +777,7 @@ plus_ou_moin: '+' {$$=1;} | '-' {$$=0;};
 fois_div_mod: '*' {$$=1;}| '/' {$$=2;}| '%' {$$=3;};
 
 declaration_de_fonction:
-ID '(' ')' '{' { depth++; tos[depth] = create_table(); } decl_loc /* { depth--; } */ liste_instructions '}' { printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");
+ID '(' ')' '{' /* { depth++; tos[depth] = create_table(); } */ decl_loc /* { depth--; } */ liste_instructions '}' { printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");
 add_to_table(tos[0], $1, FUNCTION, 0);} ;
 
 decl_loc:

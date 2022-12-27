@@ -12,8 +12,8 @@
 #include "quads.h"
 #include "tos.h"
 extern listQ *Lglobal;
-extern struct tos ** tos;
+extern struct tos **tos[MAX_DEPTH];
 
 void mips(void);
 
-void QuadToMips(int file ,listQ *liste ,char * buffer);
+void QuadToMips(int file, listQ *liste, char *buffer);
