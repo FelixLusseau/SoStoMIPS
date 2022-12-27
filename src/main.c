@@ -60,9 +60,11 @@ int main(int argc, char **argv) {
     printf("->%d\n", r);
 
     show_table(tos);
+    
+    mips();
+
     free_table(tos);
 
-    mips();
 
     return r;
 }

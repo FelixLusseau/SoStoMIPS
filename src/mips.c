@@ -24,7 +24,7 @@ noreturn void raler(int syserr, const char *msg, ...) {
 }
 
 void mips(void){
-
+    printf("\n### MIPS: ###\n");
     listQ *liste=Lglobal;
 
     int file = open("mips.asm", O_WRONLY | O_CREAT | O_TRUNC, 0666);
@@ -33,11 +33,14 @@ void mips(void){
     int N = 1000;
     char buffer[N];
     int Woctet;
+    int taille_chaine=0;
 
     /*************************** Déclaration des variables ***************************************/
 
-    sprintf(buffer, "      .data\n");
-    Woctet = write(file, &buffer, 1000);
+    taille_chaine=sprintf(buffer, "      .data\n");
+    buffer[taille_chaine+1]='\0';
+    printf("%s\n",buffer);
+    Woctet = write(file, &buffer, taille_chaine);
     CHK(Woctet);
     
     for (unsigned int i = 0; i < HT_SIZE; i++) { // table des symboles
@@ -45,17 +48,17 @@ void mips(void){
             printf("n°%d : ", i);
             switch (tos[i]->type) {
             case IDENTIFIER:
-                sprintf(buffer, "%s:   .space 4\n", tos[i]->str);
+                taille_chaine=sprintf(buffer, "%s:   .space 4\n", tos[i]->str);
                 break;
             case FUNCTION:
                 printf("Function\t\t");
                 break;
             case ARRAY:
-                sprintf(buffer, "%s:   .space %d\n", tos[i]->str,tos[i]->tab_length);
+                taille_chaine=sprintf(buffer, "%s:   .space %d\n", tos[i]->str,tos[i]->tab_length);
                 break;
             }
 
-            Woctet = write(file, &buffer, N);
+            Woctet = write(file, &buffer, taille_chaine);
             CHK(Woctet);
         }
     }
@@ -64,8 +67,8 @@ void mips(void){
 
         //QuadToMips();
 
-        Woctet = write(file, &buffer, 1000);
-        CHK(Woctet);
+        //Woctet = write(file, &buffer, taille_chaine);
+        //CHK(Woctet);
 
         liste = liste->next;
     }
