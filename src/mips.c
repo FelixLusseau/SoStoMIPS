@@ -1,7 +1,4 @@
-#ifndef MIPS_H
-#define MIPS_H
 #include "mips.h"
-
 
 #define CHK(op)            \
     do {                   \
@@ -38,23 +35,19 @@ void mips(void){
     /*************************** Déclaration des variables ***************************************/
 
     taille_chaine=sprintf(buffer, "      .data\n");
-    buffer[taille_chaine+1]='\0';
-    printf("%s\n",buffer);
     Woctet = write(file, &buffer, taille_chaine);
     CHK(Woctet);
-    
+
     for (unsigned int i = 0; i < HT_SIZE; i++) { // table des symboles
-        if (tos[i] != NULL) {
-            printf("n°%d : ", i);
-            switch (tos[i]->type) {
+        if (tos[0][i] != NULL) {
+            switch (tos[0][i]->type) {
             case IDENTIFIER:
-                taille_chaine=sprintf(buffer, "%s:   .space 4\n", tos[i]->str);
+                taille_chaine=sprintf(buffer, "%s:   .space 4\n", tos[0][i]->str);
                 break;
             case FUNCTION:
-                printf("Function\t\t");
                 break;
             case ARRAY:
-                taille_chaine=sprintf(buffer, "%s:   .space %d\n", tos[i]->str,tos[i]->tab_length);
+                taille_chaine=sprintf(buffer, "%s:   .space %d\n", tos[0][i]->str, tos[0][i]->tab_length);
                 break;
             }
 
@@ -62,10 +55,15 @@ void mips(void){
             CHK(Woctet);
         }
     }
-    /********************************* Traduction des quads en MIPS ****************************************/
-    while (liste != NULL ) {
 
-        //QuadToMips();
+    /********************************* Traduction des quads en MIPS ****************************************/
+    taille_chaine=sprintf(buffer, "\nmain:\n");
+    Woctet = write(file, &buffer, taille_chaine);
+    CHK(Woctet);
+    
+    while (liste != NULL) {
+
+        // QuadToMips();
 
         //Woctet = write(file, &buffer, taille_chaine);
         //CHK(Woctet);
@@ -76,7 +74,7 @@ void mips(void){
     close(file);
 }
 
-void QuadToMips( int file ,listQ *liste ,char * buffer){
+void QuadToMips(int file, listQ *liste, char *buffer) {
 
     switch (liste->quad->kind) {
     case Q_ADD:
@@ -157,6 +155,5 @@ void QuadToMips( int file ,listQ *liste ,char * buffer){
     }
 
     printf("\n");
-}
 
-#endif
+}

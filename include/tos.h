@@ -7,6 +7,7 @@
 
 #define HT_SIZE 100000
 #define MAX_LENGTH 200
+#define MAX_DEPTH 100
 
 enum var_type { IDENTIFIER, FUNCTION, ARRAY };
 
@@ -21,6 +22,8 @@ unsigned int hash(unsigned char *str);
 struct tos **create_table();
 
 int add_to_table(struct tos **table, char *str, int type, int tab_length);
+
+struct tos *get_from_table(struct tos **table, char *str);
 
 void free_table(struct tos **table);
 

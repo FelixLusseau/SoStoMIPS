@@ -1,5 +1,8 @@
 #include "tos.h"
 
+extern struct tos **tos[MAX_DEPTH];
+extern int depth;
+
 unsigned int hash(unsigned char *str) {
     unsigned hash = 6961;
     int c;
@@ -21,6 +24,14 @@ struct tos **create_table() {
 
 int add_to_table(struct tos **table, char *str, int type, int tab_length) {
     unsigned int hash1 = hash((unsigned char *)str);
+    int i = 0;
+    while (tos[i] != NULL) {
+        if (tos[i][hash1] != NULL && table == tos[0]) {
+            printf("Error: %s already exists in the table\n", str);
+            return -1;
+        }
+        i++;
+    }
     if (table[hash1] == NULL) {
         if ((table[hash1] = malloc(sizeof(struct tos))) == NULL)
             return -1;
@@ -31,6 +42,14 @@ int add_to_table(struct tos **table, char *str, int type, int tab_length) {
     table[hash1]->type = type;
     table[hash1]->tab_length = tab_length;
     return hash1;
+}
+
+struct tos *get_from_table(struct tos **table, char *str) {
+    unsigned int hash1 = hash((unsigned char *)str);
+    if (table[hash1] == NULL) {
+        return NULL;
+    }
+    return table[hash1];
 }
 
 void free_table(struct tos **table) {
@@ -44,8 +63,6 @@ void free_table(struct tos **table) {
 }
 
 void show_table(struct tos **table) {
-    printf("\n### Table of symboles : ###\n\n");
-
     for (unsigned int i = 0; i < HT_SIZE; i++) {
         if (table[i] != NULL) {
             printf("n°%d : ", i);
