@@ -1,4 +1,5 @@
 bin/
+doc/
 obj/
 src/lex.c
 src/yacc.c

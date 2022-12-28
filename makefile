@@ -64,19 +64,20 @@ test :  $(OUTPUT)
 			./$(OUTPUT) < $${file} ; \
         done
 
-#doc:
-#	bison --report=all --report-file=yacc.output \
-#		--graph=yacc.dot --output=/dev/null \
-#		yacc.y
-#	dot -Tpdf < yacc.dot > yacc.pdf
+.PHONY: clean doc
+doc:
+	mkdir -p doc
+	bison --report=all --report-file=doc/yacc.output \
+		--graph=doc/yacc.dot --output=/dev/null \
+		lex-yacc/yacc.y
+	dot -Tpdf < doc/yacc.dot > doc/yacc.pdf
 
-.PHONY: clean
 clean:
 	rm -f $(OBJDIR)/*.o
 	rm -f $(OUTPUT)
 	rm -f $(LEXC)
 	rm -f $(YACCC) $(YACCC:.c=.h) $(YACCC:.c=.output)
-
+	rm -rf doc
 
 #prefixe=compilateur
 #
