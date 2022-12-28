@@ -7,8 +7,9 @@
 extern int yyparse();
 extern int yylex();
 extern char *yytext;
-struct tos **tos[MAX_DEPTH];
+struct tos_entry **tos;
 int depth = 0;
+int width[MAX_TOS_SIZE] = {0};
 
 int nb_temp = 1; // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur création
 listQ *Lglobal;  // liste des quads
@@ -47,7 +48,7 @@ int main(int argc, char **argv) {
         printf("Output file: %s\n", output); // TODO
     }
 
-    if ((tos[0] = create_table()) == NULL) {
+    if ((tos = create_table()) == NULL) {
         return 1;
     }
 
@@ -56,16 +57,12 @@ int main(int argc, char **argv) {
     int r = yyparse();
 
     printf("->%d\n", r);
-    
-    mips();
 
-    int i = 0;
-    while (tos[i] != NULL) {
-        printf("\n### Table of symboles %d %s : ###\n\n", i, (i == 0) ? "(global)" : "(local)");
-        show_table(tos[i]);
-        free_table(tos[i]);
-        i++;
-    }
+    // mips();
+
+    printf("\n### Table of symboles : ###\n\n");
+    show_table(tos);
+    free_table(tos);
 
     printf("\nFree Lglobal:\n");
     Lfree();

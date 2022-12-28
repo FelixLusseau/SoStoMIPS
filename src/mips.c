@@ -38,7 +38,7 @@ void mips(void) {
     Woctet = write(file, &buffer, taille_chaine);
     CHK(Woctet);
 
-    for (unsigned int i = 0; i < HT_SIZE; i++) { // table des symboles
+    /* for (unsigned int i = 0; i < HT_SIZE; i++) { // table des symboles
         if (tos[0][i] != NULL) {
             switch (tos[0][i]->var_kind) {
             case IDENTIFIER:
@@ -54,7 +54,7 @@ void mips(void) {
             Woctet = write(file, &buffer, taille_chaine);
             CHK(Woctet);
         }
-    }
+    } */
 
     /********************************* Traduction des quads en MIPS ****************************************/
     taille_chaine = sprintf(buffer, "\nmain:\n");

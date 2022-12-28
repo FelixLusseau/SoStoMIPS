@@ -11,8 +11,9 @@ extern int yylex();
 extern char* text;
 extern void yyerror(const char * msg);
 extern listQ *Lglobal;
-extern struct tos ** tos[MAX_DEPTH];
+extern struct tos_entry ** tos[MAX_TOS_SIZE];
 extern int depth;
+extern int width[MAX_TOS_SIZE];
 %}
 %union{char *strval; 
        int intval; 

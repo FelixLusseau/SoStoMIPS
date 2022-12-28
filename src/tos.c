@@ -1,7 +1,8 @@
 #include "tos.h"
 
-extern struct tos **tos[MAX_DEPTH];
+extern struct tos_entry **tos[MAX_TOS_SIZE];
 extern int depth;
+extern int width[MAX_TOS_SIZE]; // width of the current depth
 
 unsigned int hash(unsigned char *str) {
     unsigned hash = 6961;
@@ -14,37 +15,37 @@ unsigned int hash(unsigned char *str) {
     return hash;
 }
 
-struct tos **create_table() {
-    struct tos **table = calloc(HT_SIZE, sizeof(struct tos));
+struct tos_entry **create_table() {
+    struct tos_entry **table = calloc(HT_SIZE, sizeof(struct tos_entry));
     if (table == NULL) {
         return NULL;
     }
     return table;
 }
 
-int add_to_table(struct tos **table, char *str, int var_kind, int tab_length) {
+int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_length) {
     unsigned int hash1 = hash((unsigned char *)str);
-    int i = 0;
-    while (tos[i] != NULL) {
-        if (tos[i][hash1] != NULL && table == tos[0]) {
-            printf("Error: %s already exists in the table\n", str);
-            return -1;
-        }
-        i++;
-    }
+
     if (table[hash1] == NULL) {
-        if ((table[hash1] = malloc(sizeof(struct tos))) == NULL)
+        if ((table[hash1] = malloc(sizeof(struct tos_entry))) == NULL)
             return -1;
         if ((table[hash1]->str = malloc(sizeof(char) * MAX_LENGTH)) == NULL)
             return -1;
     }
     sprintf(table[hash1]->str, "%s", str);
-    table[hash1]->var_kind = var_kind;
-    table[hash1]->tab_length = tab_length;
+    if (depth == 0) {
+        table[hash1]->used = 1;
+        table[hash1]->var_kind = var_kind;
+        table[hash1]->tab_length = tab_length;
+        table[hash1]->type = UNDEFINED;
+        memset(table[hash1]->next_lvl, 0, sizeof(table[hash1]->next_lvl));
+    } else
+        table[hash1]->used = 0;
+
     return hash1;
 }
 
-struct tos *get_from_table(struct tos **table, char *str) {
+struct tos_entry *get_from_table(struct tos_entry **table, char *str) {
     unsigned int hash1 = hash((unsigned char *)str);
     if (table[hash1] == NULL) {
         return NULL;
@@ -52,7 +53,7 @@ struct tos *get_from_table(struct tos **table, char *str) {
     return table[hash1];
 }
 
-void free_table(struct tos **table) {
+void free_table(struct tos_entry **table) {
     for (unsigned int i = 0; i < HT_SIZE; i++) {
         if (table[i] != NULL) {
             free(table[i]->str);
@@ -62,22 +63,42 @@ void free_table(struct tos **table) {
     free(table);
 }
 
-void show_table(struct tos **table) {
+void show_table(struct tos_entry **table) {
     for (unsigned int i = 0; i < HT_SIZE; i++) {
-        if (table[i] != NULL) {
+        if (table[i] != NULL && table[i]->used == 1) {
             printf("n°%d : ", i);
             switch (table[i]->var_kind) {
             case IDENTIFIER:
                 printf("ID\t\t\t");
+                switch (table[i]->type) {
+                case UNDEFINED:
+                    printf("Type : undefined");
+                    break;
+                case INT:
+                    printf("Type : int      ");
+                    break;
+                case FLOAT:
+                    printf("Type : float");
+                    break;
+                case STRING:
+                    printf("Type : string");
+                    break;
+                case BOOL:
+                    printf("Type : bool");
+                    break;
+                }
+                printf("\t");
                 break;
             case FUNCTION:
-                printf("Function\t\t");
+                printf("Function\t\t\t\t\t");
                 break;
             case ARRAY:
-                printf("Array of %d elements\t", table[i]->tab_length);
+                printf("Array of %d elements\t\t\t\t", table[i]->tab_length);
                 break;
             }
-            printf("%s\n", table[i]->str);
+            printf("%s", table[i]->str);
+
+            printf("\n");
         }
     }
 }
