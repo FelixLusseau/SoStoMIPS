@@ -22,7 +22,7 @@ struct tos **create_table() {
     return table;
 }
 
-int add_to_table(struct tos **table, char *str, int type, int tab_length) {
+int add_to_table(struct tos **table, char *str, int var_kind, int tab_length) {
     unsigned int hash1 = hash((unsigned char *)str);
     int i = 0;
     while (tos[i] != NULL) {
@@ -39,7 +39,7 @@ int add_to_table(struct tos **table, char *str, int type, int tab_length) {
             return -1;
     }
     sprintf(table[hash1]->str, "%s", str);
-    table[hash1]->type = type;
+    table[hash1]->var_kind = var_kind;
     table[hash1]->tab_length = tab_length;
     return hash1;
 }
@@ -66,7 +66,7 @@ void show_table(struct tos **table) {
     for (unsigned int i = 0; i < HT_SIZE; i++) {
         if (table[i] != NULL) {
             printf("n°%d : ", i);
-            switch (table[i]->type) {
+            switch (table[i]->var_kind) {
             case IDENTIFIER:
                 printf("ID\t\t\t");
                 break;

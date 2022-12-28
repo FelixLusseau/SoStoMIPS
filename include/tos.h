@@ -9,11 +9,9 @@
 #define MAX_LENGTH 200
 #define MAX_DEPTH 100
 
-enum var_type { IDENTIFIER, FUNCTION, ARRAY };
-
 struct tos {
     char *str;
-    int type;
+    enum { IDENTIFIER, FUNCTION, ARRAY } var_kind;
     int tab_length;
 };
 
@@ -21,7 +19,7 @@ unsigned int hash(unsigned char *str);
 
 struct tos **create_table();
 
-int add_to_table(struct tos **table, char *str, int type, int tab_length);
+int add_to_table(struct tos **table, char *str, int var_kind, int tab_length);
 
 struct tos *get_from_table(struct tos **table, char *str);
 

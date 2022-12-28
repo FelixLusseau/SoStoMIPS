@@ -20,9 +20,9 @@ noreturn void raler(int syserr, const char *msg, ...) {
     exit(EXIT_FAILURE);
 }
 
-void mips(void){
+void mips(void) {
     printf("\n### MIPS: ###\n");
-    listQ *liste=Lglobal;
+    listQ *liste = Lglobal;
 
     int file = open("mips.asm", O_WRONLY | O_CREAT | O_TRUNC, 0666);
     CHK(file);
@@ -30,24 +30,24 @@ void mips(void){
     int N = 1000;
     char buffer[N];
     int Woctet;
-    int taille_chaine=0;
+    int taille_chaine = 0;
 
     /*************************** Déclaration des variables ***************************************/
 
-    taille_chaine=sprintf(buffer, "      .data\n");
+    taille_chaine = sprintf(buffer, "      .data\n");
     Woctet = write(file, &buffer, taille_chaine);
     CHK(Woctet);
 
     for (unsigned int i = 0; i < HT_SIZE; i++) { // table des symboles
         if (tos[0][i] != NULL) {
-            switch (tos[0][i]->type) {
+            switch (tos[0][i]->var_kind) {
             case IDENTIFIER:
-                taille_chaine=sprintf(buffer, "%s:   .space 4\n", tos[0][i]->str);
+                taille_chaine = sprintf(buffer, "%s:   .space 4\n", tos[0][i]->str);
                 break;
             case FUNCTION:
                 break;
             case ARRAY:
-                taille_chaine=sprintf(buffer, "%s:   .space %d\n", tos[0][i]->str, tos[0][i]->tab_length);
+                taille_chaine = sprintf(buffer, "%s:   .space %d\n", tos[0][i]->str, tos[0][i]->tab_length);
                 break;
             }
 
@@ -57,16 +57,16 @@ void mips(void){
     }
 
     /********************************* Traduction des quads en MIPS ****************************************/
-    taille_chaine=sprintf(buffer, "\nmain:\n");
+    taille_chaine = sprintf(buffer, "\nmain:\n");
     Woctet = write(file, &buffer, taille_chaine);
     CHK(Woctet);
-    
+
     while (liste != NULL) {
 
-        // QuadToMips();
+        QuadToMips(file, liste, buffer);
 
-        //Woctet = write(file, &buffer, taille_chaine);
-        //CHK(Woctet);
+        // Woctet = write(file, &buffer, taille_chaine);
+        // CHK(Woctet);
 
         liste = liste->next;
     }
@@ -155,5 +155,4 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     }
 
     printf("\n");
-
 }
