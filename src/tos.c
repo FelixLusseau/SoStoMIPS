@@ -78,13 +78,13 @@ void show_table(struct tos_entry **table) {
                     printf("Type : int      ");
                     break;
                 case FLOAT:
-                    printf("Type : float");
+                    printf("Type : float      ");
                     break;
                 case STRING:
-                    printf("Type : string");
+                    printf("Type : string      ");
                     break;
                 case BOOL:
-                    printf("Type : bool");
+                    printf("Type : bool      ");
                     break;
                 }
                 printf("\t");
@@ -97,7 +97,6 @@ void show_table(struct tos_entry **table) {
                 break;
             }
             printf("%s", table[i]->str);
-
             printf("\n");
         }
     }
