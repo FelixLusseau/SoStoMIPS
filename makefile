@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -g #-Wall -Wextra -Werror -Wno-unused-function
+CFLAGS = -g -Wall -Wextra -Werror -Wno-unused-function
 LDLIBS = -lm
 
 LEXYACC_PATH = ./lex-yacc

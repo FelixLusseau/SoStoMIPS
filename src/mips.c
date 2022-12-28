@@ -81,6 +81,8 @@ void mips(void) {
 }
 
 void QuadToMips(int file, listQ *liste, char *buffer) {
+    (void)file;
+    (void)buffer;
 
     switch (liste->quad->kind) {
     case Q_ADD:
@@ -112,6 +114,9 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         break;
     case Q_EXIT:
         printf(" EXIT ");
+        break;
+    case Q_RETURN:
+        printf(" RETURN ");
         break;
     case Q_TAB_CREAT:
         printf(" TAB[]CREAT ");
