@@ -12,6 +12,7 @@
 struct tos_entry {
     char *str;
     int used;
+    int depth;
     enum { IDENTIFIER, FUNCTION, ARRAY } var_kind;
     int tab_length;
     enum { UNDEFINED, INT, FLOAT, STRING, BOOL } type;
@@ -26,8 +27,8 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
 
 struct tos_entry *get_from_table(struct tos_entry **table, char *str);
 
-void free_table(struct tos_entry **table);
-
 void show_table(struct tos_entry **table);
+
+void free_table(struct tos_entry **table);
 
 #endif
