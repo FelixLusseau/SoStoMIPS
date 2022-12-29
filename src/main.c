@@ -61,9 +61,10 @@ int main(int argc, char **argv) {
     mips();
 
     printf("\n### Table of symbols : ###\n\n");
-    // printf("%s ", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->str);
-    // printf("%d ", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->used);
-    // printf("%d\n", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->depth);
+    // update_type(tos, "somme", INT);
+    //  printf("%s ", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->str);
+    //  printf("%d ", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->used);
+    //  printf("%d\n", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->depth);
     show_table(tos);
     free_table(tos);
 

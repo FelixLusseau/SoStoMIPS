@@ -67,6 +67,18 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
     return hash1;
 }
 
+int update_type(struct tos_entry **table, char *str, int type) {
+    unsigned int hash1 = hash((unsigned char *)str);
+    if (table[hash1] == NULL) {
+        return -1;
+    }
+    if (table[hash1]->used)
+        table[hash1]->type = type;
+    else
+        table[hash1]->next_lvl[0]->type = type;
+    return 0;
+}
+
 struct tos_entry *get_from_table(struct tos_entry **table, char *str) {
     unsigned int hash1 = hash((unsigned char *)str);
     if (table[hash1] == NULL) {

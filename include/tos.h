@@ -25,6 +25,8 @@ struct tos_entry **create_table();
 
 int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_length);
 
+int update_type(struct tos_entry **table, char *str, int type);
+
 struct tos_entry *get_from_table(struct tos_entry **table, char *str);
 
 void show_table(struct tos_entry **table);
