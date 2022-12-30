@@ -116,4 +116,15 @@ case_test *CTcreat(void);
 /* remplie les quadOP vide des tests */
 void CTcomplete(case_test *Case, quadOP *id_test);
 
+
+/* utilisé pour CFOR contient les test + les branchements */
+typedef struct for_brnch {
+    int addr_goback;
+    quads *Max;
+    quads *GoTo;
+    quads *Id;
+} for_brnch;
+
+for_brnch *FBcreat(void);
+
 #endif

@@ -97,7 +97,7 @@ void QOaffiche(quadOP *op) {
         printf("bool:%i ", op->u.cst);
         break;
     case QO_TAB:
-        printf("tosau:%s ", op->u.name);
+        printf("tab:%s ", op->u.name);
         break;
     }
 }
@@ -356,6 +356,8 @@ void complete(listQ *listGT, int addresse) {
     }
 }
 
+/******************************** CASE ********************************************/
+
 case_test *CTcreat(void) {
     case_test *Case = malloc(sizeof(case_test));
     GC_case_test[I_case_test] = Case;
@@ -375,4 +377,13 @@ void CTcomplete(case_test *Case, quadOP *id_test){
         }
         it = it->next;
     }
+}
+
+/******************************** FOR ********************************************/
+
+for_brnch *FBcreat(void){
+
+    for_brnch *For = malloc(sizeof(for_brnch));
+
+    return For;
 }
