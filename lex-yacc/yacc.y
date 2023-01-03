@@ -120,8 +120,6 @@ add_to_table(tos, $1);}
   add_to_table(tos, $2);
 
 }
-=======
-  }
 
 | ID '[' operande_entier ']' '=' concatenation { 
   add_to_table(tos, $1, ARRAY, atoi((char*)$3));
