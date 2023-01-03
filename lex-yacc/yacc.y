@@ -11,6 +11,7 @@ extern int yylex();
 extern char* text;
 extern void yyerror(const char * msg);
 extern listQ *Lglobal;
+extern char ** tos;
 %}
 %union{char *strval; 
        int intval; 
@@ -73,7 +74,7 @@ liste_instructions ';' instruction {
 }
 |instruction {
   printf("liste_instruction->instruction\n");
-
+// instruction
   quadOP *addr=QOcreat(QO_ADDR,NULL,0);
   quads *nextQuad=Qcreat(Q_GOTO,addr,NULL,NULL);
   Lappend(Lglobal,nextQuad);
@@ -83,14 +84,43 @@ liste_instructions ';' instruction {
 };
 
 instruction: 
-ID '=' concatenation                                   { printf("instruction-> ID = concatenation\n");
+ID '=' concatenation                                   
+{ printf("instruction-> ID = concatenation\n");
+add_to_table(tos, $1);
   quadOP* res= QOcreat(QO_ID,$1,0);
   quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
   Lappend(Lglobal,q);
   free($1);
 }
-| ID '[' operande_entier ']' '=' concatenation         { printf("instruction-> ID [ operande_entier ] = concatenation\n");}
-| DECLARE ID '[' ID ']'                                { printf("instruction-> DECLARE ID [ ENTIER ] \n");}
+| ID '[' operande_entier ']' '=' concatenation         {
+
+  printf("instruction-> ID [ operande_entier ] = concatenation\n");
+
+  quadOP* res= QOcreat(QO_TAB,$1,0);
+
+  quads *q=Qcreat(Q_TAB_EQUAL,$3,$6,res); // TODO : vérification
+
+  Lappend(Lglobal,q);
+  free($1);
+  
+  
+add_to_table(tos, $1);}
+
+| DECLARE ID '[' ID ']'                                {
+  printf("instruction-> DECLARE ID [ ENTIER ] \n");
+
+  quadOP* res  = QOcreat(QO_TAB,$2,0);
+  quadOP* size = QOcreat(QO_CST,$4,0);
+
+  quads *q=Qcreat(Q_TAB_CREAT,size,NULL,res); // TODO : vérification
+
+  Lappend(Lglobal,q);
+
+
+
+  add_to_table(tos, $2);
+
+}
 | IF test_bloc M THEN liste_instructions M else_part FI    { 
   printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");
 
@@ -102,11 +132,44 @@ ID '=' concatenation                                   { printf("instruction-> I
  
 }
 | FOR ID DO IN liste_instructions DONE                 { printf("instruction->FOR ID DO IN liste_instructions DONE \n");}
-| FOR ID IN liste_operandes DO liste_instructions DONE { 
+| FOR ID IN liste_operandes DO M liste_instructions M DONE { 
   
+  
+
+  // TODO : Taille de liste_operandes
+
+  int addrM0 = $6;
+  int addrM1 = $8;
+
+  quadOP *addrFirstInstruction=QOcreat(QO_ADDR,NULL,addrM0); // TODO : address
+  quads *nextQuad=Qcreat(Q_GOTO,addrFirstInstruction,NULL,NULL);
+  
+  // Lappend(Lglobal,nextQuad);
+
+  // we will test if i < length of liste_operandes
+
+  embranchment *test_value_i = EMcreat();
+  
+  quads *if_true=Qcreat(Q_IF,NULL,$1,NULL);
+  Lappend(Lglobal,if_true);
+
+  quads *if_false=Qcreat(Q_GOTO,NULL,NULL,NULL);
+  Lappend(Lglobal,if_false);
+
+  $$=EMcreat();
+
+  Lappend($$->True,if_true);
+  Lappend($$->False,if_false);
+
 
 
   printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");}
+| FOR ID DO IN liste_instructions DONE                 { printf("instruction->FOR ID DO IN liste_instructions DONE \n");
+add_to_table(tos, $2);}
+| FOR ID IN liste_operandes M DO liste_instructions M DONE { printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");
+
+
+add_to_table(tos, $2);}
 
 | WHILE M test_bloc M DO liste_instructions M DONE { 
   printf("instruction-> WHILE test_bloc DO liste_instructions DONE \n");
@@ -350,7 +413,10 @@ test_expr O M test_expr2 {
   $$->True=T;
 
   }
-| test_expr2 {  printf("test_expr-> test_expr2 \n"); $$=$1; } ;
+| test_expr2 {  
+  printf("test_expr-> test_expr2 \n");
+  $$=$1;
+  } ;
 
 test_expr2:
 test_expr2 A M test_expr3 { 
@@ -383,11 +449,11 @@ test_expr2 A M test_expr3 {
 | test_expr3 { 
   printf("test_expr2-> test_expr3 \n"); 
   
- // test_expr3
+  // création de deux quads correspondant aux cas : False et True
   quads *if_true3=Qcreat(Q_IF,NULL,$1,NULL);
   Lappend(Lglobal,if_true3);
 
-  quads *if_false3=Qcreat(Q_GOTO,NULL,NULL,NULL);
+  quads *if_false3=Qcreat(Q_GOTO,NULL,NULL,NULL); // TODO : Adresse de branchement?
   Lappend(Lglobal,if_false3);
 
   $$=EMcreat();
@@ -621,7 +687,7 @@ operande_entier:
     id[taille+1]='\0';
     sprintf(id,"$%d",entier);
 
-    quadOP* op=QOcreat(QO_ID,id,0);
+    quadOP* op=QOcreat(QO_ID,id,0); // TODO : valeur?
     $$=op;
     free($2);
 
@@ -719,10 +785,12 @@ plus_ou_moin: '+' {$$=1;} | '-' {$$=0;};
 fois_div_mod: '*' {$$=1;}| '/' {$$=2;}| '%' {$$=3;};
 
 declaration_de_fonction:
-ID '(' ')' '{' decl_loc liste_instructions '}' { printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");} ;
+ID '(' ')' '{' decl_loc liste_instructions '}' { printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");
+add_to_table(tos, $1);} ;
 
 decl_loc:
-decl_loc LOCAL ID '=' concatenation ';' { printf("decl_loc-> decl_loc LOCAL ID = concatenation \n");}
+decl_loc LOCAL ID '=' concatenation ';' { printf("decl_loc-> decl_loc LOCAL ID = concatenation \n");
+add_to_table(tos, $3);}
 | %empty                                { printf("decl_loc-> empty \n");};
 
 appel_de_fonction:
