@@ -63,31 +63,66 @@ void mips(void) {
     }
 
     /********************************* Traduction des quads en MIPS ****************************************/
-    taille_chaine = sprintf(buffer, "\nmain:\n");
-    Woctet = write(file, &buffer, taille_chaine);
+    taille_chaine = sprintf(buffer, "\n.text\n\nmain:\n");
+    Woctet = write(file, &buffer, taille_chaine); 
     CHK(Woctet);
 
     while (liste != NULL) {
 
         QuadToMips(file, liste, buffer);
 
-        Woctet = write(file, &buffer, taille_chaine);
+        Woctet = write(file, &buffer, strlen(buffer)); // ???
         CHK(Woctet);
-
+        buffer[0] = '\0'; // ???
         liste = liste->next;
     }
 
     close(file);
 }
 
+/* returns a number from 0 to 7
+if it is 0 that means false, otherwise
+it's true and the number returned is the 
+index of the temporary variable
+*/
+
+int charToInt(char c){
+	int num = 0;
+
+	num = c - '0';
+
+	return num;
+}
+
+int isTemporaryVariable(const char * varName) {
+    if(!strncmp(varName,"__TEMP__", 8))
+        return charToInt(varName[8]);
+    return 0;
+}
+
+
 void QuadToMips(int file, listQ *liste, char *buffer) {
     (void)file;
-    (void)buffer;
+
+    int idx,idx2;
 
     switch (liste->quad->kind) {
     case Q_ADD:
         printf(" ADD ");
-        sprintf(buffer, "add $t0, $t0, $t1");
+            
+        // load the op1 in a temporary variable
+        sprintf(buffer,"lw $t%d, %s\n",idx+1,liste->quad->op1->u.name);
+
+        // concatenation
+        
+        if(liste->quad->op2->kind==QO_CST)
+            sprintf(buffer + strlen(buffer), "addi $t%d, $t%d, %d\n",idx,idx+1,liste->quad->op2->u.cst);
+        else {
+            sprintf(buffer + strlen(buffer),"lw $t%d, %s\n",idx+2,liste->quad->op2->u.name);
+            sprintf(buffer + strlen(buffer), "add $t%d, $t%d, $t%d\n",idx,idx+1,idx+2);
+        }  
+        
+       
         break;
     case Q_LESS:
         printf(" LESS ");
@@ -109,6 +144,37 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         break;
     case Q_EQUAL:
         printf(" EQUAL ");
+
+        
+
+        if(!(idx=isTemporaryVariable(liste->quad->op1->u.name))){
+            
+            // load the value of op1 in the last temporary variable
+
+            sprintf(buffer, "li $t7, %s\n",liste->quad->op1->u.name);
+
+            if(!(idx2=isTemporaryVariable(liste->quad->res->u.name))){
+                
+                sprintf(buffer + strlen(buffer), "sw $t7, %s\n",liste->quad->res->u.name); // flottants et entiers? à chaque fois qu'on déclare une nouvelle variable on appelle .data
+            }
+            else{
+                
+                sprintf(buffer, "la $t7, $t%d\n",idx2);
+            }
+        }
+        else{
+             
+
+            // assign what is in this temporary variable to the res variable:
+
+            // à modifer : (redéfintion d'une variable définie) :
+            if(!(idx2=isTemporaryVariable(liste->quad->res->u.name))){
+                sprintf(buffer, "sw $t%d, %s\n",idx,liste->quad->res->u.name);
+            }
+            else
+                sprintf(buffer, "la $t%d, $t%d\n",idx2,idx);
+        }
+
         break;
     case Q_GOTO:
         printf(" GOTO ");
