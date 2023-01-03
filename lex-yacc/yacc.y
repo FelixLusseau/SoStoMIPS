@@ -90,7 +90,6 @@ ID '=' concatenation {
   quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
   Lappend(Lglobal,q);
   free($1);
-<<<<<<< HEAD
 }
 | ID '[' operande_entier ']' '=' concatenation         {
 
@@ -151,7 +150,6 @@ add_to_table(tos, $1);}
   Lappend(Lglobal,q);
   }
 
->>>>>>> 27bad36aad8a93513a32e7859b8bae65cc3baada
 | IF test_bloc M THEN liste_instructions M else_part FI    { 
   printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");
 
@@ -160,49 +158,6 @@ add_to_table(tos, $1);}
 
   complete($2->True,addrM1+1);
   complete($2->False,addrM2+1);
-<<<<<<< HEAD
- 
-}
-| FOR ID DO IN liste_instructions DONE                 { printf("instruction->FOR ID DO IN liste_instructions DONE \n");}
-| FOR ID IN liste_operandes DO M liste_instructions M DONE { 
-  
-  
-
-  // TODO : Taille de liste_operandes
-
-  int addrM0 = $6;
-  int addrM1 = $8;
-
-  quadOP *addrFirstInstruction=QOcreat(QO_ADDR,NULL,addrM0); // TODO : address
-  quads *nextQuad=Qcreat(Q_GOTO,addrFirstInstruction,NULL,NULL);
-  
-  // Lappend(Lglobal,nextQuad);
-
-  // we will test if i < length of liste_operandes
-
-  embranchment *test_value_i = EMcreat();
-  
-  quads *if_true=Qcreat(Q_IF,NULL,$1,NULL);
-  Lappend(Lglobal,if_true);
-
-  quads *if_false=Qcreat(Q_GOTO,NULL,NULL,NULL);
-  Lappend(Lglobal,if_false);
-
-  $$=EMcreat();
-
-  Lappend($$->True,if_true);
-  Lappend($$->False,if_false);
-
-
-
-  printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");}
-| FOR ID DO IN liste_instructions DONE                 { printf("instruction->FOR ID DO IN liste_instructions DONE \n");
-add_to_table(tos, $2);}
-| FOR ID IN liste_operandes M DO liste_instructions M DONE { printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");
-
-
-add_to_table(tos, $2);}
-=======
   }
 
 | FOR ID DO IN liste_instructions DONE { 
@@ -214,7 +169,6 @@ add_to_table(tos, $2);}
   printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");
   add_to_table(tos, $2, IDENTIFIER, 0);
   }
->>>>>>> 27bad36aad8a93513a32e7859b8bae65cc3baada
 
 | WHILE M test_bloc M DO liste_instructions M DONE { 
   printf("instruction-> WHILE test_bloc DO liste_instructions DONE \n");
@@ -510,18 +464,11 @@ test_expr O M test_expr2 {
   listQ *T=Lconcat($1->True,$$->True);
   $$->True=T;
   }
-<<<<<<< HEAD
-| test_expr2 {  
-  printf("test_expr-> test_expr2 \n");
-  $$=$1;
-  } ;
-=======
 
 | test_expr2 {  
   printf("test_expr-> test_expr2 \n"); $$=$1; 
   };
 
->>>>>>> 27bad36aad8a93513a32e7859b8bae65cc3baada
 
 test_expr2:
 test_expr2 A M test_expr3 { 
