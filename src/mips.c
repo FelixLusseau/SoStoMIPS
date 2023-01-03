@@ -71,8 +71,8 @@ void mips(void) {
 
         QuadToMips(file, liste, buffer);
 
-        // Woctet = write(file, &buffer, taille_chaine);
-        // CHK(Woctet);
+        Woctet = write(file, &buffer, taille_chaine);
+        CHK(Woctet);
 
         liste = liste->next;
     }
@@ -82,11 +82,12 @@ void mips(void) {
 
 void QuadToMips(int file, listQ *liste, char *buffer) {
     (void)file;
-    (void)buffer;
+    // (void)buffer;
 
     switch (liste->quad->kind) {
     case Q_ADD:
         printf(" ADD ");
+        // sprintf(buffer, "add $t0, $t0, $t1");
         break;
     case Q_LESS:
         printf(" LESS ");
