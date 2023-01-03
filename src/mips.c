@@ -109,20 +109,24 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     switch (liste->quad->kind) {
     case Q_ADD:
         printf(" ADD ");
+        if((idx=isTemporaryVariable(liste->quad->res->u.name))){
             
-        // load the op1 in a temporary variable
-        sprintf(buffer,"lw $t%d, %s\n",idx+1,liste->quad->op1->u.name);
+            // load the op1 in a temporary variable
+            sprintf(buffer,"lw $t%d, %s\n",idx+1,liste->quad->op1->u.name);
 
-        // concatenation
-        
-        if(liste->quad->op2->kind==QO_CST)
-            sprintf(buffer + strlen(buffer), "addi $t%d, $t%d, %d\n",idx,idx+1,liste->quad->op2->u.cst);
+            // concatenation
+            
+            if(liste->quad->op2->kind==QO_CST)
+                sprintf(buffer + strlen(buffer), "addi $t%d, $t%d, %d\n",idx,idx+1,liste->quad->op2->u.cst);
+            else {
+                sprintf(buffer + strlen(buffer),"lw $t%d, %s\n",idx+2,liste->quad->op2->u.name);
+                sprintf(buffer + strlen(buffer), "add $t%d, $t%d, $t%d\n",idx,idx+1,idx+2);
+            }  
+        }
         else {
-            sprintf(buffer + strlen(buffer),"lw $t%d, %s\n",idx+2,liste->quad->op2->u.name);
-            sprintf(buffer + strlen(buffer), "add $t%d, $t%d, $t%d\n",idx,idx+1,idx+2);
-        }  
-        
-       
+            // if the res var is not a temporary variable
+        }
+
         break;
     case Q_LESS:
         printf(" LESS ");
@@ -149,8 +153,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
 
         if(!(idx=isTemporaryVariable(liste->quad->op1->u.name))){
             
-            // load the value of op1 in the last temporary variable
-
+            // load the value of in a temporary variable
             sprintf(buffer, "li $t7, %s\n",liste->quad->op1->u.name);
 
             if(!(idx2=isTemporaryVariable(liste->quad->res->u.name))){
@@ -167,12 +170,11 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
 
             // assign what is in this temporary variable to the res variable:
 
-            // à modifer : (redéfintion d'une variable définie) :
             if(!(idx2=isTemporaryVariable(liste->quad->res->u.name))){
                 sprintf(buffer, "sw $t%d, %s\n",idx,liste->quad->res->u.name);
             }
             else
-                sprintf(buffer, "la $t%d, $t%d\n",idx2,idx);
+                sprintf(buffer, "la $t%d, $t%d\n",idx,idx2);
         }
 
         break;

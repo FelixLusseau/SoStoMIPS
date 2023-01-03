@@ -74,7 +74,7 @@ liste_instructions ';' instruction {
 
 |instruction {
   printf("liste_instruction->instruction\n");
-// instruction
+
   quadOP *addr=QOcreat(QO_ADDR,NULL,0);
   quads *nextQuad=Qcreat(Q_GOTO,addr,NULL,NULL);
   Lappend(Lglobal,nextQuad);
@@ -90,36 +90,7 @@ ID '=' concatenation {
   quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
   Lappend(Lglobal,q);
   free($1);
-}
-| ID '[' operande_entier ']' '=' concatenation         {
-
-  printf("instruction-> ID [ operande_entier ] = concatenation\n");
-
-  quadOP* res= QOcreat(QO_TAB,$1,0);
-
-  quads *q=Qcreat(Q_TAB_EQUAL,$3,$6,res); // TODO : vérification
-
-  Lappend(Lglobal,q);
-  free($1);
-  
-  
-add_to_table(tos, $1);}
-
-| DECLARE ID '[' ID ']'                                {
-  printf("instruction-> DECLARE ID [ ENTIER ] \n");
-
-  quadOP* res  = QOcreat(QO_TAB,$2,0);
-  quadOP* size = QOcreat(QO_CST,$4,0);
-
-  quads *q=Qcreat(Q_TAB_CREAT,size,NULL,res); // TODO : vérification
-
-  Lappend(Lglobal,q);
-
-
-
-  add_to_table(tos, $2);
-
-}
+  }
 
 | ID '[' operande_entier ']' '=' concatenation { 
   add_to_table(tos, $1, ARRAY, atoi((char*)$3));
@@ -500,11 +471,11 @@ test_expr2 A M test_expr3 {
 | test_expr3 { 
   printf("test_expr2-> test_expr3 \n"); 
   
-  // création de deux quads correspondant aux cas : False et True
+ // test_expr3
   quads *if_true3=Qcreat(Q_IF,NULL,$1,NULL);
   Lappend(Lglobal,if_true3);
 
-  quads *if_false3=Qcreat(Q_GOTO,NULL,NULL,NULL); // TODO : Adresse de branchement?
+  quads *if_false3=Qcreat(Q_GOTO,NULL,NULL,NULL);
   Lappend(Lglobal,if_false3);
 
   $$=EMcreat();
@@ -764,7 +735,7 @@ operande_entier:
     id[taille+1]='\0';
     sprintf(id,"$%d",entier);
 
-    quadOP* op=QOcreat(QO_ID,id,0); // TODO : valeur?
+    quadOP* op=QOcreat(QO_ID,id,0);
     $$=op;
     free($2);
 
