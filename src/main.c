@@ -1,22 +1,22 @@
+#include "mips.h"
 #include "quads.h"
 #include "tos.h"
 #include <getopt.h>
 #include <stdio.h>
 
-#define RED "\x1B[31m"
-#define reset "\x1B[0m"
-
 extern int yyparse();
 extern int yylex();
 extern char *yytext;
-char **tos;
+struct tos_entry **tos;
+int depth = 0;
+int width[MAX_TOS_SIZE] = {0};
 
 int nb_temp = 1; // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur création
 listQ *Lglobal;  // liste des quads
 
 int main(int argc, char **argv) {
     if (argc < 1) {
-        printf(RED "Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n" reset, argv[0]);
+        printf("Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n", argv[0]);
         return 1;
     }
 
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
             printf("TOS\n");
             return 0;
         default:
-            printf(RED "Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n" reset, argv[0]);
+            printf("Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n", argv[0]);
             return 1;
         }
     }
@@ -51,21 +51,26 @@ int main(int argc, char **argv) {
     if ((tos = create_table()) == NULL) {
         return 1;
     }
-    // printf("Table of symboles created\n");
-    /* if (add_to_table(tos, "toto") == -1) {
-        return 1;
-    }
-    printf("Added to table of symboles\n"); */
 
     Lglobal = Lcreat();
 
     int r = yyparse();
 
-    printf("->%d\n", r);
+    printf("Yacc return : ->%d\n", r);
 
+    mips();
+
+    printf("\n### Table of symbols : ###\n\n");
+    // update_type(tos, "somme", INT);
+    //  printf("%s ", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->str);
+    //  printf("%d ", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->used);
+    //  printf("%d\n", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->depth);
     show_table(tos);
     free_table(tos);
-    // printf("Table of symboles freed\n");
+
+    printf("\nFree Lglobal:\n");
+    Lfree();
+    printf("\n");
 
     return r;
 }
