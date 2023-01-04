@@ -10,7 +10,7 @@ char *text;
 FORBIDENNCHAR ([\'\"!;\[\]\|\(\)=(!=)(\\|[^n\'\"t])])
 
 SPECIAUX (\\[tn\'\"\^\\])
-AUTORISER ([[:alnum:]ëËàéçèùêÊ&#~_^€@£µ§:\.?,]*)
+AUTORISES ([[:alnum:]ëËàéçèùêÊ&#~_^€@£µ§:\.?,]*)
 
 %%
 
@@ -77,7 +77,7 @@ AUTORISER ([[:alnum:]ëËàéçèùêÊ&#~_^€@£µ§:\.?,]*)
     return CHAINE;
 }
 
-({AUTORISER}|{SPECIAUX})* {
+({AUTORISES}|{SPECIAUX})* {
     //alors on ne peut pas séparer le cas MOT, ENTIER ou ID à ce stade, le yacc décidera ce que ce sera
     printf("    mot/id/entier:%s\n",yytext);
     yylval.strval=strdup(yytext);
