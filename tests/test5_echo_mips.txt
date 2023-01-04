@@ -1,0 +1,4 @@
+i=8;
+declare tablo[4];
+echo ${i};
+exit
