@@ -208,7 +208,6 @@ ID '=' concatenation {
   $7->u.cst=addrM0; // boucle
 
 }
-
 | WHILE M test_bloc M DO liste_instructions M DONE { 
   printf("instruction-> WHILE test_bloc DO liste_instructions DONE \n");
 
@@ -221,7 +220,6 @@ ID '=' concatenation {
 
   $6->u.cst=addrM0+1;
   }
-
 | UNTIL M test_bloc M DO liste_instructions M DONE { 
   printf("instruction-> UNTIL test_bloc DO liste_instructions DONE \n");
 
@@ -494,7 +492,13 @@ liste_operandes operande {
   quads *q=Qcreat(Q_EQUAL,liste,tab,NULL);
   Lappend(Lglobal,q);
 
-  $$=10;
+  struct tos_entry *tab_tos=get_from_table(tos,$3);
+  if(tab==NULL || tab_tos->var_kind!=ARRAY){
+    yyerror("tableau:%s appellé alors que non initialisé ou n'est pas array");
+  }
+
+
+  $$=tab_tos->tab_length;
   } ;
 
 concatenation:

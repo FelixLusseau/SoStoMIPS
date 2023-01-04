@@ -162,7 +162,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     case Q_EQUAL:
         printf(" EQUAL ");
 
-        if ((idx = isTemporaryVariable(liste->quad->op1->u.name)) < 0) {
+        if (liste->quad->op1->kind == QO_ID && (idx = isTemporaryVariable(liste->quad->op1->u.name)) < 0) {
 
             // load the value of in a temporary variable
             sprintf(buffer, "li $t7, %s\n", liste->quad->op1->u.name);
