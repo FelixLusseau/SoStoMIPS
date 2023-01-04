@@ -6,7 +6,7 @@
             raler(1, #op); \
     } while (0)
 
-int curr_temp_reg=2;
+int curr_temp_reg = 2;
 
 noreturn void raler(int syserr, const char *msg, ...) {
     va_list ap;
@@ -82,14 +82,21 @@ void mips(void) {
     close(file);
 }
 
+<<<<<<< HEAD
 
 int isTemporaryVariable(const char * varName) {
     if(varName == NULL )
         return -1;
     if((strlen(varName) < 9 ))
+=======
+int isTemporaryVariable(const char *varName) {
+    if (varName == NULL)
         return -1;
-    if(!strncmp(varName,"__TEMP__", 8)){
-        return atoi(varName+8);
+    if (strlen(varName) < 9)
+>>>>>>> a683bfb282ed78e586d9a517998f0a3c62718141
+        return -1;
+    if (!strncmp(varName, "__TEMP__", 8)) {
+        return atoi(varName + 8);
     }
     return -1;
 }
@@ -102,12 +109,13 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     switch (liste->quad->kind) {
     case Q_ADD:
         printf(" ADD ");
-        if ((idx = isTemporaryVariable(liste->quad->res->u.name))>=0) {
+        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
 
             // load the op1 in a temporary variable
 
             // check if op1 is temp???
 
+<<<<<<< HEAD
             if(liste->quad->op1->kind==QO_CST) {
                 sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++)%7, liste->quad->op1->u.cst);
             }
@@ -115,14 +123,21 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
 
                 sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++)%7, liste->quad->op1->u.name);
             }
+=======
+            sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
+>>>>>>> a683bfb282ed78e586d9a517998f0a3c62718141
 
                 // concatenation
 
             if (liste->quad->op2->kind == QO_CST)
+<<<<<<< HEAD
                 sprintf(buffer + strlen(buffer), "addi $s%d, $t%d, %d\n", idx%7, (curr_temp_reg-1)%7, liste->quad->op2->u.cst);
+=======
+                sprintf(buffer + strlen(buffer), "addi $s%d, $t%d, %d\n", idx % 7, (curr_temp_reg) % 7, liste->quad->op2->u.cst);
+>>>>>>> a683bfb282ed78e586d9a517998f0a3c62718141
             else {
-                sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++)%7, liste->quad->op2->u.name);
-                sprintf(buffer + strlen(buffer), "add $s%d, $t%d, $t%d\n", idx%7, (curr_temp_reg-2)%7, (curr_temp_reg-1)%7);
+                sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
+                sprintf(buffer + strlen(buffer), "add $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
 
         } else {
@@ -133,6 +148,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     case Q_LESS:
         printf(" LESS ");
 
+<<<<<<< HEAD
 
 
         if((idx=isTemporaryVariable(liste->quad->res->u.name))>=0){
@@ -152,12 +168,23 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
             
             if(liste->quad->op2->kind==QO_CST)
                 sprintf(buffer + strlen(buffer), "subi $s%d, $t%d, %d\n",idx%7, (curr_temp_reg-1)%7, liste->quad->op2->u.cst);
+=======
+        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
+
+            // load the op1 in a temporary variable
+
+            sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
+
+            // concatenation
+
+            if (liste->quad->op2->kind == QO_CST)
+                sprintf(buffer + strlen(buffer), "subi $s%d, $t%d, %d\n", idx % 7, (curr_temp_reg) % 7, liste->quad->op2->u.cst);
+>>>>>>> a683bfb282ed78e586d9a517998f0a3c62718141
             else {
-                sprintf(buffer + strlen(buffer),"lw $t%d, %s\n",(curr_temp_reg++)%7, liste->quad->op2->u.name);
-                sprintf(buffer + strlen(buffer), "sub $s%d, $t%d, $t%d\n", idx%7, (curr_temp_reg-2)%7, (curr_temp_reg-1)%7);
-            }  
-        }
-        else {
+                sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
+                sprintf(buffer + strlen(buffer), "sub $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
+            }
+        } else {
             // if the res var is not a temporary variable
         }
 
@@ -180,6 +207,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     case Q_EQUAL:
         printf(" EQUAL ");
 
+<<<<<<< HEAD
         if(liste->quad->op1->kind==QO_CST){
             sprintf(buffer, "li $t7, %d\n", liste->quad->op1->u.cst);
             sprintf(buffer + strlen(buffer), "sw $t7, %s\n",
@@ -187,16 +215,24 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         }
         else {
             if ((idx = isTemporaryVariable(liste->quad->op1->u.name))<0) {
+=======
+        if (liste->quad->op1->kind == QO_ID && (idx = isTemporaryVariable(liste->quad->op1->u.name)) < 0) {
+>>>>>>> a683bfb282ed78e586d9a517998f0a3c62718141
 
                 // load the value of in a temporary variable
                 sprintf(buffer, "li $t7, %s\n", liste->quad->op1->u.name);
 
+<<<<<<< HEAD
                 if ((idx2 = isTemporaryVariable(liste->quad->res->u.name))<0) {
+=======
+            if ((idx2 = isTemporaryVariable(liste->quad->res->u.name)) < 0) {
+>>>>>>> a683bfb282ed78e586d9a517998f0a3c62718141
 
                     sprintf(buffer + strlen(buffer), "sw $t7, %s\n",
                             liste->quad->res->u.name); // flottants et entiers? à chaque fois qu'on déclare une nouvelle variable on appelle .data
                 } else {
 
+<<<<<<< HEAD
                     sprintf(buffer + strlen(buffer), "la $t7, $t%d\n", idx2%7);
                 }
             } else {
@@ -209,6 +245,17 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
                 } else
                     sprintf(buffer, "la $t%d, $t%d\n", idx%7, idx2%7);
             }
+=======
+                sprintf(buffer + strlen(buffer), "la $t7, $t%d\n", idx2 % 7);
+            }
+        } else {
+
+            // assign what is in this temporary variable to the res variable:
+            if (liste->quad->op1->kind==QO_ID && (idx2 = isTemporaryVariable(liste->quad->res->u.name))<0) {
+                sprintf(buffer, "sw $s%d, %s\n", (idx) % 7, liste->quad->res->u.name);
+            } else
+                sprintf(buffer, "la $t%d, $t%d\n", idx % 7, idx2 % 7);
+>>>>>>> a683bfb282ed78e586d9a517998f0a3c62718141
         }
         break;
     case Q_GOTO:
