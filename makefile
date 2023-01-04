@@ -61,7 +61,16 @@ TESTDIR = tests
 test :  $(OUTPUT)
 		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
+			rm -f mips.asm ; \
 			./$(OUTPUT) < $${file} ; \
+        done
+
+test_mips :  $(OUTPUT)
+		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
+			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
+			rm -f mips.asm ; \
+			./$(OUTPUT) < $${file} ; \
+			spim -file mips.asm ; \
         done
 
 .PHONY: clean doc
@@ -78,6 +87,7 @@ clean:
 	rm -f $(LEXC)
 	rm -f $(YACCC) $(YACCC:.c=.h) $(YACCC:.c=.output)
 	rm -rf doc
+	rm -f mips.asm
 
 #prefixe=compilateur
 #
