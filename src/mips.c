@@ -105,15 +105,16 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
             // load the op1 in a temporary variable
 
             // check if op1 is temp???
+
             sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++)%7, liste->quad->op1->u.name);
 
             // concatenation
 
             if (liste->quad->op2->kind == QO_CST)
-                sprintf(buffer + strlen(buffer), "addi $t%d, $t%d, %d\n", idx%7, (curr_temp_reg)%7, liste->quad->op2->u.cst);
+                sprintf(buffer + strlen(buffer), "addi $s%d, $t%d, %d\n", idx%7, (curr_temp_reg)%7, liste->quad->op2->u.cst);
             else {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++)%7, liste->quad->op2->u.name);
-                sprintf(buffer + strlen(buffer), "add $t%d, $t%d, $t%d\n", idx%7, (curr_temp_reg-1)%7, (curr_temp_reg)%7);
+                sprintf(buffer + strlen(buffer), "add $s%d, $t%d, $t%d\n", idx%7, (curr_temp_reg-2)%7, (curr_temp_reg-1)%7);
             }
         } else {
             // if the res var is not a temporary variable
@@ -126,15 +127,16 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         if((idx=isTemporaryVariable(liste->quad->res->u.name))>=0){
             
             // load the op1 in a temporary variable
+            
             sprintf(buffer,"lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op1->u.name);
 
             // concatenation
             
             if(liste->quad->op2->kind==QO_CST)
-                sprintf(buffer + strlen(buffer), "subi $t%d, $t%d, %d\n",idx%7, (curr_temp_reg)%7, liste->quad->op2->u.cst);
+                sprintf(buffer + strlen(buffer), "subi $s%d, $t%d, %d\n",idx%7, (curr_temp_reg)%7, liste->quad->op2->u.cst);
             else {
                 sprintf(buffer + strlen(buffer),"lw $t%d, %s\n",(curr_temp_reg++)%7, liste->quad->op2->u.name);
-                sprintf(buffer + strlen(buffer), "sub $t%d, $t%d, $t%d\n", idx%7, (curr_temp_reg-1)%7, (curr_temp_reg)%7);
+                sprintf(buffer + strlen(buffer), "sub $s%d, $t%d, $t%d\n", idx%7, (curr_temp_reg-2)%7, (curr_temp_reg-1)%7);
             }  
         }
         else {
@@ -179,7 +181,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
 
             if ((idx2 = isTemporaryVariable(liste->quad->res->u.name))<0) {
 
-                sprintf(buffer, "sw $t%d, %s\n", (idx)%7, liste->quad->res->u.name);
+                sprintf(buffer, "sw $s%d, %s\n", (idx)%7, liste->quad->res->u.name);
             } else
                 sprintf(buffer, "la $t%d, $t%d\n", idx%7, idx2%7);
         }

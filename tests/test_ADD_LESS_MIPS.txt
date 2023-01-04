@@ -1,12 +1,19 @@
 i=8;
 c=4;
 
-j=$(expr ${i} - ${c}) ;
+var1=$(expr ${i} - ${c}) ;
 
-v = $(expr ${j} + ${j} );
+v = $(expr ${var1} + ${var1} );
 
 p = $(expr ${v} + ${i}) ;
 
 w = $(expr ${v} - ${p});
+
+x = $(expr ${w} - ${p});
+
+y = $(expr ${x} - ${p});
+
+z = $(expr ${y} - ${p});
+
 
 exit
