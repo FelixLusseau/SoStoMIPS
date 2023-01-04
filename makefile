@@ -62,8 +62,7 @@ test :  $(OUTPUT)
 		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
-			./$(OUTPUT) < $${file} ; \
-			if ! [ -z $? ] ; then \
+			if ! ./$(OUTPUT) < $${file}  ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
 				exit 1 ; \
 			fi ; \
@@ -73,12 +72,14 @@ test_mips :  $(OUTPUT)
 		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
-			./$(OUTPUT) < $${file} ; \
-			if ! [ -z $? ] ; then \
+			if ! ./$(OUTPUT) < $${file}  ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
 				exit 1 ; \
 			fi ; \
-			spim -file mips.asm ; \
+			if ! [ -z $(spim -file mips.asm | grep error | wc -l) ]  ; then \
+				echo "\n\033[91mError in $${file}'s MIPS\033[0m" ; \
+				exit 1 ; \
+			fi ; \
         done
 
 .PHONY: clean doc
