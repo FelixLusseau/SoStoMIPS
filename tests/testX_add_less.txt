@@ -1,9 +1,12 @@
 i=8;
 c=4;
 
-var1=$(expr ${i} - ${c}) ;
 
-v = $(expr ${var1} + ${var1} );
+var2=$(expr 1 +2);
+
+var1=$(expr ${i} - 4) ;
+
+v = $(expr ${var1} + 4);
 
 p = $(expr ${v} + ${i}) ;
 
