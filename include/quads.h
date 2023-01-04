@@ -132,10 +132,4 @@ typedef struct for_brnch {
 for_brnch *FBcreat(void);
 
 
-/* utilisé pour liste_operandes contient le nombre d'opérande ou le nom du tableau */
-typedef struct lst_op {
-    int taille;
-    char * nom_tab;
-} lst_op;
-
 #endif

@@ -67,6 +67,9 @@ extern int width[MAX_TOS_SIZE];
 M: %empty {printf("M->empty\n");$$=Lglobal->taille;}
 
 for_id_liste_branchement: %empty{
+  
+  $$=FBcreat();
+
   // index=0;
   quadOP *index=QOcreat_temp();
   quadOP *num=QOcreat(QO_CST,NULL,0);
@@ -175,21 +178,22 @@ ID '=' concatenation {
   complete($2->False,addrM2+1);
  
 }
-| FOR ID for_id_liste_branchement DO  liste_instructions DONE M  { 
+| FOR for_id_liste_branchement ID  DO  liste_instructions DONE  { 
   printf("instruction->FOR ID DO IN liste_instructions DONE \n");
-  add_to_table(tos, $2, IDENTIFIER, 0);
+  add_to_table(tos, $3, IDENTIFIER, 0);
 
-  int addrM0=$3->addr_goback;
-  int addrM1=$7;
+  int addrM0=$2->addr_goback;
+  int addrM1=Lglobal->taille;
 
   // complètes les instructions au début de la boucle (for_id_liste_branchement)
-  $3->Max->op2=QOcreat(QO_CST,NULL,taille_parametres);
-  $3->GoTo->res=QOcreat(QO_ADDR,NULL,addrM1+1);
-  $3->Id->res=QOcreat(QO_ID,$2,0);
+  $2->Max->op2=QOcreat(QO_CST,NULL,taille_parametres);
+  $2->GoTo->res=QOcreat(QO_ADDR,NULL,addrM1+1);
+  char * id=strdup($3);
+  $2->Id->res=QOcreat(QO_ID,id,0);
 
   $5->u.cst=addrM0; // boucle
   }
-| FOR ID IN liste_operandes for_id_liste_branchement DO liste_instructions DONE M { 
+| FOR ID IN liste_operandes DO for_id_liste_branchement liste_instructions DONE { 
   printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");
   add_to_table(tos, $2, IDENTIFIER, 0);
 
@@ -197,13 +201,14 @@ ID '=' concatenation {
     taille_parametres=$4;
   }
 
-  int addrM0=$5->addr_goback;
-  int addrM1=$9;
+  int addrM0=$6->addr_goback;
+  int addrM1=Lglobal->taille;
 
   // complètes les instructions au début de la boucle (for_id_liste_branchement)
-  $5->Max->op2=QOcreat(QO_CST,NULL,$4);
-  $5->GoTo->res=QOcreat(QO_ADDR,NULL,addrM1+1);
-  $5->Id->res=QOcreat(QO_ID,$2,0);
+  $6->Max->op2=QOcreat(QO_CST,NULL,$4);
+  $6->GoTo->res=QOcreat(QO_ADDR,NULL,addrM1+1);
+  char * id=strdup($2);
+  $6->Id->res=QOcreat(QO_ID,id,0);
 
   $7->u.cst=addrM0; // boucle
 
