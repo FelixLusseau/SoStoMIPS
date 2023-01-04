@@ -501,6 +501,7 @@ liste_operandes operande {
   $$=tab_tos->tab_length;
   } ;
 
+
 concatenation:
 concatenation operande { 
   printf("concatenation-> concatenation operande \n");
@@ -511,7 +512,6 @@ concatenation operande {
   Lappend(Lglobal,q);
   $$=temp;
 }
-
 | operande { 
   printf("concatenation-> operande \n");  
   $$=$1;
@@ -567,7 +567,6 @@ test_expr2 A M test_expr3 {
   $$->True = $1->True;
   $$->False = Lconcat($1->False,$4->False);
   }
-
 | test_expr3 { 
   printf("test_expr2-> test_expr3 \n"); 
   
@@ -628,7 +627,6 @@ concatenation '=' concatenation       {
   Lappend(Lglobal,q);
   $$=temp;
   }
-
 | operateur1 concatenation { 
   printf("test_instruction-> operateur1 concatenation \n");
   quadOP* temp=QOcreat_temp();
@@ -646,7 +644,6 @@ concatenation '=' concatenation       {
   Lappend(Lglobal,q);
   $$=temp;
   }
-
 | operande operateur2 operande { 
   printf("test_instruction-> operande operateur2 operande \n");
   int oper=0;
@@ -965,25 +962,25 @@ decl_loc LOCAL ID '=' concatenation ';' {
   quads *q=Qcreat(Q_EQUAL,res,$5,NULL);
   Lappend(Lglobal,q);
 }
-| %empty                                { printf("decl_loc-> empty \n");};
+| %empty   { printf("decl_loc-> empty \n");};
 
-fct: %empty {
-  quadOP *addr=QOcreat(QO_ADDR,NULL,0);
-  quads *q1=Qcreat(Q_GOTO,addr,NULL,NULL);
-  Lappend(Lglobal,q1);
 
-  quadOP *fct=QOcreat(QO_FCT,NULL,0);
+appel_de_fonction:
+ID liste_operandes  { 
+  printf("appel_de_fonction-> ID liste_operandes \n");
+
+  quadOP *fct=QOcreat(QO_FCT,$1,0);
   quads *q2=Qcreat(Q_FCT,fct,NULL,NULL);
   Lappend(Lglobal,q2);
 
-}
-
-appel_de_fonction:
-ID fct liste_operandes  { 
-  printf("appel_de_fonction-> ID liste_operandes \n");
-
   }
-| ID                { printf("appel_de_fonction-> ID \n");} ;
+| ID { 
+  printf("appel_de_fonction-> ID \n");
+
+  quadOP *fct=QOcreat(QO_FCT,$1,0);
+  quads *q2=Qcreat(Q_FCT,fct,NULL,NULL);
+  Lappend(Lglobal,q2);
+  } ;
  
 %%
 
