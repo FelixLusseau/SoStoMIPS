@@ -7,6 +7,6 @@ v = $(expr ${j} + ${j} );
 
 p = $(expr ${v} + ${i}) ;
 
-w = $(expr ${v} - ${p}) ;
+w = $(expr ${v} - ${p});
 
 exit
