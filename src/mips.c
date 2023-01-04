@@ -101,7 +101,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     switch (liste->quad->kind) {
     case Q_ADD:
         printf(" ADD ");
-        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
+        if (liste->quad->res->kind == QO_ID && (idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
 
             // load the op1 in a temporary variable
 

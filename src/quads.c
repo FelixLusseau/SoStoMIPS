@@ -9,10 +9,12 @@ int I_quadOP = 0;
 int I_liste = 0;
 int I_embranchment = 0;
 int I_case_test = 0;
+int I_for_brnch = 0;
 
 quads *GC_quad[GC_TAILLE];
 quadOP *GC_quadOP[GC_TAILLE];
 listQ *GC_liste[GC_TAILLE];
+for_brnch *GC_for_brnch[GC_TAILLE];
 embranchment *GC_embranchment[GC_TAILLE];
 case_test *GC_case_test[GC_TAILLE];
 
@@ -68,10 +70,10 @@ void QOfree(quadOP *op) {
         return;
     }
     if ((op->kind == QO_ID || op->kind == QO_STR || op->kind == QO_TAB)) {
-        // printf("    QOfree ID/STR: %s\n", op->u.name);
+        //printf("    QOfree ID/STR: %s\n", op->u.name);
         free(op->u.name);
     } else {
-        // printf("    QOfree CST: %i\n", op->u.cst);
+        //printf("    QOfree CST: %i\n", op->u.cst);
     }
     free(op);
 }
@@ -310,16 +312,16 @@ listQ *Lconcat(listQ *list, listQ *list2) {
 
 void Lfree() {
     for (int i = 0; i <= I_quadOP; i++) {
-        // printf("QOfree %i/%i", i, I_quadOP);
+        //printf("QOfree %i/%i", i, I_quadOP);
         QOfree(GC_quadOP[i]);
     }
     printf("\n");
     for (int j = 0; j <= I_quad; j++) {
-        // printf("Qfree %i/%i\n", j, I_quad);
+        //printf("Qfree %i/%i\n", j, I_quad);
         Qfree(GC_quad[j]);
     }
     for (int k = 0; k <= I_liste; k++) {
-        // printf("Lfree %i/%i\n", k, I_liste);
+        //printf("Lfree %i/%i\n", k, I_liste);
         free(GC_liste[k]);
     }
     for (int k = 0; k <= I_embranchment; k++) {
@@ -327,6 +329,9 @@ void Lfree() {
     }
     for (int k = 0; k <= I_case_test; k++) {
         free(GC_case_test[k]);
+    }
+    for (int k = 0; k <= I_for_brnch; k++) {
+        free(GC_for_brnch[k]);
     }
 }
 
@@ -398,7 +403,9 @@ void CTcomplete(case_test *Case, quadOP *id_test) {
 
 for_brnch *FBcreat(void){
 
-    for_brnch *For = malloc(sizeof(for_brnch));
+    for_brnch *embr = malloc(sizeof(for_brnch));
+    GC_for_brnch[I_for_brnch] = embr;
+    I_for_brnch++;
 
-    return For;
+    return embr;
 }
