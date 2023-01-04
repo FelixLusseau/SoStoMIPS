@@ -95,6 +95,8 @@ int charToInt(char c){
 }
 
 int isTemporaryVariable(const char * varName) {
+    if(varName == NULL || strlen(varName) < 9 )
+        return 0;
     if(!strncmp(varName,"__TEMP__", 8))
         return charToInt(varName[8]);
     return 0;
@@ -130,6 +132,25 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         break;
     case Q_LESS:
         printf(" LESS ");
+
+        if((idx=isTemporaryVariable(liste->quad->res->u.name))){
+            
+            // load the op1 in a temporary variable
+            sprintf(buffer,"lw $t%d, %s\n",idx+1,liste->quad->op1->u.name);
+
+            // concatenation
+            
+            if(liste->quad->op2->kind==QO_CST)
+                sprintf(buffer + strlen(buffer), "subi $t%d, $t%d, %d\n",idx,idx+1,liste->quad->op2->u.cst);
+            else {
+                sprintf(buffer + strlen(buffer),"lw $t%d, %s\n",idx+2,liste->quad->op2->u.name);
+                sprintf(buffer + strlen(buffer), "sub $t%d, $t%d, $t%d\n",idx,idx+1,idx+2);
+            }  
+        }
+        else {
+            // if the res var is not a temporary variable
+        }
+
         break;
     case Q_MUL:
         printf(" MUL ");

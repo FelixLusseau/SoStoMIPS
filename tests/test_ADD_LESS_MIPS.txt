@@ -1,10 +1,12 @@
 i=8;
 c=4;
 
-j=$(expr ${i} + ${c}) ;
+j=$(expr ${i} - ${c}) ;
 
 v = $(expr ${j} + ${j} );
 
 p = $(expr ${v} + ${i}) ;
+
+w = $(expr ${v} - ${p}) ;
 
 exit
