@@ -1,4 +1,4 @@
 i=8;
-declare tablo[4];
+declare tablo[5];
 echo ${i};
 exit
