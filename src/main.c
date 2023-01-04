@@ -11,9 +11,9 @@ struct tos_entry **tos;
 int depth = 0;
 int width[MAX_TOS_SIZE] = {0};
 
-int nb_temp = 1; // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur création
-listQ *Lglobal;  // liste des quads
-int taille_parametres =0; // taille de la table des variable '$'
+int nb_temp = 1;           // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur création
+listQ *Lglobal;            // liste des quads
+int taille_parametres = 0; // taille de la table des variable '$'
 
 int main(int argc, char **argv) {
     if (argc < 1) {
