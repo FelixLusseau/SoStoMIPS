@@ -63,6 +63,10 @@ test :  $(OUTPUT)
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
 			./$(OUTPUT) < $${file} ; \
+			if ! [ -z $? ] ; then \
+				echo "\n\033[91mError in $${file}\033[0m" ; \
+				exit 1 ; \
+			fi ; \
         done
 
 test_mips :  $(OUTPUT)
