@@ -39,7 +39,7 @@ typedef struct quads {
     enum{Q_ADD=100,   // +
          Q_LESS,      // -
          Q_CONCAT,    // concaténation
-         Q_CONCAT_OP, // concaténation d'opérande ( appel de fonction )
+         Q_CONCAT_OP, // concaténation d'opérande ( appel de fonction ) pas utilisé pour l'instant
          Q_MUL,       // *
          Q_DIV,       // ./.
          Q_MOD,       // %
@@ -130,5 +130,12 @@ typedef struct for_brnch {
 } for_brnch;
 
 for_brnch *FBcreat(void);
+
+
+/* utilisé pour liste_operandes contient le nombre d'opérande ou le nom du tableau */
+typedef struct lst_op {
+    int taille;
+    char * nom_tab;
+} lst_op;
 
 #endif

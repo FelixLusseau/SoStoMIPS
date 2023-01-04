@@ -179,7 +179,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
 
             // assign what is in this temporary variable to the res variable:
 
-            if ((idx2 = isTemporaryVariable(liste->quad->res->u.name))<0) {
+            if (liste->quad->op1->kind==QO_ID && (idx2 = isTemporaryVariable(liste->quad->res->u.name))<0) {
 
                 sprintf(buffer, "sw $s%d, %s\n", (idx)%7, liste->quad->res->u.name);
             } else
