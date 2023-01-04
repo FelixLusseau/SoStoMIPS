@@ -245,7 +245,7 @@ ID '=' concatenation {
     taille_parametres=$2;
   }
 
-  for(int i=1; i<$2; i++){
+  for(int i=1; i<=$2; i++){
     quadOP *index=QOcreat(QO_CST,NULL,i);
     quadOP *tab=QOcreat(QO_TAB,"$",0);
     quads *q=Qcreat(Q_ECHO,tab,index,NULL);

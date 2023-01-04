@@ -224,6 +224,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         break;
     case Q_ECHO:
         printf(" ECHO ");
+        
 
         break;
     case Q_FCT:
@@ -234,10 +235,34 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         break;
     case Q_TAB_CREAT:
         printf(" TAB[]CREAT ");
-        
+
         break;
     case Q_TAB_EQUAL:
         printf(" TAB[]EQUAL ");
+
+        if(liste->quad->op1->kind == QO_CST)
+            sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++)%7, liste->quad->op1->u.cst*4); // indice
+        else {  // indice
+            
+            sprintf(buffer, "li $t7, 4\n");
+            sprintf(buffer + strlen(buffer), "lw $t8, %s\n", liste->quad->op1->u.name); 
+
+             
+            sprintf(buffer + strlen(buffer), "mul $t%d, $t8, $t7\n", (curr_temp_reg++)%7); 
+
+        }
+
+
+        if(liste->quad->op2->kind == QO_CST)
+            sprintf(buffer + strlen(buffer), "li $t%d, %d\n ",(curr_temp_reg++)%7, liste->quad->op2->u.cst); // valeur
+        else
+            sprintf(buffer + strlen(buffer), "lw $t%d, %s\n",(curr_temp_reg++)%7, liste->quad->op2->u.name); // valeur
+
+
+        
+
+        sprintf(buffer + strlen(buffer), "sw $t%d, %s($t%d)\n", (curr_temp_reg-1)%7,liste->quad->res->u.name, (curr_temp_reg-2)%7);
+
         break;
     case Q_TAB_GIVE:
         printf(" TAB[]GIVE ");
