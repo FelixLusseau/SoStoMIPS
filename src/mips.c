@@ -102,7 +102,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     switch (liste->quad->kind) {
     case Q_ADD:
         printf(" ADD ");
-        if (liste->quad->res->kind== QO_ID && (idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
+        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
 
             // load the op1 in a temporary variable
 
@@ -128,8 +128,8 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         } else {
             // if the res var is not a temporary variable
         }
+
         break;
-        
     case Q_LESS:
         printf(" LESS ");
 
@@ -195,6 +195,7 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
                     sprintf(buffer + strlen(buffer), "sw $t7, %s\n",
                             liste->quad->res->u.name); // flottants et entiers? à chaque fois qu'on déclare une nouvelle variable on appelle .data
                 } else {
+
                     sprintf(buffer + strlen(buffer), "la $t7, $t%d\n", idx2%7);
                 }
             } else {
@@ -207,15 +208,6 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
                 } else
                     sprintf(buffer, "la $t%d, $t%d\n", idx%7, idx2%7);
             }
-                sprintf(buffer + strlen(buffer), "la $t7, $t%d\n", idx2 % 7);
-            }
-        } else {
-
-            // assign what is in this temporary variable to the res variable:
-            if (liste->quad->op1->kind==QO_ID && (idx2 = isTemporaryVariable(liste->quad->res->u.name))<0) {
-                sprintf(buffer, "sw $s%d, %s\n", (idx) % 7, liste->quad->res->u.name);
-            } else
-                sprintf(buffer, "la $t%d, $t%d\n", idx % 7, idx2 % 7);
         }
         break;
     case Q_GOTO:
