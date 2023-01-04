@@ -20,9 +20,9 @@ noreturn void raler(int syserr, const char *msg, ...) {
     exit(EXIT_FAILURE);
 }
 
-void mips(void){
-    printf("\n### MIPS: ###\n");
-    listQ *liste=Lglobal;
+void mips(void) {
+    printf("\n### MIPS: ###\n\n");
+    listQ *liste = Lglobal;
 
     int file = open("mips.asm", O_WRONLY | O_CREAT | O_TRUNC, 0666);
     CHK(file);
@@ -30,43 +30,49 @@ void mips(void){
     int N = 1000;
     char buffer[N];
     int Woctet;
-    int taille_chaine=0;
+    int taille_chaine = 0;
 
     /*************************** Déclaration des variables ***************************************/
 
-    taille_chaine=sprintf(buffer, "      .data\n");
+    taille_chaine = sprintf(buffer, "      .data\n");
     Woctet = write(file, &buffer, taille_chaine);
     CHK(Woctet);
 
     for (unsigned int i = 0; i < HT_SIZE; i++) { // table des symboles
-        if (tos[0][i] != NULL) {
-            switch (tos[0][i]->type) {
-            case IDENTIFIER:
-                taille_chaine=sprintf(buffer, "%s:   .space 4\n", tos[0][i]->str);
-                break;
-            case FUNCTION:
-                break;
-            case ARRAY:
-                taille_chaine=sprintf(buffer, "%s:   .space %d\n", tos[0][i]->str, tos[0][i]->tab_length);
-                break;
-            }
+        if (tos[i] != NULL) {
+            struct tos_entry *entry = tos[i];
+            while (entry != NULL) {
+                if (entry->used == 1) {
+                    switch (entry->var_kind) {
+                    case IDENTIFIER:
+                        taille_chaine = sprintf(buffer, "%s:   .space 4\n", entry->str);
+                        break;
+                    case FUNCTION:
+                        break;
+                    case ARRAY:
+                        taille_chaine = sprintf(buffer, "%s:   .space %d\n", entry->str, entry->tab_length);
+                        break;
+                    }
 
-            Woctet = write(file, &buffer, taille_chaine);
-            CHK(Woctet);
+                    Woctet = write(file, &buffer, taille_chaine);
+                    CHK(Woctet);
+                }
+                entry = entry->next_lvl[0];
+            }
         }
     }
 
     /********************************* Traduction des quads en MIPS ****************************************/
-    taille_chaine=sprintf(buffer, "\nmain:\n");
+    taille_chaine = sprintf(buffer, "\nmain:\n");
     Woctet = write(file, &buffer, taille_chaine);
     CHK(Woctet);
-    
+
     while (liste != NULL) {
 
-        // QuadToMips();
+        QuadToMips(file, liste, buffer);
 
-        //Woctet = write(file, &buffer, taille_chaine);
-        //CHK(Woctet);
+        // Woctet = write(file, &buffer, taille_chaine);
+        // CHK(Woctet);
 
         liste = liste->next;
     }
@@ -75,6 +81,8 @@ void mips(void){
 }
 
 void QuadToMips(int file, listQ *liste, char *buffer) {
+    (void)file;
+    (void)buffer;
 
     switch (liste->quad->kind) {
     case Q_ADD:
@@ -106,6 +114,21 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         break;
     case Q_EXIT:
         printf(" EXIT ");
+        break;
+    case Q_RETURN:
+        printf(" RETURN ");
+        break;
+    case Q_READ:
+        printf(" READ ");
+        break;
+    case Q_ECHO:
+        printf(" ECHO ");
+        break;
+    case Q_FCT:
+        printf(" FCT: ");
+        break;
+    case Q_FCT_CALL:
+        printf(" CALL FCT () ");
         break;
     case Q_TAB_CREAT:
         printf(" TAB[]CREAT ");
@@ -155,5 +178,4 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     }
 
     printf("\n");
-
 }

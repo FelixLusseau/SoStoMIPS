@@ -47,6 +47,10 @@ typedef struct quads {
          Q_GOTO,      // goto addresse
          Q_EXIT,      // exit
          Q_RETURN,    // return
+         Q_READ,      // var = read
+         Q_ECHO,      // echo tab[i] où tab=$
+         Q_FCT,       // declaration fonction
+         Q_FCT_CALL,  // appel de fonction
          Q_TAB_CREAT, // créer []
          Q_TAB_EQUAL, // tab[i]=val
          Q_TAB_GIVE,  // tab[i]

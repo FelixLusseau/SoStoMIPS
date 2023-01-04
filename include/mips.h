@@ -13,7 +13,7 @@
 #include "quads.h"
 #include "tos.h"
 extern listQ *Lglobal;
-extern struct tos **tos[MAX_DEPTH];
+extern struct tos_entry **tos;
 
 void mips(void);
 

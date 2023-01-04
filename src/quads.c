@@ -8,7 +8,7 @@ int I_quad = 0;
 int I_quadOP = 0;
 int I_liste = 0;
 int I_embranchment = 0;
-int I_case_test=0;
+int I_case_test = 0;
 
 quads *GC_quad[GC_TAILLE];
 quadOP *GC_quadOP[GC_TAILLE];
@@ -39,7 +39,7 @@ quadOP *QOcreat(int Type, char *str, int val) {
     I_quadOP++;
 
     qo->kind = Type;
-    if ( !(Type == QO_ID || Type == QO_STR || Type == QO_TAB || Type == QO_FCT) ) {
+    if (!(Type == QO_ID || Type == QO_STR || Type == QO_TAB || Type == QO_FCT)) {
         printf("  cst:%i\n", val);
         qo->u.cst = val;
     } else {
@@ -68,10 +68,10 @@ void QOfree(quadOP *op) {
         return;
     }
     if ((op->kind == QO_ID || op->kind == QO_STR || op->kind == QO_TAB)) {
-        //printf("    QOfree ID/STR: %s\n", op->u.name);
+        // printf("    QOfree ID/STR: %s\n", op->u.name);
         free(op->u.name);
     } else {
-        //printf("    QOfree CST: %i\n", op->u.cst);
+        // printf("    QOfree CST: %i\n", op->u.cst);
     }
     free(op);
 }
@@ -130,7 +130,7 @@ void Qaffiche(quads *q) {
     printf(" res: ");
     if (q->res != NULL) {
         QOaffiche(q->res);
-    }else{
+    } else {
         printf("NULL ");
     }
 
@@ -164,6 +164,21 @@ void Qaffiche(quads *q) {
         break;
     case Q_EXIT:
         printf(" EXIT ");
+        break;
+    case Q_RETURN:
+        printf(" RETURN ");
+        break;
+    case Q_READ:
+        printf(" READ ");
+        break;
+    case Q_ECHO:
+        printf(" ECHO ");
+        break;
+    case Q_FCT:
+        printf(" FCT: ");
+        break;
+    case Q_FCT_CALL:
+        printf(" CALL FCT () ");
         break;
     case Q_TAB_CREAT:
         printf(" TAB[]CREAT ");
@@ -215,14 +230,14 @@ void Qaffiche(quads *q) {
     printf(" op1: ");
     if (q->op1 != NULL) {
         QOaffiche(q->op1);
-    }else{
+    } else {
         printf("NULL ");
     }
 
     printf(" op2: ");
     if (q->op2 != NULL) {
         QOaffiche(q->op2);
-    }else{
+    } else {
         printf("NULL ");
     }
 
@@ -277,11 +292,11 @@ quads *LgetQuad(listQ *list, int value_idx) {
         return list->quad;
     }
 
-    int index=0;
+    int index = 0;
     listQ *it = list->next;
-    while (it->next != NULL && index<value_idx) {
+    while (it->next != NULL && index < value_idx) {
         it = it->next;
-        index+=1;
+        index += 1;
     }
     return it->quad;
 }
@@ -295,16 +310,16 @@ listQ *Lconcat(listQ *list, listQ *list2) {
 
 void Lfree() {
     for (int i = 0; i <= I_quadOP; i++) {
-        //printf("QOfree %i/%i", i, I_quadOP);
+        // printf("QOfree %i/%i", i, I_quadOP);
         QOfree(GC_quadOP[i]);
     }
     printf("\n");
     for (int j = 0; j <= I_quad; j++) {
-        //printf("Qfree %i/%i\n", j, I_quad);
+        // printf("Qfree %i/%i\n", j, I_quad);
         Qfree(GC_quad[j]);
     }
     for (int k = 0; k <= I_liste; k++) {
-        //printf("Lfree %i/%i\n", k, I_liste);
+        // printf("Lfree %i/%i\n", k, I_liste);
         free(GC_liste[k]);
     }
     for (int k = 0; k <= I_embranchment; k++) {
@@ -347,7 +362,7 @@ void complete(listQ *listGT, int addresse) {
 
     while (it != NULL) {
         if (it->quad->kind != Q_GOTO && it->quad->kind != Q_IF) {
-            printf("ERREUR COMPLETION D'UN GOTO: %i/%i/%i \n",it->quad->kind,Q_IF,Q_GOTO);
+            printf("ERREUR COMPLETION D'UN GOTO: %i/%i/%i \n", it->quad->kind, Q_IF, Q_GOTO);
         } else if (it->quad->res == NULL) {
             quadOP *add = QOcreat(QO_ADDR, NULL, addresse);
             it->quad->res = add;
@@ -363,12 +378,12 @@ case_test *CTcreat(void) {
     GC_case_test[I_case_test] = Case;
     I_case_test++;
 
-    Case->branch=EMcreat();
-    Case->test=Lcreat();
+    Case->branch = EMcreat();
+    Case->test = Lcreat();
     return Case;
 }
 
-void CTcomplete(case_test *Case, quadOP *id_test){
+void CTcomplete(case_test *Case, quadOP *id_test) {
     listQ *it = Case->test;
 
     while (it != NULL) {

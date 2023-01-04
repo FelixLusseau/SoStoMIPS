@@ -1,7 +1,5 @@
       .data
-new_phrase:   .space 4
-:   .space 4
-i:   .space 4
-mots:   .space 100
+a:   .space 4
+b:   .space 4
 
 main:

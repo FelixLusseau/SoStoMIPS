@@ -9,11 +9,14 @@
 
 extern int yylex(); 
 extern char* text;
-extern void yyerror(const char * msg);
+extern void yyerror(const char *msg);
 extern listQ *Lglobal;
-extern struct tos ** tos[MAX_DEPTH];
+extern struct tos_entry **tos;
 extern int depth;
+extern int taille_parametres;
+extern int width[MAX_TOS_SIZE];
 %}
+
 %union{char *strval; 
        int intval; 
        listQ* listQ; 
@@ -64,30 +67,32 @@ extern int depth;
 M: %empty {printf("M->empty\n");$$=Lglobal->taille;}
 
 for_id_liste_branchement: %empty{
-
+  // index=0;
   quadOP *index=QOcreat_temp();
   quadOP *num=QOcreat(QO_CST,NULL,0);
   quads *q1=Qcreat(Q_EQUAL,index,num,NULL);
   Lappend(Lglobal,q1);
 
-
+  // index+=1;
   quads *q2=Qcreat(Q_ADD,index,index,QOcreat(QO_CST,NULL,1));
   Lappend(Lglobal,q2);
 
   $$->addr_goback=Lglobal->taille;
 
+  // temp= if index > ?;
   quadOP *temp=QOcreat_temp();
   quads *q3=Qcreat(Q_IF_GT,temp,index,NULL); // la taille est encore inconnue
   Lappend(Lglobal,q3);
   
   $$->Max=q3;
 
+  // if temp goto ?;
   quads *q4=Qcreat(Q_IF,NULL,temp,NULL); // le saut est encore inconnue
   Lappend(Lglobal,q4);
 
   $$->GoTo=q4;
 
-  // le nom est encore inconnue
+  // id = $[index];
   quadOP *tab=QOcreat(QO_TAB,"$",0);
   quads *q5=Qcreat(Q_TAB_GIVE,NULL,tab,index);
   Lappend(Lglobal,q5);
@@ -111,7 +116,6 @@ liste_instructions ';' instruction {
   Lappend(Lglobal,nextQuad);
   addr->u.cst=Lglobal->taille+1;
   $$=addr;
-
 }
 |instruction {
   printf("liste_instruction->instruction\n");
@@ -121,20 +125,21 @@ liste_instructions ';' instruction {
   Lappend(Lglobal,nextQuad);
   addr->u.cst=Lglobal->taille+1;
   $$=addr;
-
-};
+  };
 
 instruction: 
-ID '=' concatenation                                   
-{ printf("instruction-> ID = concatenation\n");
-  add_to_table(tos[0], $1, IDENTIFIER, 0);
+ID '=' concatenation { 
+  printf("instruction-> ID = concatenation\n");
+  add_to_table(tos, $1, IDENTIFIER, 0);
+  update_type(tos, $1, STRING);
+
   quadOP* res= QOcreat(QO_ID,$1,0);
   quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
   Lappend(Lglobal,q);
-  free($1);
-}
+  }
+
 | ID '[' operande_entier ']' '=' concatenation { 
-  add_to_table(tos[0], $1, ARRAY, atoi((char*)$3));
+  add_to_table(tos, $1, ARRAY, atoi((char*)$3));
 
   printf("instruction-> ID [ operande_entier ] = concatenation\n");
 
@@ -144,9 +149,10 @@ ID '=' concatenation
   Lappend(Lglobal,q);
 
   }
+
 | DECLARE ID '[' ID ']' { 
   printf("instruction-> DECLARE ID [ ENTIER ] \n");
-  add_to_table(tos[0], $2, ARRAY, atoi((char*)$4));
+  add_to_table(tos, $2, ARRAY, atoi((char*)$4));
 
   int index=0;
   if(!ToInt(&index,$4)){
@@ -157,8 +163,8 @@ ID '=' concatenation
   quadOP *idx=QOcreat(QO_CST,NULL,index);
   quads *q=Qcreat(Q_TAB_CREAT,tab,idx,NULL);
   Lappend(Lglobal,q);
-
   }
+
 | IF test_bloc M THEN liste_instructions M else_part FI    { 
   printf("instruction-> IF test_bloc THEN liste_instructions else_part FI \n");
 
@@ -169,13 +175,27 @@ ID '=' concatenation
   complete($2->False,addrM2+1);
  
 }
-| FOR ID DO liste_instructions DONE                 { 
+| FOR ID for_id_liste_branchement DO  liste_instructions DONE M  { 
   printf("instruction->FOR ID DO IN liste_instructions DONE \n");
-  add_to_table(tos[0], $2, IDENTIFIER, 0);
+  add_to_table(tos, $2, IDENTIFIER, 0);
+
+  int addrM0=$3->addr_goback;
+  int addrM1=$7;
+
+  // complètes les instructions au début de la boucle (for_id_liste_branchement)
+  $3->Max->op2=QOcreat(QO_CST,NULL,taille_parametres);
+  $3->GoTo->res=QOcreat(QO_ADDR,NULL,addrM1+1);
+  $3->Id->res=QOcreat(QO_ID,$2,0);
+
+  $5->u.cst=addrM0; // boucle
   }
 | FOR ID IN liste_operandes for_id_liste_branchement DO liste_instructions DONE M { 
   printf("instruction-> FOR ID IN liste_operandes DO liste_instructions DONE  \n");
-  add_to_table(tos[0], $2, IDENTIFIER, 0);
+  add_to_table(tos, $2, IDENTIFIER, 0);
+
+  if( $4 > taille_parametres ){
+    taille_parametres=$4;
+  }
 
   int addrM0=$5->addr_goback;
   int addrM1=$9;
@@ -200,8 +220,8 @@ ID '=' concatenation
   complete($3->False,addrM2+1);
 
   $6->u.cst=addrM0+1;
-
   }
+
 | UNTIL M test_bloc M DO liste_instructions M DONE { 
   printf("instruction-> UNTIL test_bloc DO liste_instructions DONE \n");
 
@@ -213,34 +233,66 @@ ID '=' concatenation
   complete($3->False,addrM1+1);
 
   $6->u.cst=addrM0+1;
-  
   }
+
 | CASE operande IN liste_cas ESAC { 
   printf("instruction-> CASE operande IN liste_cas ESAC \n");
 
   CTcomplete($4,$2);
-
   }
-| MYECHO liste_operandes                               { printf("instruction-> MYECHO liste_operandes \n");}
-| READ ID                                              { printf("instruction-> READ ID \n");}
-| READ ID '[' operande_entier ']'                      { printf("instruction-> READ ID [ operande_entier ] \n");}
-| declaration_de_fonction                              { printf("instruction-> declaration_de_fonction \n");}
-| appel_de_fonction                                    { printf("instruction-> appel_de_fonction \n");}
+
+| MYECHO liste_operandes { 
+  printf("instruction-> MYECHO liste_operandes \n");
+  if($2>taille_parametres){
+    taille_parametres=$2;
+  }
+
+  for(int i=1; i<$2; i++){
+    quadOP *index=QOcreat(QO_CST,NULL,i);
+    quadOP *tab=QOcreat(QO_TAB,"$",0);
+    quads *q=Qcreat(Q_ECHO,tab,index,NULL);
+    Lappend(Lglobal,q);
+  }
+}
+| READ ID { 
+  printf("instruction-> READ ID \n");
+  quadOP *id=QOcreat(QO_ID,$2,0);
+  quads *q=Qcreat(Q_READ,id,NULL,NULL);
+  Lappend(Lglobal,q);
+}
+| READ ID '[' operande_entier ']' { 
+  printf("instruction-> READ ID [ operande_entier ] \n");
+  quadOP *tab=QOcreat(QO_TAB,$2,0);
+  quadOP *index=$4;
+  quads *q=Qcreat(Q_READ,tab,index,NULL);
+  Lappend(Lglobal,q);
+}
+| declaration_de_fonction { 
+  printf("instruction-> declaration_de_fonction \n");
+  }
+
+| appel_de_fonction { 
+  printf("instruction-> appel_de_fonction \n");
+  }
+
 | RETURN { 
   printf("instruction-> RETURN \n");
   quads *q=Qcreat(Q_RETURN,NULL,NULL,NULL);
   Lappend(Lglobal,q);
   }
+
 | RETURN operande_entier { 
   printf("instruction-> RETURN operande_entier \n");
   quads *q=Qcreat(Q_RETURN,$2,NULL,NULL);
   Lappend(Lglobal,q);
   }
+
 | EXIT { 
   printf("instruction->EXIT\n");
   quads *q=Qcreat(Q_EXIT,NULL,NULL,NULL);
   Lappend(Lglobal,q);
  }
+
 | EXIT operande_entier { 
   printf("instruction->EXIT operande_entier\n");
   quads *q=Qcreat(Q_EXIT,$2,NULL,NULL);
@@ -259,8 +311,13 @@ ELIF test_bloc M THEN liste_instructions M else_part  {
   
   $5->u.cst=addrM2+1;
   }
-| ELSE liste_instructions                         { printf("else_part->ELSE liste_instructions\n");}
-| %empty                                          { printf("else_part->empty\n");};
+| ELSE liste_instructions { 
+  printf("else_part->ELSE liste_instructions\n");
+  }
+
+| %empty { 
+  printf("else_part->empty\n");
+  };
 
 liste_cas:
 liste_cas filtre ')' M liste_instructions  ';' ';'  { 
@@ -282,9 +339,9 @@ liste_cas filtre ')' M liste_instructions  ';' ';'  {
   }else if($2!=NULL){
     $$=$2;
   }
-
   }
-| filtre ')' M liste_instructions  ';' ';'          { 
+
+| filtre ')' M liste_instructions  ';' ';' { 
   printf("liste_cas->filtre ) liste_instructions ; ; \n");
   
   if($1!=NULL){
@@ -296,7 +353,6 @@ liste_cas filtre ')' M liste_instructions  ';' ';'  {
   }else{ /* $1 = "*"  */  
     $$=NULL;
   }
-
   };
 
 filtre:
@@ -317,8 +373,8 @@ ID {
   Lappend($$->branch->True,True);
   Lappend($$->branch->False,False);
   Lappend($$->test,test);
-
   }
+
 | CHAINE { 
 
   printf("filtre->CHAINE\n");
@@ -338,6 +394,7 @@ ID {
   Lappend($$->branch->False,False);
   Lappend($$->test,test);
   }
+
 | filtre '|' M ID  { 
   printf("filtre->filtre | MOT\n");
 
@@ -371,8 +428,8 @@ ID {
   Lappend($$->branch->False,False);
   Lappend($$->test,test);
   }
-
   }
+
 | filtre '|' M CHAINE { 
   printf("filtre->filtre | CHAINE\n");
 
@@ -402,32 +459,33 @@ ID {
   Lappend($$->test,test);
   }
   }
-| '*'                { printf("filtre-> *\n"); $$=NULL;};
+| '*' { 
+  printf("filtre-> *\n"); $$=NULL;
+  };
 
 liste_operandes:
-liste_operandes operande      { 
+liste_operandes operande { 
   printf("liste_operandes-> liste_operandes operande \n");
 
-  int taille=(int)((ceil(log10($1+1))+1)*sizeof(char));
-  char id[taille+2];
-  id[taille+1]='\0';
-  sprintf(id,"$%d",$1+1);
-  
-  quadOP *arg1=QOcreat(QO_ID,id,0);
-  quads *q=Qcreat(Q_EQUAL,arg1,$2,NULL);
-  Lappend(Lglobal,q);
-
   $$=$1+1;
+
+  quadOP *index=QOcreat(QO_CST,NULL,$$);
+  quadOP *tab=QOcreat(QO_TAB,"$",0);
+  quads *q=Qcreat(Q_TAB_EQUAL,tab,index,$2);
+  Lappend(Lglobal,q);
   }
-| operande                    { 
+
+| operande { 
   printf("liste_operandes-> operande \n");
 
-  quadOP *arg1=QOcreat(QO_ID,"$1",0);
-  quads *q=Qcreat(Q_EQUAL,arg1,$1,NULL);
+  quadOP *index=QOcreat(QO_CST,NULL,1);
+  quadOP *tab=QOcreat(QO_TAB,"$",0);
+  quads *q=Qcreat(Q_TAB_EQUAL,tab,index,$1);
   Lappend(Lglobal,q);
 
   $$=1;
   }
+
 | '$' '{' ID '[' '*' ']' '}'  { 
   printf("liste_operandes-> $ { ID [ * ] } \n");
 
@@ -449,17 +507,17 @@ concatenation operande {
   Lappend(Lglobal,q);
   $$=temp;
 }
+
 | operande { 
   printf("concatenation-> operande \n");  
   $$=$1;
-} ;
+};
 
 
 test_bloc:
 TEST test_expr  { 
   printf("test_bloc-> TEST test_expr \n"); 
   $$=$2;
-
   };
 
 test_expr:
@@ -470,9 +528,11 @@ test_expr O M test_expr2 {
   $$=$4;
   listQ *T=Lconcat($1->True,$$->True);
   $$->True=T;
-
   }
-| test_expr2 {  printf("test_expr-> test_expr2 \n"); $$=$1; } ;
+
+| test_expr2 {  
+  printf("test_expr-> test_expr2 \n"); $$=$1; 
+  };
 
 
 test_expr2:
@@ -492,8 +552,8 @@ test_expr2 A M test_expr3 {
   $$=EMcreat();
   Lappend($$->True,if_true3);
   $$->False=$1->False;
-
   } 
+
 | test_expr2 A M test_expr3_0 { 
   printf("test_expr2-> test_expr2 A test_expr3 \n"); 
 
@@ -503,6 +563,7 @@ test_expr2 A M test_expr3 {
   $$->True = $1->True;
   $$->False = Lconcat($1->False,$4->False);
   }
+
 | test_expr3 { 
   printf("test_expr2-> test_expr3 \n"); 
   
@@ -519,19 +580,26 @@ test_expr2 A M test_expr3 {
   Lappend($$->False,if_false3);
   printf("3\n");
   }
-| test_expr3_0 { printf("test_expr2-> test_expr3_0 \n"); $$=$1;};
+
+| test_expr3_0 { 
+  printf("test_expr2-> test_expr3_0 \n"); $$=$1;
+  };
 
 test_expr3_0:
-'(' test_expr ')'       { printf("test_expr3_0 -> ( test_expr ) \n"); $$=$2; }
+'(' test_expr ')' { 
+  printf("test_expr3_0 -> ( test_expr ) \n"); $$=$2; 
+  }
+
 | '!' '(' test_expr ')' { 
   printf("test_expr3_0 -> ! ( test_expr ) \n"); 
   $$=EMcreat(); 
   $$->True = $3->False;
   $$->False = $3->True;
-  } ;
+  };
 
 test_expr3:
-test_instruction      { printf("test_expr3 -> test_instruction \n"); $$=$1;}
+test_instruction { 
+  printf("test_expr3 -> test_instruction \n"); $$=$1;}
 | '!' test_instruction  { 
   printf("test_expr3-> ! test_instruction \n");
   quadOP *temp=QOcreat_temp();
@@ -548,6 +616,7 @@ concatenation '=' concatenation       {
   Lappend(Lglobal,q);
   $$=temp;
   }
+
 | concatenation '!' '=' concatenation { 
   printf("test_instruction-> concatenation != concatenation \n");
   quadOP *temp=QOcreat_temp();
@@ -555,6 +624,7 @@ concatenation '=' concatenation       {
   Lappend(Lglobal,q);
   $$=temp;
   }
+
 | operateur1 concatenation { 
   printf("test_instruction-> operateur1 concatenation \n");
   quadOP* temp=QOcreat_temp();
@@ -572,6 +642,7 @@ concatenation '=' concatenation       {
   Lappend(Lglobal,q);
   $$=temp;
   }
+
 | operande operateur2 operande { 
   printf("test_instruction-> operande operateur2 operande \n");
   int oper=0;
@@ -622,6 +693,7 @@ operande:
   $$=QOcreat(QO_ID,$3,0);
   free($3);
   }
+
 | '$' '{' ID '[' operande_entier ']' '}' {
    printf("operande-> $ { ID [ operande_entier ] }\n");
 
@@ -638,6 +710,7 @@ operande:
   $$=QOcreat(QO_STR,$1,0);
   free($1);
   }
+
 | '$' ID { 
   printf("operande-> $ ENTIER\n");
 
@@ -648,6 +721,7 @@ operande:
     char id[taille+2];
     id[taille+1]='\0';
     sprintf(id,"$%d",entier);
+    
 
     $$=QOcreat(QO_ID,id,0);
     free($2);
@@ -656,23 +730,28 @@ operande:
       printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
   }
 } 
+
 | '$' '*' { 
   printf("operande-> $ *\n");
-  $$=QOcreat(QO_ID,"$*",0);
+  $$=QOcreat(QO_TAB,"$",0);
   }
+
 | '$' '?' { 
-  printf("operande-> $ ?\n");
+  printf("operande-> $ ?\n"); // résultat d'une fonction
   $$=QOcreat(QO_ID,"$?",0);
   }
+
 | CHAINE { 
   printf("operande-> CHAINE:%s\n",$1); 
   $$=QOcreat(QO_STR,$1,0);
   free($1);
   }
+
 | '$' '(' EXPR somme_entiere ')' { 
   printf("operande-> $ ( EXPR somme_entiere )\n");
   $$=$4;
   }
+
 | '$' '(' appel_de_fonction ')'          { printf("operande-> $ ( appel_de_fonction )\n");} ;
 
 
@@ -692,6 +771,7 @@ somme_entiere plus_ou_moin produit_entier {
 
   $$=temp;
 }
+
 | produit_entier { 
   printf("somme_entiere-> produit_entier \n");
   $$=$1;
@@ -718,6 +798,7 @@ produit_entier fois_div_mod operande_entier {
   Lappend(Lglobal,q);
   $$=temp;
 }
+
 |operande_entier { 
   printf("produit_entier-> operande_entier \n");
   $$=$1;
@@ -731,6 +812,7 @@ operande_entier:
     $$=op;
     free($3);
   }
+
 | '$' '{' ID '[' operande_entier ']' '}' { 
   printf("operande_entier-> $ { ID [ operande_entier ] } \n");
   quadOP* tab=QOcreat(QO_TAB,$3,0);
@@ -740,6 +822,7 @@ operande_entier:
   $$=temp;
   free($3);
   }
+
 | '$' ID { 
   printf("operande_entier-> $ ENTIER \n");
   int entier;
@@ -758,6 +841,7 @@ operande_entier:
       printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
   }
   }
+
 | plus_ou_moin '$' '{' ID '}' { 
   printf("operande_entier-> plus_ou_moin $ { ID } \n");
 
@@ -772,6 +856,7 @@ operande_entier:
     Lappend(Lglobal,q);
     free($4);
   }
+
 | plus_ou_moin '$' '{' ID '[' operande_entier ']' '}' {
  printf("operande_entier-> plus_ou_moin $ { ID [ operande_entier ] }\n");
 
@@ -790,6 +875,7 @@ operande_entier:
   Lappend(Lglobal,q);
   free($4);
  }
+
 | plus_ou_moin '$' ID  { 
   printf("operande_entier-> plus_ou_moin $ ENTIER\n");
   int entier;
@@ -816,6 +902,7 @@ operande_entier:
       printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
   }
   }
+  
 | ID { 
   printf("operande_entier-> ENTIER \n");
   int entier;
@@ -824,6 +911,7 @@ operande_entier:
   }
   free($1);
 }
+
 | plus_ou_moin ID { 
   printf("operande_entier-> plus_ou_moin ENTIER\n");
   int entier;
@@ -848,17 +936,49 @@ plus_ou_moin: '+' {$$=1;} | '-' {$$=0;};
 fois_div_mod: '*' {$$=1;}| '/' {$$=2;}| '%' {$$=3;};
 
 declaration_de_fonction:
-ID '(' ')' '{' /* { depth++; tos[depth] = create_table(); } */ decl_loc /* { depth--; } */ liste_instructions '}' { 
+ID '(' ')' '{' { depth++; 
+                /* printf("deeeeeeppppppttttthhhh : %d  ", depth); */ 
+                quadOP *fct=QOcreat(QO_FCT,$1,0);
+                quads *q=Qcreat(Q_FCT,fct,NULL,NULL);
+                Lappend(Lglobal,q);
+                } 
+decl_loc liste_instructions { depth--; 
+                              /* printf("deeeeeeppppppttttthhhh ------ : %d   ", depth); */ } 
+'}' 
+  { 
   printf("declaration_de_fonction-> ID ( ) { decl_loc liste_instructions }\n");
-add_to_table(tos[0], $1, FUNCTION, 0);} ;
+  add_to_table(tos, $1, FUNCTION, 0);
+} ;
 
 decl_loc:
-decl_loc LOCAL ID '=' concatenation ';' { printf("decl_loc-> decl_loc LOCAL ID = concatenation \n");
-add_to_table(tos[depth], $3, IDENTIFIER, 0);}
+decl_loc LOCAL ID '=' concatenation ';' { 
+  printf("decl_loc-> decl_loc LOCAL ID = concatenation \n");
+  add_to_table(tos, $3, IDENTIFIER, 0);
+
+  update_type(tos, $3, STRING);
+
+  quadOP* res= QOcreat(QO_ID,$3,0);
+  quads *q=Qcreat(Q_EQUAL,res,$5,NULL);
+  Lappend(Lglobal,q);
+}
 | %empty                                { printf("decl_loc-> empty \n");};
 
+fct: %empty {
+  quadOP *addr=QOcreat(QO_ADDR,NULL,0);
+  quads *q1=Qcreat(Q_GOTO,addr,NULL,NULL);
+  Lappend(Lglobal,q1);
+
+  quadOP *fct=QOcreat(QO_FCT,NULL,0);
+  quads *q2=Qcreat(Q_FCT,fct,NULL,NULL);
+  Lappend(Lglobal,q2);
+
+}
+
 appel_de_fonction:
-ID liste_operandes  { printf("appel_de_fonction-> ID liste_operandes \n");}
+ID fct liste_operandes  { 
+  printf("appel_de_fonction-> ID liste_operandes \n");
+
+  }
 | ID                { printf("appel_de_fonction-> ID \n");} ;
  
 %%
