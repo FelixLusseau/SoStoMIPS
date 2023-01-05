@@ -134,20 +134,19 @@ instruction:
 ID '=' concatenation { 
   printf("instruction-> ID = concatenation\n");
   add_to_table(tos, $1, IDENTIFIER, 0);
-  update_type(tos, $1, STRING);
+  update_type(tos, $1, $3->id_type);
 
   quadOP* res= QOcreat(QO_ID,$1,0,$3->id_type);
   quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
   Lappend(Lglobal,q);
   }
 
-| ID '[' operande_entier ']' '=' concatenation { 
+| ID '[' operande_entier ']' '=' concatenation {
   add_to_table(tos, $1, ARRAY, atoi((char*)$3));
 
   printf("instruction-> ID [ operande_entier ] = concatenation\n");
 
-
-  quadOP *tab=QOcreat(QO_TAB,$1,0,ARRAY);
+  quadOP *tab=QOcreat(QO_TAB,$1,0,$6->id_type);
   quads *q=Qcreat(Q_TAB_EQUAL,tab,$3,$6);
   Lappend(Lglobal,q);
 
@@ -431,10 +430,10 @@ ID {
     Lappend($$->branch->False,False);
     Lappend($$->test,test);
   }else{
-  $$=CTcreat();
-  Lappend($$->branch->True,True);
-  Lappend($$->branch->False,False);
-  Lappend($$->test,test);
+    $$=CTcreat();
+    Lappend($$->branch->True,True);
+    Lappend($$->branch->False,False);
+    Lappend($$->test,test);
   }
   }
 
@@ -825,7 +824,7 @@ operande_entier:
 '$' '{' ID '}'{ 
   printf("operande_entier-> $ { ID } \n");
   struct tos_entry *id=get_from_table(tos, $3);
-  
+
   if(id->type!=INT){
 
   }
