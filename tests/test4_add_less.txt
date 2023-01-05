@@ -1,0 +1,22 @@
+i=8;
+c=4;
+
+
+var2=$(expr 1 +2);
+
+var1=$(expr ${i} - 4) ;
+
+v = $(expr ${var1} + 4);
+
+p = $(expr ${v} + ${i}) ;
+
+w = $(expr ${v} - ${p});
+
+x = $(expr ${w} - ${p});
+
+y = $(expr ${x} - ${p});
+
+z = $(expr ${y} - ${p});
+
+
+exit

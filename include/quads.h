@@ -20,17 +20,17 @@ typedef struct quadOP {
          QO_BOOL,  // booléens 
          QO_TAB    // tableau (string)
          }kind;
+    int id_type;
     union{int cst;char *name;}u;
 } quadOP;
 
-quadOP* QOcreat(int Type, char* str,int val);
-
+quadOP* QOcreat(int Type, char* str,int val,int ID_type);
 
 /* créer quadOP de type addresse, si l'adresse<0 alors elle inconnue pour l'instant */
 quadOP* QOcreat_addrs(int v);
 
 /* creer un variable temporaire pour le code 3 adresses */
-quadOP * QOcreat_temp(void);
+quadOP * QOcreat_temp(int ID_type);
 
 void QOaffiche(quadOP *op);
 
@@ -130,6 +130,8 @@ typedef struct for_brnch {
 } for_brnch;
 
 for_brnch *FBcreat(void);
+
+
 
 
 #endif

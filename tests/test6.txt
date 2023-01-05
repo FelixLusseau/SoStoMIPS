@@ -1,6 +1,19 @@
+<<<<<<< HEAD
 j = $(expr 2*6);
 
 v = $(expr ${j}*2);
 
 c = $(expr ${v}/${j});
 exit
+=======
+declare tableau[5];
+
+tableau[1]=6;
+tableau[2]=7;
+tableau[3]=8;
+tableau[4]=5;
+
+echo ${tableau[*]};
+
+exit
+>>>>>>> 72c8142e3863d1fd8b5ddfa6617b4f055050cb79

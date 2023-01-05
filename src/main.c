@@ -59,13 +59,14 @@ int main(int argc, char **argv) {
 
     printf("Yacc return : ->%d\n", r);
 
+    if (r != 0) {
+        printf("Erreur de syntaxe\n");
+        return r;
+    }
+
     mips();
 
     printf("\n### Table of symbols : ###\n\n");
-    // update_type(tos, "somme", INT);
-    //  printf("%s ", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->str);
-    //  printf("%d ", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->used);
-    //  printf("%d\n", tos[hash((unsigned char *)"somme")] /* ->next_lvl[0] */->depth);
     show_table(tos);
     free_table(tos);
 
@@ -73,5 +74,5 @@ int main(int argc, char **argv) {
     Lfree();
     printf("\n");
 
-    return r;
+    return 0;
 }

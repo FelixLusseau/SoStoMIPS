@@ -1,4 +1,5 @@
 #include "quads.h"
+#include "tos.h"
 #include <math.h>
 extern int nb_temp;
 
@@ -33,7 +34,7 @@ int ToInt(int *i, char *str) {
 
 /******************************** QUADOP ********************************************/
 
-quadOP *QOcreat(int Type, char *str, int val) {
+quadOP *QOcreat(int Type, char *str, int val, int ID_type) {
     quadOP *qo = malloc(sizeof(quadOP));
 
     GC_quadOP[I_quadOP] = qo;
@@ -48,18 +49,19 @@ quadOP *QOcreat(int Type, char *str, int val) {
         printf("  str:%s\n", str);
         qo->u.name = strdup(str);
     }
+    qo->id_type=ID_type;
 
     return qo;
 }
 
-quadOP *QOcreat_temp(void) {
+quadOP *QOcreat_temp(int ID_type) {
     int taille = (int)((ceil(log10(nb_temp)) + 1) * sizeof(char)); // nombre de char necessaire pour écrire nb_temp
     char temp[taille + 10];
     temp[taille + 9] = '\0';
 
     sprintf(temp, "__TEMP__%d", nb_temp);
 
-    quadOP *Qtemp = QOcreat(QO_ID, temp, 0);
+    quadOP *Qtemp = QOcreat(QO_ID, temp, 0,ID_type);
 
     nb_temp++;
     return Qtemp;
@@ -369,7 +371,7 @@ void complete(listQ *listGT, int addresse) {
         if (it->quad->kind != Q_GOTO && it->quad->kind != Q_IF) {
             printf("ERREUR COMPLETION D'UN GOTO: %i/%i/%i \n", it->quad->kind, Q_IF, Q_GOTO);
         } else if (it->quad->res == NULL) {
-            quadOP *add = QOcreat(QO_ADDR, NULL, addresse);
+            quadOP *add = QOcreat(QO_ADDR, NULL, addresse,INT);
             it->quad->res = add;
         }
         it = it->next;
