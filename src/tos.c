@@ -84,7 +84,10 @@ struct tos_entry *get_from_table(struct tos_entry **table, char *str) {
     if (table[hash1] == NULL) {
         return NULL;
     }
-    return table[hash1];
+    if (depth == 1 && table[hash1]->used == 0 && table[hash1]->next_lvl[0] != NULL)
+        return table[hash1]->next_lvl[0];
+    else
+        return table[hash1];
 }
 
 void show_table(struct tos_entry **table) {
