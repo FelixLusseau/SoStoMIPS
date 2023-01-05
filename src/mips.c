@@ -353,7 +353,6 @@ void QuadToMips(int file, listQ *liste, char *buffer)
         break;
     case Q_ECHO:
         printf(" ECHO ");
-
         break;
     case Q_FCT:
         printf(" FCT: ");

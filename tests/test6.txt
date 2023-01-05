@@ -1,2 +1,10 @@
-j = $(expr 2+6);
+declare tableau[5];
+
+tableau[1]=6;
+tableau[2]=7;
+tableau[3]=8;
+tableau[4]=5;
+
+echo ${tableau[*]};
+
 exit
