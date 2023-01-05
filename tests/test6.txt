@@ -1,9 +1,10 @@
 declare tableau[5];
 
 tableau[1]=6;
-tableau[2]=7;
-tableau[3]=8;
-tableau[4]=5;
+tableau[2]=1;
+tableau[3]=6;
+tableau[4]=2;
+tableau[5]=5;
 
 echo ${tableau[*]};
 

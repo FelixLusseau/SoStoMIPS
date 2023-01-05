@@ -262,7 +262,7 @@ id '=' concatenation {
   printf("instruction-> READ ID \n");
 
   struct tos_entry * id_tab=get_from_table(tos,$2);
-  
+
   quadOP *id=QOcreat(QO_ID,$2,0,id_tab->type);
   quads *q=Qcreat(Q_READ,id,NULL,NULL);
   Lappend(Lglobal,q);
@@ -494,15 +494,28 @@ liste_operandes operande {
 | '$' '{' id '[' '*' ']' '}'  { 
   printf("liste_operandes-> $ { ID [ * ] } \n");
 
-  quadOP *liste=QOcreat(QO_TAB,"$",0,ARRAY);
-  quadOP *tab=QOcreat(QO_TAB,$3,0,ARRAY);
-  quads *q=Qcreat(Q_EQUAL,liste,tab,NULL);
-  Lappend(Lglobal,q);
 
   struct tos_entry *tab_tos=get_from_table(tos,$3);
   if(tab_tos==NULL || tab_tos->var_kind!=ARRAY){
     yyerror("tableau:%s appellé alors que non initialisé ou n'est pas array");
   }
+
+  quadOP *temp=QOcreat_temp(UNDEFINED);
+  quadOP *liste=QOcreat(QO_TAB,"$",0,ARRAY);
+  quadOP *tab=QOcreat(QO_TAB,$3,0,ARRAY);
+
+  for(int i=0; i<=tab_tos->tab_length;i++){
+
+    quadOP *index=QOcreat(QO_CST,NULL,i,INT);
+
+    quads *q1=Qcreat(Q_TAB_GIVE,temp,tab,index);
+    Lappend(Lglobal,q1);
+
+    quads *q2=Qcreat(Q_TAB_EQUAL,liste,index,temp);
+    Lappend(Lglobal,q2);
+
+  }
+
   $$=tab_tos->tab_length;
   } ;
 
