@@ -8,6 +8,8 @@
     } while (0)
 
 int curr_temp_reg = 2;
+char * TABLE_$ = "";
+char * CURR_TYPE_TO_PRINT = "";
 
 noreturn void raler(int syserr, const char *msg, ...)
 {
@@ -295,6 +297,13 @@ void QuadToMips(int file, listQ *liste, char *buffer)
     case Q_EQUAL:
         printf(" EQUAL ");
 
+        if(liste->quad->res->u.name!= NULL && !strncmp(liste->quad->res->u.name,"$",1)){
+            TABLE_$ = liste->quad->res->u.name;
+            
+            break;
+        }
+
+
         if (liste->quad->op1->kind == QO_CST)
         {
             sprintf(buffer, "li $t7, %d\n", liste->quad->op1->u.cst);
@@ -354,6 +363,17 @@ void QuadToMips(int file, listQ *liste, char *buffer)
     case Q_ECHO:
         printf(" ECHO ");
 
+        int index = liste->quad->op1->u.cst;
+
+        sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, index*4-4); 
+
+        sprintf(buffer + strlen(buffer), "li $v0, 1\n");
+
+        // ??? change a0
+        sprintf(buffer + strlen(buffer), "lw $a0, %s($t%d)\nsyscall\n",TABLE_$ ,curr_temp_reg-1);
+
+        
+
         break;
     case Q_FCT:
         printf(" FCT: ");
@@ -367,6 +387,33 @@ void QuadToMips(int file, listQ *liste, char *buffer)
         break;
     case Q_TAB_EQUAL:
         printf(" TAB[]EQUAL ");
+
+        // ???
+
+        if(liste->quad->op2->kind==QO_STR) { // echo "this string";
+            sprintf(buffer, ".data\nSTRING_TO_PRINT:   .asciiz %s\n.text\n",liste->quad->op2->u.name);
+
+            break;
+            
+        }
+
+        if(1/*TODO : if var is int or if it is string*/) // echo ${var}
+        {
+            // int
+
+        }
+        else{
+
+        }
+
+        if(liste->quad->res->u.name!=NULL && !strncmp(liste->quad->res->u.name,"$",1)){
+            TABLE_$ = "TABLE_TO_PRINT";
+
+            sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name); 
+            sprintf(buffer + strlen(buffer) , "sw $t%d, %s\n",curr_temp_reg-1,TABLE_$);
+
+            break;
+        }
 
         if (liste->quad->op1->kind == QO_CST)
             sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst * 4); // indice

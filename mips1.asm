@@ -1,15 +1,35 @@
-# PROGRAM: Hello, World!
+.data
+i:   .space 4
+TABLE_TO_PRINT: .space 200
 
-.data # Data declaration section
+.text
 
-out_string: .asciiz "\nHello, World!\n"
 
-.text # Assembly language instructions
+main:
+li $t7, 2
+sw $t7, i
 
-main: # Start of code section
+.data
+STRING_TO_PRINT:   .asciiz "test"
+.text
 
-li $v0, 4 # system call code for printing string = 4
+li $v0, 4
+la $a0, STRING_TO_PRINT
+syscall
 
-la $a0, out_string # load address of string to be printed into $a0
+li $t2, 0
+li $v0, 1
+lw $a0, ($t2)
+syscall
 
-syscall # call operating system to perform opera
+lw $t3, i
+sw $t3, TABLE_TO_PRINT
+li $t4, 0
+li $v0, 1
+lw $a0, TABLE_TO_PRINT($t4)
+syscall
+
+li $a0, 0
+li $v0, 10
+syscall
+

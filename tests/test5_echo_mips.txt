@@ -1,4 +1,9 @@
-i=1;
-declare table[5];
-table[${i}]=${i};
+declare tableau[5];
+
+
+tableau[1]="6";
+
+
+echo ${tableau[*]};
+
 exit

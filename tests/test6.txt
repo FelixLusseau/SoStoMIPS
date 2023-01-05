@@ -1,2 +1,6 @@
-j = $(expr 2+6);
+j = $(expr 2*6);
+
+v = $(expr ${j}*2);
+
+c = $(expr ${v}/${j});
 exit
