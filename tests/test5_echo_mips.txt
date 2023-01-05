@@ -1,9 +1,16 @@
-declare tableau[5];
+declare abc[5];
 
 
-tableau[1]="6";
+abc[1]=6;
+abc[2]=6;
 
+abc[3]=6;
 
-echo ${tableau[*]};
+abc[4]=6;
+
+abc[5]=6;
+
+echo ${abc[*]};
+
 
 exit

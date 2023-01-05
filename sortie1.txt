@@ -1,112 +1,135 @@
-    mot/id/entier:i
-    =
-    mot/id/entier:2
-operande-> MOT
-        créer quadOP:0  str:2
-concatenation-> operande 
-    ;
-instruction-> ID = concatenation
-        créer quadOP:1  str:i
+    declare
+    mot/id/entier:abc
+    [
+    mot/id/entier:5
+    ]
+instruction-> DECLARE ID [ ENTIER ] 
+ToInt: 5
+        créer quadOP:0  str:abc
+        créer quadOP:1  cst:5
 liste_instruction->instruction
         créer quadOP:2  cst:0
-    mot/id/entier:k
+    ;
+    mot/id/entier:abc
+    [
+    mot/id/entier:1
+operande_entier-> ENTIER 
+ToInt: 1
+        créer quadOP:3  cst:1
+    ]
     =
-    mot/id/entier:3
+    mot/id/entier:6
 operande-> MOT
-        créer quadOP:3  str:3
+        créer quadOP:4  str:6
 concatenation-> operande 
     ;
-instruction-> ID = concatenation
-        créer quadOP:4  str:k
+instruction-> ID [ operande_entier ] = concatenation
+        créer quadOP:5  str:abc
 liste_instruction->liste_instructions ; instruction
-        créer quadOP:5  cst:0
-    if
-    test
-    $
-    {
-    mot/id/entier:i
-    }
-operande-> $ { ID }
-        créer quadOP:6  str:i
+        créer quadOP:6  cst:0
+    mot/id/entier:abc
+    [
+    mot/id/entier:2
+operande_entier-> ENTIER 
+ToInt: 2
+        créer quadOP:7  cst:2
+    ]
     =
+    mot/id/entier:6
+operande-> MOT
+        créer quadOP:8  str:6
 concatenation-> operande 
-    $
-    {
-    mot/id/entier:k
-    }
-operande-> $ { ID }
-        créer quadOP:7  str:k
-concatenation-> operande 
-    then
-test_instruction-> concatenation = concatenation 
-        créer quadOP:8  str:__TEMP__1
-test_expr3 -> test_instruction 
-test_expr2-> test_expr3 
-2
-3
-test_expr-> test_expr2 
-test_bloc-> TEST test_expr 
-M->empty
-    echo
-    $
-    {
-    mot/id/entier:i
-    }
-operande-> $ { ID }
-        créer quadOP:9  str:i
-liste_operandes-> operande 
-        créer quadOP:10  cst:1
-        créer quadOP:11  str:$
-    else
-instruction-> MYECHO liste_operandes 
-        créer quadOP:12  cst:1
-        créer quadOP:13  str:$
-liste_instruction->instruction
-        créer quadOP:14  cst:0
-M->empty
-    echo
-    $
-    {
-    mot/id/entier:k
-    }
-operande-> $ { ID }
-        créer quadOP:15  str:k
-liste_operandes-> operande 
-        créer quadOP:16  cst:1
-        créer quadOP:17  str:$
-    fi
-instruction-> MYECHO liste_operandes 
-        créer quadOP:18  cst:1
-        créer quadOP:19  str:$
-liste_instruction->instruction
-        créer quadOP:20  cst:0
-else_part->ELSE liste_instructions
-instruction-> IF test_bloc THEN liste_instructions else_part FI 
-        créer quadOP:21  cst:8
-        créer quadOP:22  cst:11
-liste_instruction->liste_instructions ; instruction
-        créer quadOP:23  cst:0
     ;
+instruction-> ID [ operande_entier ] = concatenation
+        créer quadOP:9  str:abc
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:10  cst:0
+    mot/id/entier:abc
+    [
+    mot/id/entier:3
+operande_entier-> ENTIER 
+ToInt: 3
+        créer quadOP:11  cst:3
+    ]
+    =
+    mot/id/entier:6
+operande-> MOT
+        créer quadOP:12  str:6
+concatenation-> operande 
+    ;
+instruction-> ID [ operande_entier ] = concatenation
+        créer quadOP:13  str:abc
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:14  cst:0
+    mot/id/entier:abc
+    [
+    mot/id/entier:4
+operande_entier-> ENTIER 
+ToInt: 4
+        créer quadOP:15  cst:4
+    ]
+    =
+    mot/id/entier:6
+operande-> MOT
+        créer quadOP:16  str:6
+concatenation-> operande 
+    ;
+instruction-> ID [ operande_entier ] = concatenation
+        créer quadOP:17  str:abc
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:18  cst:0
+    mot/id/entier:abc
+    [
+    mot/id/entier:5
+operande_entier-> ENTIER 
+ToInt: 5
+        créer quadOP:19  cst:5
+    ]
+    =
+    mot/id/entier:6
+operande-> MOT
+        créer quadOP:20  str:6
+concatenation-> operande 
+    ;
+instruction-> ID [ operande_entier ] = concatenation
+        créer quadOP:21  str:abc
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:22  cst:0
+    echo
+    $
+    {
+    mot/id/entier:abc
+    [
+    *
+    ]
+    }
+liste_operandes-> $ { ID [ * ] } 
+        créer quadOP:23  str:$
+        créer quadOP:24  str:abc
+    ;
+instruction-> MYECHO liste_operandes 
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:25  cst:0
     exit
 instruction->EXIT
 liste_instruction->liste_instructions ; instruction
-        créer quadOP:24  cst:0
+        créer quadOP:26  cst:0
 programme->liste_instruction
 
 Affichage Lglobal:
-ligne 1:  res: id:i  EQUAL  op1: string:2  op2: NULL 
+ligne 1:  res: tab:abc  TAB[]CREAT  op1: cst:5  op2: NULL 
 ligne 2:  res: addr:3  GOTO  op1: NULL  op2: NULL 
-ligne 3:  res: id:k  EQUAL  op1: string:3  op2: NULL 
+ligne 3:  res: tab:abc  TAB[]EQUAL  op1: cst:1  op2: string:6 
 ligne 4:  res: addr:5  GOTO  op1: NULL  op2: NULL 
-ligne 5:  res: id:__TEMP__1  IF ==  op1: id:i  op2: id:k 
-ligne 6:  res: addr:8  IF _ GOTO  op1: id:__TEMP__1  op2: NULL 
-ligne 7:  res: addr:11  GOTO  op1: NULL  op2: NULL 
-ligne 8:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: id:i 
-ligne 9:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 5:  res: tab:abc  TAB[]EQUAL  op1: cst:2  op2: string:6 
+ligne 6:  res: addr:7  GOTO  op1: NULL  op2: NULL 
+ligne 7:  res: tab:abc  TAB[]EQUAL  op1: cst:3  op2: string:6 
+ligne 8:  res: addr:9  GOTO  op1: NULL  op2: NULL 
+ligne 9:  res: tab:abc  TAB[]EQUAL  op1: cst:4  op2: string:6 
 ligne 10:  res: addr:11  GOTO  op1: NULL  op2: NULL 
-ligne 11:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: id:k 
-ligne 12:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
-ligne 13:  res: addr:14  GOTO  op1: NULL  op2: NULL 
+ligne 11:  res: tab:abc  TAB[]EQUAL  op1: cst:5  op2: string:6 
+ligne 12:  res: addr:13  GOTO  op1: NULL  op2: NULL 
+ligne 13:  res: tab:$  EQUAL  op1: tab:abc  op2: NULL 
 ligne 14:  res: addr:15  GOTO  op1: NULL  op2: NULL 
 ligne 15:  res: NULL  EXIT  op1: NULL  op2: NULL 
 ligne 16:  res: addr:17  GOTO  op1: NULL  op2: NULL 
@@ -114,19 +137,19 @@ Yacc return : ->0
 
 ### MIPS: ###
 
- EQUAL 
- GOTO 
- EQUAL 
- GOTO 
- IF == 
- IF _ GOTO 
+ TAB[]CREAT 
  GOTO 
  TAB[]EQUAL 
- ECHO 
  GOTO 
  TAB[]EQUAL 
- ECHO 
  GOTO 
+ TAB[]EQUAL 
+ GOTO 
+ TAB[]EQUAL 
+ GOTO 
+ TAB[]EQUAL 
+ GOTO 
+ EQUAL 
  GOTO 
  EXIT (nil)
 
@@ -134,8 +157,7 @@ Yacc return : ->0
 
 ### Table of symbols : ###
 
-n°29818 : ID			Type : string      	i
-n°29820 : ID			Type : string      	k
+n°66423 : ID			Type : undefined	abc
 
 Free Lglobal:
 
