@@ -2,7 +2,6 @@
 
 extern struct tos_entry **tos[MAX_TOS_SIZE];
 extern int depth;
-extern int width[MAX_TOS_SIZE]; // width of the current depth
 
 unsigned int hash(unsigned char *str) {
     unsigned hash = 6961;
@@ -27,10 +26,8 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
     unsigned int hash1 = hash((unsigned char *)str);
 
     if (table[hash1] == NULL) {
-        if ((table[hash1] = malloc(sizeof(struct tos_entry))) == NULL)
-            return -1;
-        if ((table[hash1]->str = malloc(sizeof(char) * MAX_LENGTH)) == NULL)
-            return -1;
+        CHKP((table[hash1] = malloc(sizeof(struct tos_entry))));
+        CHKP((table[hash1]->str = malloc(sizeof(char) * MAX_LENGTH)));
     }
     sprintf(table[hash1]->str, "%s", str);
     if (depth == 0) {
@@ -46,10 +43,8 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
             table[hash1]->used = 0;
         for (int d = 0; d < depth; d++) {
             if (table[hash1]->next_lvl[0] == NULL) {
-                if ((table[hash1]->next_lvl[0] = malloc(sizeof(struct tos_entry))) == NULL)
-                    return -1;
-                if ((table[hash1]->next_lvl[0]->str = malloc(sizeof(char) * MAX_LENGTH)) == NULL)
-                    return -1;
+                CHKP((table[hash1]->next_lvl[0] = malloc(sizeof(struct tos_entry))));
+                CHKP((table[hash1]->next_lvl[0]->str = malloc(sizeof(char) * MAX_LENGTH)));
             }
             sprintf(table[hash1]->next_lvl[0]->str, "%s", str);
             if (d == depth - 1) {
@@ -63,7 +58,6 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
                 table[hash1]->next_lvl[0]->used = 0;
         }
     }
-
     return hash1;
 }
 
@@ -128,14 +122,11 @@ void show_table(struct tos_entry **table) {
                     }
                     printf("%s", entry->str);
                     if (entry->depth)
-                        // printf("\t\t\t (depth %d)", entry->depth);
                         printf(" (local variable)");
                     printf("\n");
                 }
                 entry = entry->next_lvl[0];
-                // printf("next : %p\n", entry);
             }
-            // printf("\n");
         }
     }
 }
