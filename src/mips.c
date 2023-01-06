@@ -338,9 +338,53 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         break;
     case Q_AND:
         printf(" AND ");
+
+        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
+
+            // load the op1 in a temporary variable
+
+            if (liste->quad->op1->kind == QO_CST) {
+                sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
+            } else {
+                sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
+            }
+
+            // concatenation
+
+            if (liste->quad->op2->kind == QO_CST)
+                sprintf(buffer + strlen(buffer), "andi $s%d, $t%d, %d\n", idx % 7, (curr_temp_reg - 1) % 7, liste->quad->op2->u.cst);
+            else {
+                sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
+                sprintf(buffer + strlen(buffer), "andi $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
+            }
+        } else {
+            // if the res var is not a temporary variable
+        }
         break;
     case Q_OR:
         printf(" OR");
+
+        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
+
+            // load the op1 in a temporary variable
+
+            if (liste->quad->op1->kind == QO_CST) {
+                sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
+            } else {
+                sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
+            }
+
+            // concatenation
+
+            if (liste->quad->op2->kind == QO_CST)
+                sprintf(buffer + strlen(buffer), "ori $s%d, $t%d, %d\n", idx % 7, (curr_temp_reg - 1) % 7, liste->quad->op2->u.cst);
+            else {
+                sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
+                sprintf(buffer + strlen(buffer), "ori $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
+            }
+        } else {
+            // if the res var is not a temporary variable
+        }
         break;
     }
 
