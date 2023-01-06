@@ -1,3 +1,4 @@
+#include "errors.h"
 #include "mips.h"
 #include "quads.h"
 #include "tos.h"
@@ -17,7 +18,7 @@ int taille_parametres = 0; // taille de la table des variable '$'
 
 int main(int argc, char **argv) {
     if (argc < 1) {
-        printf("Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n", argv[0]);
+        printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>]\n", argv[0]);
         return 1;
     }
 
@@ -28,7 +29,7 @@ int main(int argc, char **argv) {
         {"output", required_argument, 0, 'o'}, {"version", no_argument, 0, 'v'}, {"tos", no_argument, 0, 't'}, {0, 0, 0, 0}};
     int option_index = 0;
 
-    while ((c = getopt_long_only(argc, argv, "o:vt", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "o:vt", long_options, &option_index)) != -1) {
         switch (c) {
         case 'o':
             output = optarg;
@@ -40,13 +41,17 @@ int main(int argc, char **argv) {
             printf("TOS\n");
             return 0;
         default:
-            printf("Usage: %s [-version | --version | -v] [-tos | --tos | -t] [(-output | --output | -o) <name>]\n", argv[0]);
+            printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>]\n", argv[0]);
             return 1;
         }
     }
 
+    int output_file;
     if (output != NULL) {
-        printf("Output file: %s\n", output); // TODO
+        printf("Output file: %s\n", output);
+        CHK(output_file = open(output, O_CREAT | O_WRONLY | O_TRUNC, 0666));
+        CHK(dup2(output_file, 1));
+        CHK(close(output_file));
     }
 
     if ((tos = create_table()) == NULL) {

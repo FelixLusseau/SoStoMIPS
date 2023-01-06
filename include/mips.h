@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "errors.h"
 #include "quads.h"
 #include "tos.h"
 extern listQ *Lglobal;
