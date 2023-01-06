@@ -1,12 +1,8 @@
     mot/id/entier:i
     =
-    $
-    (
     mot/id/entier:2
-    )
-appel_de_fonction-> id 
+operande-> MOT
         créer quadOP:0  str:2
-operande-> $ ( appel_de_fonction )
 concatenation-> operande 
     ;
 instruction-> ID = concatenation
@@ -15,13 +11,9 @@ liste_instruction->instruction
         créer quadOP:2  cst:0
     mot/id/entier:k
     =
-    $
-    (
     mot/id/entier:2
-    )
-appel_de_fonction-> id 
+operande-> MOT
         créer quadOP:3  str:2
-operande-> $ ( appel_de_fonction )
 concatenation-> operande 
     ;
 instruction-> ID = concatenation
@@ -36,8 +28,9 @@ liste_instruction->liste_instructions ; instruction
     }
 operande-> $ { ID }
         créer quadOP:6  str:i
-    =
+    ?
 concatenation-> operande 
+    =
     $
     {
     mot/id/entier:k
@@ -46,7 +39,7 @@ operande-> $ { ID }
         créer quadOP:7  str:k
 concatenation-> operande 
     then
-test_instruction-> concatenation = concatenation 
+test_instruction-> concatenation != concatenation 
         créer quadOP:8  str:__TEMP__1
 test_expr3 -> test_instruction 
 test_expr2-> test_expr3 
@@ -80,8 +73,8 @@ liste_instruction->instruction
         créer quadOP:14  cst:0
 else_part->ELSE liste_instructions
 instruction-> IF test_bloc THEN liste_instructions else_part FI 
-        créer quadOP:15  cst:10
-        créer quadOP:16  cst:12
+        créer quadOP:15  cst:8
+        créer quadOP:16  cst:10
 liste_instruction->liste_instructions ; instruction
         créer quadOP:17  cst:0
     ;
@@ -92,35 +85,31 @@ liste_instruction->liste_instructions ; instruction
 programme->liste_instruction
 
 Affichage Lglobal:
-ligne 1:  res: fct:2  CALL FCT ()  op1: NULL  op2: NULL 
-ligne 2:  res: id:i  EQUAL  op1:  op2: NULL 
-ligne 3:  res: addr:4  GOTO  op1: NULL  op2: NULL 
-ligne 4:  res: fct:2  CALL FCT ()  op1: NULL  op2: NULL 
-ligne 5:  res: id:k  EQUAL  op1:  op2: NULL 
-ligne 6:  res: addr:7  GOTO  op1: NULL  op2: NULL 
-ligne 7:  res: id:__TEMP__1  IF ==  op1: id:i  op2: id:k 
-ligne 8:  res: addr:10  IF _ GOTO  op1: id:__TEMP__1  op2: NULL 
-ligne 9:  res: addr:12  GOTO  op1: NULL  op2: NULL 
-ligne 10:  res: id:i  EQUAL  op1: string:3  op2: NULL 
+ligne 1:  res: id:i  EQUAL  op1: string:2  op2: NULL 
+ligne 2:  res: addr:3  GOTO  op1: NULL  op2: NULL 
+ligne 3:  res: id:k  EQUAL  op1: string:2  op2: NULL 
+ligne 4:  res: addr:5  GOTO  op1: NULL  op2: NULL 
+ligne 5:  res: id:__TEMP__1  IF !=  op1: id:i  op2: id:k 
+ligne 6:  res: addr:8  IF _ GOTO  op1: id:__TEMP__1  op2: NULL 
+ligne 7:  res: addr:10  GOTO  op1: NULL  op2: NULL 
+ligne 8:  res: id:i  EQUAL  op1: string:3  op2: NULL 
+ligne 9:  res: addr:10  GOTO  op1: NULL  op2: NULL 
+ligne 10:  res: id:k  EQUAL  op1: string:4  op2: NULL 
 ligne 11:  res: addr:12  GOTO  op1: NULL  op2: NULL 
-ligne 12:  res: id:k  EQUAL  op1: string:4  op2: NULL 
-ligne 13:  res: addr:14  GOTO  op1: NULL  op2: NULL 
+ligne 12:  res: addr:13  GOTO  op1: NULL  op2: NULL 
+ligne 13:  res: NULL  EXIT  op1: NULL  op2: NULL 
 ligne 14:  res: addr:15  GOTO  op1: NULL  op2: NULL 
-ligne 15:  res: NULL  EXIT  op1: NULL  op2: NULL 
-ligne 16:  res: addr:17  GOTO  op1: NULL  op2: NULL 
 Yacc return : ->0
 
 ### MIPS: ###
 
- CALL FCT () 
  EQUAL 
  GOTO 
- CALL FCT () 
  EQUAL 
  GOTO 
- IF == 
- IF _ GOTO 
- GOTO 1 ==== k2 ==== k3 ==== k
+ IF != 
+ IF _ GOTO WAAAAAA 603676384
+ GOTO 
  EQUAL 
  GOTO 
  EQUAL 
@@ -131,7 +120,6 @@ Yacc return : ->0
 
 ### Table of symbols : ###
 
-n°29763 : ID			Type : undefined	2
 n°29818 : ID			Type : string      	i
 n°29820 : ID			Type : string      	k
 

@@ -403,7 +403,11 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
     case Q_IF:
         printf(" IF _ GOTO ");
 
+        
+
         if(liste->quad->op1->u.cst>0){
+
+            
             printf("WAAAAAA %d",liste->quad->op1->u.cst);
             IF_ELSE = "IF";
             int addr_first_instruction =liste->quad->res->u.cst;

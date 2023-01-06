@@ -1,16 +1,7 @@
 declare abc[5];
 
 
-abc[1]=5;
-abc[2]=3;
 
-abc[3]=7;
-
-abc[4]=9;
-
-abc[5]=8;
-
-echo ${abc[*]};
 
 
 exit
