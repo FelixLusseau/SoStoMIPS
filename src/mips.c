@@ -324,6 +324,18 @@ void QuadToMips(int file, listQ *liste, char *buffer)
         break;
     case Q_RETURN:
         printf(" RETURN ");
+        // Load the return value into $v0
+        if (liste->quad->res->kind == QO_CST)
+        {
+            sprintf(buffer, "li $v0, %d\n", liste->quad->res->u.cst);
+        }
+        else
+        {
+            sprintf(buffer, "lw $v0, %s\n", liste->quad->res->u.name);
+        }
+
+        // Jump to the end of the function
+        sprintf(buffer + strlen(buffer), "j end\n");
         break;
     case Q_READ:
         printf(" READ ");
