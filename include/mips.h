@@ -18,6 +18,6 @@ extern struct tos_entry **tos;
 
 void mips(void);
 
-void QuadToMips(int file, listQ *liste, char *buffer);
+void QuadToMips(listQ *liste, char *buffer);
 
 #endif

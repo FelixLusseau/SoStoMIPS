@@ -58,7 +58,7 @@ void mips(void)
     while (liste != NULL)
     {
 
-        QuadToMips(file, liste, buffer);
+        QuadToMips(liste, buffer); // ici aussi j'ai enlevé l'argument file 
 
         Woctet = write(file, &buffer, strlen(buffer)); // ???
         CHK(Woctet);
@@ -82,9 +82,10 @@ int isTemporaryVariable(const char *varName)
     return -1;
 }
 
-void QuadToMips(int file, listQ *liste, char *buffer)
+void QuadToMips(listQ *liste, char *buffer)
 {
-    (void)file;
+    // (void)file; // j'ai enlevé l'argument file car je vois pas vraiment d'utilité à le passer en argument
+    // on pourrait l'ajouter plus tard, corrigez moi si je me trompe
 
     int idx, idx2;
 
