@@ -36,13 +36,14 @@ void mips(void) {
                         break;
                     }
 
-                    Woctet = write(file, &buffer, taille_chaine);
-                    CHK(Woctet);
+                    CHK(Woctet = write(file, &buffer, taille_chaine));
                 }
                 entry = entry->next_lvl[0];
             }
         }
     }
+    taille_chaine = sprintf(buffer, "buffer:   .space 100");
+    CHK(Woctet = write(file, &buffer, taille_chaine));
 
     /********************************* Traduction des quads en MIPS ****************************************/
     taille_chaine = sprintf(buffer, "\n.text\n\nmain:\n");
@@ -260,7 +261,7 @@ void QuadToMips(listQ *liste, char *buffer) {
         break;
     case Q_EXIT:
         printf(" EXIT ");
-        sprintf(buffer, "li $a0, %d\n", (liste->quad->res) ? liste->quad->res->u.cst : 0);
+        sprintf(buffer, "li $v1, %d\n", (liste->quad->res) ? liste->quad->res->u.cst : 0);
         sprintf(buffer + strlen(buffer), "li $v0, 10\n");
         sprintf(buffer + strlen(buffer), "syscall\n");
         break;
@@ -280,6 +281,15 @@ void QuadToMips(listQ *liste, char *buffer) {
         break;
     case Q_READ:
         printf(" READ ");
+
+        // Buffer
+        sprintf(buffer, "move $t%d, $a0\n", (curr_temp_reg++) % 7);
+        sprintf(buffer + strlen(buffer), "li $v0, 8\n");
+        sprintf(buffer + strlen(buffer), "la $a0, buffer\n");
+        sprintf(buffer + strlen(buffer), "li $a1, 100\n");
+        sprintf(buffer + strlen(buffer), "syscall\n");
+        sprintf(buffer + strlen(buffer), "move $t%d,$a0\n", (curr_temp_reg++) % 7);
+
         break;
     case Q_ECHO:
         printf(" ECHO ");
@@ -371,12 +381,9 @@ void QuadToMips(listQ *liste, char *buffer) {
         sprintf(buffer, "lw $t0, %s\n", liste->quad->op1->u.name);
 
         // Calculate the offset of the element in the array
-        if (liste->quad->op2->kind == QO_CST)
-        {
+        if (liste->quad->op2->kind == QO_CST) {
             sprintf(buffer + strlen(buffer), "li $t1, %d\n", liste->quad->op2->u.cst * 4); // assuming each element is 4 bytes
-        }
-        else
-        {
+        } else {
             sprintf(buffer + strlen(buffer), "lw $t1, %s\n", liste->quad->op2->u.name);
             sprintf(buffer + strlen(buffer), "li $t2, 4\n"); // assuming each element is 4 bytes
             sprintf(buffer + strlen(buffer), "mul $t1, $t1, $t2\n");
@@ -420,21 +427,20 @@ void QuadToMips(listQ *liste, char *buffer) {
         break;
     case Q_IF_NOT:
         printf(" NOT ");
+        // début du not
+        sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
+        sprintf(buffer + strlen(buffer), "xori $t%d, $t%d, 1\n", (curr_temp_reg - 1) % 7, (curr_temp_reg - 1) % 7);
         break;
     case Q_AND:
         printf(" AND ");
 
-        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0)
-        {
+        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
 
             // load the op1 in a temporary variable
 
-            if (liste->quad->op1->kind == QO_CST)
-            {
+            if (liste->quad->op1->kind == QO_CST) {
                 sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
-            }
-            else
-            {
+            } else {
                 sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
             }
 
@@ -442,31 +448,24 @@ void QuadToMips(listQ *liste, char *buffer) {
 
             if (liste->quad->op2->kind == QO_CST)
                 sprintf(buffer + strlen(buffer), "andi $s%d, $t%d, %d\n", idx % 7, (curr_temp_reg - 1) % 7, liste->quad->op2->u.cst);
-            else
-            {
+            else {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "andi $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        }
-        else
-        {
+        } else {
             // if the res var is not a temporary variable
         }
         break;
     case Q_OR:
         printf(" OR");
 
-        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0)
-        {
+        if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
 
             // load the op1 in a temporary variable
 
-            if (liste->quad->op1->kind == QO_CST)
-            {
+            if (liste->quad->op1->kind == QO_CST) {
                 sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
-            }
-            else
-            {
+            } else {
                 sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
             }
 
@@ -474,14 +473,11 @@ void QuadToMips(listQ *liste, char *buffer) {
 
             if (liste->quad->op2->kind == QO_CST)
                 sprintf(buffer + strlen(buffer), "ori $s%d, $t%d, %d\n", idx % 7, (curr_temp_reg - 1) % 7, liste->quad->op2->u.cst);
-            else
-            {
+            else {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "ori $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        }
-        else
-        {
+        } else {
             // if the res var is not a temporary variable
         }
         break;
