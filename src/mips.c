@@ -10,6 +10,9 @@ int curr_temp_reg = 2;
 char * TABLE_$ = "";
 char * CURR_TYPE_TO_PRINT = "";
 
+char * IF_ELSE ="";
+int count_goto=1;
+
 noreturn void raler(int syserr, const char *msg, ...) {
     va_list ap;
 
@@ -286,6 +289,28 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         break;
     case Q_GOTO:
         printf(" GOTO ");
+
+        if(!strcmp(IF_ELSE,"IF")) {
+            IF_ELSE="NAN";
+        }
+        else if (!strcmp(IF_ELSE,"ELSE")) {
+            
+            int addr_first_instruction =liste->quad->res->u.cst;
+            int curr_addr = count_goto;
+
+            int k=0;
+
+            while(k<addr_first_instruction-curr_addr){
+                liste = liste->next;
+                k++;
+                printf("%d ==== k",k);
+                
+            }
+
+            IF_ELSE = "NAN";
+        }
+
+        
         break;
     case Q_EXIT:
         printf(" EXIT ");
@@ -377,10 +402,45 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         break;
     case Q_IF:
         printf(" IF _ GOTO ");
+
+        if(liste->quad->op1->u.cst>0){
+            printf("WAAAAAA %d",liste->quad->op1->u.cst);
+            IF_ELSE = "IF";
+            int addr_first_instruction =liste->quad->res->u.cst;
+            int curr_addr = count_goto;
+
+            int k=0;
+
+            while(k<addr_first_instruction-curr_addr){
+                liste = liste->next;
+                k++;
+                
+            }
+
+
+        }
+        else{
+            IF_ELSE = "ELSE";
+            
+        }
+
         break;
     case Q_IF_EQ:
         printf(" IF == ");
+
+        idx = isTemporaryVariable(liste->quad->res->u.name)%7;
+
+        sprintf(buffer, "lw $s%d, %s\n",idx,liste->quad->op1->u.name);
+        sprintf(buffer + strlen(buffer), "lw $s%d, %s\n",(idx+1)%7,liste->quad->op2->u.name);
+
+        sprintf(buffer + strlen(buffer), "beq $s%d, $s%d, Else\n",idx,(idx + 1)%7);
+
+
+
+
+
         break;
+    
     case Q_IF_NE:
         printf(" IF != ");
         break;
@@ -412,6 +472,8 @@ void QuadToMips(int file, listQ *liste, char *buffer) {
         printf(" OR");
         break;
     }
+
+    count_goto++;
 
     printf("\n");
 }
