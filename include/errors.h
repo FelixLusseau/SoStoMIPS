@@ -1,6 +1,7 @@
 #ifndef ERROR_H
 #define ERROR_H
 
+#include <errno.h>
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -13,6 +14,12 @@
 #define CHK(op)            \
     do {                   \
         if ((op) == -1)    \
+            raler(1, #op); \
+    } while (0)
+
+#define CHKP(op)           \
+    do {                   \
+        if ((op) == NULL)  \
             raler(1, #op); \
     } while (0)
 

@@ -1,6 +1,7 @@
 #ifndef TOS_H
 #define TOS_H
 
+#include "errors.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
