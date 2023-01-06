@@ -18,9 +18,9 @@ ToInt: 1
         créer quadOP:3  cst:1
     ]
     =
-    mot/id/entier:6
+    mot/id/entier:5
 operande-> MOT
-        créer quadOP:4  str:6
+        créer quadOP:4  str:5
 concatenation-> operande 
     ;
 instruction-> ID [ operande_entier ] = concatenation
@@ -35,9 +35,9 @@ ToInt: 2
         créer quadOP:7  cst:2
     ]
     =
-    mot/id/entier:6
+    mot/id/entier:3
 operande-> MOT
-        créer quadOP:8  str:6
+        créer quadOP:8  str:3
 concatenation-> operande 
     ;
 instruction-> ID [ operande_entier ] = concatenation
@@ -52,9 +52,9 @@ ToInt: 3
         créer quadOP:11  cst:3
     ]
     =
-    mot/id/entier:6
+    mot/id/entier:7
 operande-> MOT
-        créer quadOP:12  str:6
+        créer quadOP:12  str:7
 concatenation-> operande 
     ;
 instruction-> ID [ operande_entier ] = concatenation
@@ -69,9 +69,9 @@ ToInt: 4
         créer quadOP:15  cst:4
     ]
     =
-    mot/id/entier:6
+    mot/id/entier:9
 operande-> MOT
-        créer quadOP:16  str:6
+        créer quadOP:16  str:9
 concatenation-> operande 
     ;
 instruction-> ID [ operande_entier ] = concatenation
@@ -86,9 +86,9 @@ ToInt: 5
         créer quadOP:19  cst:5
     ]
     =
-    mot/id/entier:6
+    mot/id/entier:8
 operande-> MOT
-        créer quadOP:20  str:6
+        créer quadOP:20  str:8
 concatenation-> operande 
     ;
 instruction-> ID [ operande_entier ] = concatenation
@@ -119,15 +119,15 @@ programme->liste_instruction
 Affichage Lglobal:
 ligne 1:  res: tab:abc  TAB[]CREAT  op1: cst:5  op2: NULL 
 ligne 2:  res: addr:3  GOTO  op1: NULL  op2: NULL 
-ligne 3:  res: tab:abc  TAB[]EQUAL  op1: cst:1  op2: string:6 
+ligne 3:  res: tab:abc  TAB[]EQUAL  op1: cst:1  op2: string:5 
 ligne 4:  res: addr:5  GOTO  op1: NULL  op2: NULL 
-ligne 5:  res: tab:abc  TAB[]EQUAL  op1: cst:2  op2: string:6 
+ligne 5:  res: tab:abc  TAB[]EQUAL  op1: cst:2  op2: string:3 
 ligne 6:  res: addr:7  GOTO  op1: NULL  op2: NULL 
-ligne 7:  res: tab:abc  TAB[]EQUAL  op1: cst:3  op2: string:6 
+ligne 7:  res: tab:abc  TAB[]EQUAL  op1: cst:3  op2: string:7 
 ligne 8:  res: addr:9  GOTO  op1: NULL  op2: NULL 
-ligne 9:  res: tab:abc  TAB[]EQUAL  op1: cst:4  op2: string:6 
+ligne 9:  res: tab:abc  TAB[]EQUAL  op1: cst:4  op2: string:9 
 ligne 10:  res: addr:11  GOTO  op1: NULL  op2: NULL 
-ligne 11:  res: tab:abc  TAB[]EQUAL  op1: cst:5  op2: string:6 
+ligne 11:  res: tab:abc  TAB[]EQUAL  op1: cst:5  op2: string:8 
 ligne 12:  res: addr:13  GOTO  op1: NULL  op2: NULL 
 ligne 13:  res: tab:$  EQUAL  op1: tab:abc  op2: NULL 
 ligne 14:  res: addr:15  GOTO  op1: NULL  op2: NULL 
@@ -151,8 +151,7 @@ Yacc return : ->0
  GOTO 
  EQUAL 
  GOTO 
- EXIT (nil)
-
+ EXIT 
  GOTO 
 
 ### Table of symbols : ###
