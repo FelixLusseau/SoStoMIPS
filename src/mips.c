@@ -353,9 +353,9 @@ void QuadToMips(listQ *liste, char *buffer)
     case Q_TAB_CREAT:
         printf(" TAB[]CREAT ");
 
-        // Get the size of the array
-        int size = liste->quad->op2->u.cst;
-
+        // Get the size of the array, the size is stored in the op1 field
+        int size = liste->quad->op1->u.cst;
+        
         // Calculate the total size of the array in bytes
         int total_size = size * 4; // assuming each element is 4 bytes
 
@@ -366,7 +366,6 @@ void QuadToMips(listQ *liste, char *buffer)
 
         // Store the base address of the array in the result variable
         sprintf(buffer + strlen(buffer), "sw $v0, %s\n", liste->quad->res->u.name);
-        break;
 
         break;
     case Q_TAB_EQUAL:
