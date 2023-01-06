@@ -119,8 +119,8 @@ Yacc return : ->0
  EQUAL 
  GOTO 
  IF == 
- IF _ GOTO WAAAAAA 439993312
- GOTO 
+ IF _ GOTO 
+ GOTO 1 ==== k2 ==== k3 ==== k
  EQUAL 
  GOTO 
  EQUAL 
