@@ -34,7 +34,7 @@ $(LEXC):
 	@echo "\033[92mLexing complete !\033[0m"
 
 $(YACCC):
-	bison -d -o $@ $(YACCSRC)
+	bison -d -o $@ $(YACCSRC) 
 	@echo "\033[92mYaccing complete !\033[0m"
 
 $(OUTPUT): $(OBJECTS) $(LEXOBJ) $(YACCOBJ)

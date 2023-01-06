@@ -184,17 +184,17 @@ id '=' concatenation {
   complete($2->False,addrM2+1);
  
 }
-| FOR for_id_liste_branchement id  DO  liste_instructions DONE  { 
+| FOR id for_id_liste_branchement   DO  liste_instructions DONE  { 
   printf("instruction->FOR ID DO IN liste_instructions DONE \n");
 
-  int addrM0=$2->addr_goback;
+  int addrM0=$3->addr_goback;
   int addrM1=Lglobal->taille;
 
   // complètes les instructions au début de la boucle (for_id_liste_branchement)
-  $2->Max->op2=QOcreat(QO_CST,NULL,taille_parametres,INT);
-  $2->GoTo->res=QOcreat(QO_ADDR,NULL,addrM1+1,INT);
-  char * id=strdup($3);
-  $2->Id->res=QOcreat(QO_ID,id,0,UNDEFINED);
+  $3->Max->op2=QOcreat(QO_CST,NULL,taille_parametres,INT);
+  $3->GoTo->res=QOcreat(QO_ADDR,NULL,addrM1+1,INT);
+  char * id=strdup($2);
+  $3->Id->res=QOcreat(QO_ID,id,0,UNDEFINED);
 
   $5->u.cst=addrM0; // boucle
   }
@@ -262,7 +262,7 @@ id '=' concatenation {
   printf("instruction-> READ ID \n");
 
   struct tos_entry * id_tab=get_from_table(tos,$2);
-  
+
   quadOP *id=QOcreat(QO_ID,$2,0,id_tab->type);
   quads *q=Qcreat(Q_READ,id,NULL,NULL);
   Lappend(Lglobal,q);
@@ -494,15 +494,28 @@ liste_operandes operande {
 | '$' '{' id '[' '*' ']' '}'  { 
   printf("liste_operandes-> $ { ID [ * ] } \n");
 
-  quadOP *liste=QOcreat(QO_TAB,"$",0,ARRAY);
-  quadOP *tab=QOcreat(QO_TAB,$3,0,ARRAY);
-  quads *q=Qcreat(Q_EQUAL,liste,tab,NULL);
-  Lappend(Lglobal,q);
 
   struct tos_entry *tab_tos=get_from_table(tos,$3);
   if(tab_tos==NULL || tab_tos->var_kind!=ARRAY){
     yyerror("tableau:%s appellé alors que non initialisé ou n'est pas array");
   }
+
+  quadOP *temp=QOcreat_temp(UNDEFINED);
+  quadOP *liste=QOcreat(QO_TAB,"$",0,ARRAY);
+  quadOP *tab=QOcreat(QO_TAB,$3,0,ARRAY);
+
+  for(int i=0; i<=tab_tos->tab_length;i++){
+
+    quadOP *index=QOcreat(QO_CST,NULL,i,INT);
+
+    quads *q1=Qcreat(Q_TAB_GIVE,temp,tab,index);
+    Lappend(Lglobal,q1);
+
+    quads *q2=Qcreat(Q_TAB_EQUAL,liste,index,temp);
+    Lappend(Lglobal,q2);
+
+  }
+
   $$=tab_tos->tab_length;
   } ;
 

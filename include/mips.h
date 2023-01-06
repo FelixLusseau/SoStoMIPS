@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "errors.h"
 #include "quads.h"
 #include "tos.h"
 extern listQ *Lglobal;
@@ -17,6 +18,6 @@ extern struct tos_entry **tos;
 
 void mips(void);
 
-void QuadToMips(int file, listQ *liste, char *buffer);
+void QuadToMips(listQ *liste, char *buffer);
 
 #endif

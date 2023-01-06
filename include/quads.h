@@ -131,6 +131,14 @@ typedef struct for_brnch {
 
 for_brnch *FBcreat(void);
 
+/* utilisé pour CFOR contient les test + les branchements */
+typedef struct lt_op {
+    int taille;
+    int tab;
+} lt_op;
+
+lt_op *LTOPcreat(void);
+
 
 
 
