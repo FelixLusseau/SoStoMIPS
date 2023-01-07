@@ -1,13 +1,17 @@
 #include "mips.h"
 
 int curr_temp_reg = 2;
+extern int output_file;
 
 void mips(void) {
     printf("\n### MIPS: ###\n\n");
     listQ *liste = Lglobal;
 
-    int file = open("mips.asm", O_WRONLY | O_CREAT | O_TRUNC, 0666);
-    CHK(file);
+    int file;
+    if (output_file == 0) {
+        CHK(file = open("mips.asm", O_WRONLY | O_CREAT | O_TRUNC, 0666));
+    } else
+        file = output_file;
 
     int N = 1000;
     char buffer[N];
@@ -42,8 +46,6 @@ void mips(void) {
             }
         }
     }
-    taille_chaine = sprintf(buffer, "buffer:   .space 100");
-    CHK(Woctet = write(file, &buffer, taille_chaine));
 
     /********************************* Traduction des quads en MIPS ****************************************/
     taille_chaine = sprintf(buffer, "\n.text\n\nmain:\n");
@@ -283,12 +285,8 @@ void QuadToMips(listQ *liste, char *buffer) {
         printf(" READ ");
 
         // Buffer
-        sprintf(buffer, "move $t%d, $a0\n", (curr_temp_reg++) % 7);
-        sprintf(buffer + strlen(buffer), "li $v0, 8\n");
-        sprintf(buffer + strlen(buffer), "la $a0, buffer\n");
-        sprintf(buffer + strlen(buffer), "li $a1, 100\n");
+        sprintf(buffer + strlen(buffer), "li $v0, 5\n");
         sprintf(buffer + strlen(buffer), "syscall\n");
-        sprintf(buffer + strlen(buffer), "move $t%d,$a0\n", (curr_temp_reg++) % 7);
 
         break;
     case Q_ECHO:
