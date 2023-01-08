@@ -18,7 +18,7 @@ int taille_parametres = 0; // taille de la table des variables '$'
 
 int main(int argc, char **argv) {
     if (argc < 1) {
-        printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h]\n", argv[0]);
+        printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h] < \"SoS_program\"\n", argv[0]);
         return 1;
     }
 
@@ -44,10 +44,10 @@ int main(int argc, char **argv) {
             printf("TOS\n");
             return 0;
         case 'h':
-            printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h]\n", argv[0]);
+            printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h] < \"SoS_program\"\n", argv[0]);
             return 0;
         default:
-            printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h]\n", argv[0]);
+            printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h] < \"SoS_program\"\n", argv[0]);
             return 1;
         }
     }
