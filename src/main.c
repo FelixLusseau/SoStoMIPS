@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
 
     int c;
     char *output = NULL;
+    int tos_show = 0;
 
     static struct option long_options[] = {{"output", required_argument, 0, 'o'},
                                            {"version", no_argument, 0, 'v'},
@@ -41,8 +42,8 @@ int main(int argc, char **argv) {
             printf("COUTURE Louise - ELMAHI Aymane - LUSSEAU Félix - TAKI AMRANI Oussama\n");
             return 0;
         case 't':
-            printf("TOS\n");
-            return 0;
+            tos_show = 1;
+            break;
         case 'h':
             printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h] < \"SoS_program\"\n", argv[0]);
             return 0;
@@ -74,8 +75,10 @@ int main(int argc, char **argv) {
 
     mips();
 
-    printf("\n### Table of symbols : ###\n\n");
-    show_table(tos);
+    if (tos_show) {
+        printf("\n### Table of symbols : ###\n\n");
+        show_table(tos);
+    }
     free_table(tos);
 
     printf("\nFree Lglobal:\n");

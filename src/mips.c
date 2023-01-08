@@ -62,7 +62,7 @@ void mips(void) {
 
     while (liste != NULL) {
 
-        QuadToMips(liste, buffer); // ici aussi j'ai enlevé l'argument file
+        QuadToMips(liste, buffer);
 
         Woctet = write(file, &buffer, strlen(buffer));
         CHK(Woctet);
@@ -110,7 +110,7 @@ void QuadToMips(listQ *liste, char *buffer) {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "add $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        } 
+        }
 
         break;
     case Q_LESS:
@@ -135,7 +135,7 @@ void QuadToMips(listQ *liste, char *buffer) {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "sub $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        } 
+        }
 
         break;
     case Q_MUL:
@@ -210,7 +210,7 @@ void QuadToMips(listQ *liste, char *buffer) {
 
             // store the remainder in the destination register
             sprintf(buffer + strlen(buffer), "mfhi $s%d\n", idx % 7);
-        } 
+        }
 
         break;
 
@@ -294,7 +294,7 @@ void QuadToMips(listQ *liste, char *buffer) {
         printf(" READ ");
 
         // Buffer
-        sprintf(buffer + strlen(buffer), "li $v0, 5\n");
+        sprintf(buffer, "li $v0, 5\n");
         sprintf(buffer + strlen(buffer), "syscall\n");
 
         break;
