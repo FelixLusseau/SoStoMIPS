@@ -10,7 +10,7 @@ extern int yylex();
 extern char *yytext;
 struct tos_entry **tos;
 int depth = 0;
-int width[MAX_TOS_SIZE] = {0};
+int output_file;
 
 int nb_temp = 1;           // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur création
 listQ *Lglobal;            // liste des quads
@@ -46,12 +46,9 @@ int main(int argc, char **argv) {
         }
     }
 
-    int output_file;
     if (output != NULL) {
         printf("Output file: %s\n", output);
         CHK(output_file = open(output, O_CREAT | O_WRONLY | O_TRUNC, 0666));
-        CHK(dup2(output_file, 1));
-        CHK(close(output_file));
     }
 
     if ((tos = create_table()) == NULL) {
@@ -79,5 +76,7 @@ int main(int argc, char **argv) {
     Lfree();
     printf("\n");
 
+    if (output_file)
+        CHK(close(output_file));
     return 0;
 }
