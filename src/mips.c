@@ -2,9 +2,9 @@
 
 int curr_temp_reg = 2;
 
-char * TABLE_$ = "";
+char *TABLE_$ = "";
 
-int count_goto=1;
+int count_goto = 1;
 
 int addr_first_instruction_else = 0;
 int else_number = 0;
@@ -64,15 +64,14 @@ void mips(void) {
 
         QuadToMips(liste, buffer); // ici aussi j'ai enlevé l'argument file
 
-        Woctet = write(file, &buffer, strlen(buffer)); 
+        Woctet = write(file, &buffer, strlen(buffer));
         CHK(Woctet);
-        buffer[0] = '\0'; 
+        buffer[0] = '\0';
         liste = liste->next;
     }
 
     close(file);
 }
-
 
 int isTemporaryVariable(const char *varName) {
     if (varName == NULL)
@@ -95,7 +94,6 @@ void QuadToMips(listQ *liste, char *buffer) {
         if (liste->quad->res->kind == QO_ID && (idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
 
             // load the op1 in a temporary variable
-
 
             if (liste->quad->op1->kind == QO_CST) {
                 sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
@@ -275,7 +273,6 @@ void QuadToMips(listQ *liste, char *buffer) {
     case Q_GOTO:
         printf(" GOTO ");
 
-
         if (count_goto + 1 == addr_first_instruction_else) {
             sprintf(buffer, "j EXIT%d\n", else_number);
             sprintf(buffer + strlen(buffer), "ELSE%d :\n", else_number);
@@ -300,8 +297,6 @@ void QuadToMips(listQ *liste, char *buffer) {
             sprintf(buffer, "lw $v0, %s\n", liste->quad->res->u.name);
         }
 
-        /* // Jump to the end of the function
-        sprintf(buffer + strlen(buffer), "j end\n"); */
         // Return from the function
         sprintf(buffer + strlen(buffer), "jr $ra\n");
         break;
@@ -322,9 +317,7 @@ void QuadToMips(listQ *liste, char *buffer) {
 
         sprintf(buffer + strlen(buffer), "li $v0, 1\n");
 
-        sprintf(buffer + strlen(buffer), "lw $a0, %s($t%d)\nsyscall\n",TABLE_$ ,curr_temp_reg-1);
-
-        
+        sprintf(buffer + strlen(buffer), "lw $a0, %s($t%d)\nsyscall\n", TABLE_$, curr_temp_reg - 1);
 
         break;
     case Q_FCT:
@@ -561,9 +554,6 @@ void QuadToMips(listQ *liste, char *buffer) {
         break;
     case Q_IF_NOT:
         printf(" NOT ");
-        // début du not
-        /* sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
-        sprintf(buffer + strlen(buffer), "xori $t%d, $t%d, 1\n", (curr_temp_reg - 1) % 7, (curr_temp_reg - 1) % 7); */
         break;
     case Q_AND:
         printf(" AND ");

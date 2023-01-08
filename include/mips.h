@@ -16,14 +16,29 @@
 extern listQ *Lglobal;
 extern struct tos_entry **tos;
 
+/**
+ * @brief Fonction écrivant dans le fichier assembleur les variables
+ * puis les instructions renvoyées par QuadToMips
+ *
+ */
 void mips(void);
 
+/**
+ * @brief Fonction convertissant les quads en MIPS
+ *
+ * @param liste
+ * @param buffer
+ */
 void QuadToMips(listQ *liste, char *buffer);
 
-/* Une variable temporaire porte le nom : __TEMP__NUM 
-Cette fonction retourne le NUM par exemple __TEMP__15 
-la fonction renverra 15*/
-
+/**
+ * @brief Une variable temporaire porte le nom : __TEMP__NUM
+ * Cette fonction retourne le NUM par exemple __TEMP__15
+ * la fonction renverra 15
+ *
+ * @param varName
+ * @return int
+ */
 int isTemporaryVariable(const char *varName);
 
 #endif
