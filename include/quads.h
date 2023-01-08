@@ -32,6 +32,15 @@ typedef struct quadOP {
     } u;
 } quadOP;
 
+/**
+ * @brief créer quadOP 
+ *
+ * @param Type
+ * @param str
+ * @param val
+ * @param ID_type
+ * @return quadOP*
+ */
 quadOP *QOcreat(int Type, char *str, int val, int ID_type);
 
 /**
@@ -187,6 +196,7 @@ typedef struct embranchment {
 /**
  * @brief créer un embranchment
  *
+ * @return embranchment*
  */
 embranchment *EMcreat(void);
 
@@ -227,7 +237,11 @@ typedef struct for_brnch {
     quads *Id;
 } for_brnch;
 
-/* créer un for_brnch */
+/** 
+ * @brief créer un for_brnch 
+ *
+ * @return for_brnch*
+ */
 for_brnch *FBcreat(void);
 
 /* utilisé pour CFOR contient les tests + les branchements */
