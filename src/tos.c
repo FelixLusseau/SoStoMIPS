@@ -25,37 +25,37 @@ struct tos_entry **create_table() {
 int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_length) {
     unsigned int hash1 = hash((unsigned char *)str);
 
-    if (table[hash1] == NULL) {
+    if (table[hash1] == NULL) { // Créé une entrée si elle n'existe pas
         CHKP((table[hash1] = malloc(sizeof(struct tos_entry))));
         CHKP((table[hash1]->str = malloc(sizeof(char) * MAX_LENGTH)));
     }
     sprintf(table[hash1]->str, "%s", str);
-    if (depth == 0) {
+    if (depth == 0) { // Vérifie si le symbole actuel est global ou local
         table[hash1]->used = 1;
         table[hash1]->depth = depth;
         table[hash1]->var_kind = var_kind;
         table[hash1]->tab_length = tab_length;
         table[hash1]->type = UNDEFINED;
-        if (table[hash1]->next_lvl[0] == NULL)
-            memset(table[hash1]->next_lvl, 0, sizeof(table[hash1]->next_lvl));
+        if (table[hash1]->next_lvl == NULL)
+            table[hash1]->next_lvl = NULL;
     } else {
         if (!table[hash1]->used)
             table[hash1]->used = 0;
         for (int d = 0; d < depth; d++) {
-            if (table[hash1]->next_lvl[0] == NULL) {
-                CHKP((table[hash1]->next_lvl[0] = malloc(sizeof(struct tos_entry))));
-                CHKP((table[hash1]->next_lvl[0]->str = malloc(sizeof(char) * MAX_LENGTH)));
+            if (table[hash1]->next_lvl == NULL) {
+                CHKP((table[hash1]->next_lvl = malloc(sizeof(struct tos_entry))));
+                CHKP((table[hash1]->next_lvl->str = malloc(sizeof(char) * MAX_LENGTH)));
             }
-            sprintf(table[hash1]->next_lvl[0]->str, "%s", str);
+            sprintf(table[hash1]->next_lvl->str, "%s", str);
             if (d == depth - 1) {
-                table[hash1]->next_lvl[0]->used = 1;
-                table[hash1]->next_lvl[0]->depth = depth;
-                table[hash1]->next_lvl[0]->var_kind = var_kind;
-                table[hash1]->next_lvl[0]->tab_length = tab_length;
-                table[hash1]->next_lvl[0]->type = UNDEFINED;
-                memset(table[hash1]->next_lvl[0]->next_lvl, 0, sizeof(table[hash1]->next_lvl[0]->next_lvl));
+                table[hash1]->next_lvl->used = 1;
+                table[hash1]->next_lvl->depth = depth;
+                table[hash1]->next_lvl->var_kind = var_kind;
+                table[hash1]->next_lvl->tab_length = tab_length;
+                table[hash1]->next_lvl->type = UNDEFINED;
+                table[hash1]->next_lvl->next_lvl = NULL;
             } else
-                table[hash1]->next_lvl[0]->used = 0;
+                table[hash1]->next_lvl->used = 0;
         }
     }
     return hash1;
@@ -63,23 +63,21 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
 
 int update_type(struct tos_entry **table, char *str, int type) {
     unsigned int hash1 = hash((unsigned char *)str);
-    if (table[hash1] == NULL) {
+    if (table[hash1] == NULL)
         return -1;
-    }
     if (table[hash1]->used)
         table[hash1]->type = type;
     else
-        table[hash1]->next_lvl[0]->type = type;
+        table[hash1]->next_lvl->type = type;
     return 0;
 }
 
 struct tos_entry *get_from_table(struct tos_entry **table, char *str) {
     unsigned int hash1 = hash((unsigned char *)str);
-    if (table[hash1] == NULL) {
+    if (table[hash1] == NULL)
         return NULL;
-    }
-    if (depth == 1 && table[hash1]->used == 0 && table[hash1]->next_lvl[0] != NULL)
-        return table[hash1]->next_lvl[0];
+    if (depth == 1 && table[hash1]->used == 0 && table[hash1]->next_lvl != NULL)
+        return table[hash1]->next_lvl;
     else
         return table[hash1];
 }
@@ -125,18 +123,18 @@ void show_table(struct tos_entry **table) {
                         printf(" (local variable)");
                     printf("\n");
                 }
-                entry = entry->next_lvl[0];
+                entry = entry->next_lvl;
             }
         }
     }
 }
 
 void free_table(struct tos_entry **table) {
-    for (unsigned int i = 0; i < HT_SIZE; i++) {
-        if (table[i] != NULL) {
-            if (table[i]->next_lvl[0] != NULL) {
-                free(table[i]->next_lvl[0]->str);
-                free(table[i]->next_lvl[0]);
+    for (unsigned int i = 0; i < HT_SIZE; i++) { // Parcours de toute la table
+        if (table[i] != NULL) {                  // Teste la présence d'un symbole
+            if (table[i]->next_lvl != NULL) {    // Libère les entrées locales si elles existent
+                free(table[i]->next_lvl->str);
+                free(table[i]->next_lvl);
             }
             free(table[i]->str);
             free(table[i]);

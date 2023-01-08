@@ -12,24 +12,27 @@ struct tos_entry **tos;
 int depth = 0;
 int output_file;
 
-int nb_temp = 1;           // nombre de variable temporaire céer, permet d'incrémenter leurs nom à leur création
+int nb_temp = 1;           // nombre de variables temporaires créées, permet d'incrémenter leur nom à leur création
 listQ *Lglobal;            // liste des quads
-int taille_parametres = 0; // taille de la table des variable '$'
+int taille_parametres = 0; // taille de la table des variables '$'
 
 int main(int argc, char **argv) {
     if (argc < 1) {
-        printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>]\n", argv[0]);
+        printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h]\n", argv[0]);
         return 1;
     }
 
     int c;
     char *output = NULL;
 
-    static struct option long_options[] = {
-        {"output", required_argument, 0, 'o'}, {"version", no_argument, 0, 'v'}, {"tos", no_argument, 0, 't'}, {0, 0, 0, 0}};
+    static struct option long_options[] = {{"output", required_argument, 0, 'o'},
+                                           {"version", no_argument, 0, 'v'},
+                                           {"tos", no_argument, 0, 't'},
+                                           {"help", no_argument, 0, 'h'},
+                                           {0, 0, 0, 0}};
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "o:vt", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "o:vth", long_options, &option_index)) != -1) {
         switch (c) {
         case 'o':
             output = optarg;
@@ -40,13 +43,16 @@ int main(int argc, char **argv) {
         case 't':
             printf("TOS\n");
             return 0;
+        case 'h':
+            printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h]\n", argv[0]);
+            return 0;
         default:
-            printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>]\n", argv[0]);
+            printf("Usage: %s [--version | -v] [--tos | -t] [(--output | -o) <name>] [--help | -h]\n", argv[0]);
             return 1;
         }
     }
 
-    if (output != NULL) {
+    if (output != NULL) { // Permet de modifier le fichier assembleur de sortie si demandé sinon "mips.asm"
         printf("Output file: %s\n", output);
         CHK(output_file = open(output, O_CREAT | O_WRONLY | O_TRUNC, 0666));
     }
@@ -57,7 +63,7 @@ int main(int argc, char **argv) {
 
     Lglobal = Lcreat();
 
-    int r = yyparse();
+    int r = yyparse(); // Lancement de l'analyse syntaxique
 
     printf("Yacc return : ->%d\n", r);
 

@@ -42,7 +42,7 @@ void mips(void) {
 
                     CHK(Woctet = write(file, &buffer, taille_chaine));
                 }
-                entry = entry->next_lvl[0];
+                entry = entry->next_lvl;
             }
         }
     }
