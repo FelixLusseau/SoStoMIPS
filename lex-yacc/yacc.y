@@ -1004,6 +1004,9 @@ decl_loc:
 decl_loc LOCAL id '=' concatenation ';' { 
   printf("decl_loc-> decl_loc LOCAL id = concatenation \n");
 
+
+  add_to_table(tos, $3, IDENTIFIER, 0);
+
   update_type(tos, $3, $5->id_type);
 
   quadOP* res= QOcreat(QO_ID,$3,0,$5->id_type);
