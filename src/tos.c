@@ -132,7 +132,7 @@ void show_table(struct tos_entry **table) {
 void free_table(struct tos_entry **table) {
     for (unsigned int i = 0; i < HT_SIZE; i++) { // Parcours de toute la table
         if (table[i] != NULL) {                  // Teste la présence d'un symbole
-            if (table[i]->next_lvl != NULL) {    // Libère les entrées locales si elles existent
+            if (table[i]->next_lvl != NULL) {    // Libère l'entrée locale si elle existe
                 free(table[i]->next_lvl->str);
                 free(table[i]->next_lvl);
             }
