@@ -76,11 +76,12 @@ test_mips :  $(OUTPUT)
 				echo "\n\033[91mError in $${file}\033[0m" ; \
 				exit 1 ; \
 			fi ; \
-			echo "\033[92m----------------------TEST MIPS----------------------\033[0m" ; \
-			if ! [ -z $(spim -file mips.asm | grep error | wc -l) ]  ; then \
+			echo "\033[92m------------TEST MIPS------------\033[0m" ; \
+			if ! [ $(spim -file mips.asm | grep 'error|parser' | wc -l) ]  ; then \
 				echo "\n\033[91mError in $${file}'s MIPS\033[0m" ; \
 				exit 1 ; \
 			fi ; \
+			echo "\033[92mOk\033[m\n" ; \
         done
 
 .PHONY: clean doc

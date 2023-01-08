@@ -354,6 +354,9 @@ void Laffiche(listQ *list) {
     }
 }
 
+
+/******************************** branchement ********************************************/
+
 embranchment *EMcreat(void) {
     embranchment *embr = malloc(sizeof(embranchment));
     GC_embranchment[I_embranchment] = embr;
