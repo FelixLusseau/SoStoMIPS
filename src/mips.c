@@ -110,9 +110,7 @@ void QuadToMips(listQ *liste, char *buffer) {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "add $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        } else {
-            // if the res var is not a temporary variable
-        }
+        } 
 
         break;
     case Q_LESS:
@@ -137,9 +135,7 @@ void QuadToMips(listQ *liste, char *buffer) {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "sub $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        } else {
-            // if the res var is not a temporary variable
-        }
+        } 
 
         break;
     case Q_MUL:
@@ -164,8 +160,6 @@ void QuadToMips(listQ *liste, char *buffer) {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "mul $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        } else {
-            // if the res var is not a temporary variable
         }
 
         break;
@@ -191,8 +185,6 @@ void QuadToMips(listQ *liste, char *buffer) {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "div $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        } else {
-            // if the res var is not a temporary variable
         }
         break;
     case Q_MOD:
@@ -218,9 +210,7 @@ void QuadToMips(listQ *liste, char *buffer) {
 
             // store the remainder in the destination register
             sprintf(buffer + strlen(buffer), "mfhi $s%d\n", idx % 7);
-        } else {
-            // if the res var is not a temporary variable
-        }
+        } 
 
         break;
 
@@ -576,8 +566,6 @@ void QuadToMips(listQ *liste, char *buffer) {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "andi $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        } else {
-            // if the res var is not a temporary variable
         }
         break;
     case Q_OR:
@@ -601,8 +589,6 @@ void QuadToMips(listQ *liste, char *buffer) {
                 sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer + strlen(buffer), "ori $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
-        } else {
-            // if the res var is not a temporary variable
         }
         break;
     }
