@@ -3,9 +3,7 @@
 int curr_temp_reg = 2;
 
 char * TABLE_$ = "";
-char * CURR_TYPE_TO_PRINT = "";
 
-char * IF_ELSE ="";
 int count_goto=1;
 
 int addr_first_instruction_else=0;
@@ -66,14 +64,15 @@ void mips(void) {
 
         QuadToMips(liste, buffer); // ici aussi j'ai enlevé l'argument file
 
-        Woctet = write(file, &buffer, strlen(buffer)); // ???
+        Woctet = write(file, &buffer, strlen(buffer)); 
         CHK(Woctet);
-        buffer[0] = '\0'; // ???
+        buffer[0] = '\0'; 
         liste = liste->next;
     }
 
     close(file);
 }
+
 
 int isTemporaryVariable(const char *varName) {
     if (varName == NULL)
@@ -87,8 +86,6 @@ int isTemporaryVariable(const char *varName) {
 }
 
 void QuadToMips(listQ *liste, char *buffer) {
-    // (void)file; // j'ai enlevé l'argument file car je vois pas vraiment d'utilité à le passer en argument
-    // on pourrait l'ajouter plus tard, corrigez moi si je me trompe
 
     int idx, idx2;
 
@@ -99,7 +96,6 @@ void QuadToMips(listQ *liste, char *buffer) {
 
             // load the op1 in a temporary variable
 
-            // check if op1 is temp???
 
             if (liste->quad->op1->kind == QO_CST) {
                 sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
@@ -280,25 +276,6 @@ void QuadToMips(listQ *liste, char *buffer) {
     case Q_GOTO:
         printf(" GOTO ");
 
-        /*if(!strcmp(IF_ELSE,"IF")) {
-            IF_ELSE="NAN";
-        }
-        else if (!strcmp(IF_ELSE,"ELSE")) {
-            
-            int addr_first_instruction =liste->quad->res->u.cst;
-            int curr_addr = count_goto;
-
-            int k=0;
-
-            while(k<addr_first_instruction-curr_addr){
-                liste = liste->next;
-                k++;
-                printf("%d ==== k",k);
-                
-            }
-
-            IF_ELSE = "NAN";
-        } */
 
         if(count_goto+1==addr_first_instruction_else){
             sprintf(buffer, "j EXIT%d\n", else_number);
@@ -349,7 +326,6 @@ void QuadToMips(listQ *liste, char *buffer) {
 
         sprintf(buffer + strlen(buffer), "li $v0, 1\n");
 
-        // ??? change a0
         sprintf(buffer + strlen(buffer), "lw $a0, %s($t%d)\nsyscall\n",TABLE_$ ,curr_temp_reg-1);
 
         
@@ -417,54 +393,6 @@ void QuadToMips(listQ *liste, char *buffer) {
     case Q_TAB_EQUAL:
         printf(" TAB[]EQUAL ");
 
-        /**
-
-        if(liste->quad->op2->kind==QO_STR) { // echo "this string";
-            sprintf(buffer, ".data\nSTRING_TO_PRINT:   .asciiz %s\n.text\n",liste->quad->op2->u.name);
-
-            break;
-            
-        }
-
-        if(TODO : if var is int or if it is string) // echo ${var}
-        {
-            // int
-
-        }
-        else{
-
-        }
-
-        if(liste->quad->res->u.name!=NULL && !strncmp(liste->quad->res->u.name,"$",1)){
-            TABLE_$ = "TABLE_TO_PRINT";
-
-            if(liste->quad->op2->u.name != NULL ){
-                printf("WOOOOOOOO : %s",liste->quad->op2->u.name);
-
-                sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name); 
-                sprintf(buffer + strlen(buffer) , "sw $t%d, %s\n",curr_temp_reg-1,TABLE_$);
-                
-            }
-            break;
-        }
-
-        if (liste->quad->op1->kind == QO_CST)
-            sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst * 4); // indice
-        else {                                                                                    // indice
-
-            sprintf(buffer, "li $t7, 4\n");
-            sprintf(buffer + strlen(buffer), "lw $t8, %s\n", liste->quad->op1->u.name);
-
-            sprintf(buffer + strlen(buffer), "mul $t%d, $t8, $t7\n", (curr_temp_reg++) % 7);
-        }
-
-        if (liste->quad->op2->kind == QO_CST)
-            sprintf(buffer + strlen(buffer), "li $t%d, %d\n ", (curr_temp_reg++) % 7, liste->quad->op2->u.cst); // valeur
-        else
-            sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name); // valeur
-
-        sprintf(buffer + strlen(buffer), "sw $t%d, %s($t%d)\n", (curr_temp_reg - 1) % 7, liste->quad->res->u.name, (curr_temp_reg - 2) % 7);
-        **/
         break;
     case Q_TAB_GIVE:
         printf(" TAB[]GIVE ");

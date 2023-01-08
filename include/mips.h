@@ -20,4 +20,10 @@ void mips(void);
 
 void QuadToMips(listQ *liste, char *buffer);
 
+/* Une variable temporaire porte le nom : __TEMP__NUM 
+Cette fonction retourne le NUM par exemple __TEMP__15 
+la fonction renverra 15*/
+
+int isTemporaryVariable(const char *varName);
+
 #endif
