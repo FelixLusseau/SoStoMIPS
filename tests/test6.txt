@@ -1,9 +1,6 @@
 i=1;
 c=0;
 
-if test ${i} -a ${c} then
-    echo "i is true and c is false"
-fi ;
 
 exit
 

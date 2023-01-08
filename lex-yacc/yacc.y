@@ -70,8 +70,21 @@ extern int width[MAX_TOS_SIZE];
 
 M: %empty {printf("M->empty\n");$$=Lglobal->taille;}
 
-id: ID { // lecture d'un ID ->
-  add_to_table(tos, $1, IDENTIFIER, 0);
+id: ID { // lecture d'un ID
+  int actual_depth=depth;
+  int dont_exist=1;
+
+  while(depth>0){
+    depth-=1;
+    if(get_from_table(tos, $1)!=NULL){
+      dont_exist=0;
+    }
+  }
+
+  depth=actual_depth;
+  if(dont_exist!=0){
+    add_to_table(tos, $1, IDENTIFIER, 0);
+  }
   $$=$1;
 };
 
@@ -968,7 +981,7 @@ fois_div_mod: '*' {$$=1;}| '/' {$$=2;}| '%' {$$=3;};
 dec_fct:%empty{
   printf("dec_fct->empty\n");
   depth++;
-  // printf("deeeeeeppppppttttthhhh : %d  ", depth); 
+ printf("deeeeeeppppppttttthhhh : %d  ", depth); 
   quads *q=Qcreat(Q_FCT,NULL,NULL,NULL);
   $$=q;
   Lappend(Lglobal,q);
@@ -980,7 +993,7 @@ ID '(' ')' dec_fct '{'  decl_loc liste_instructions '}' {
  // code déplacé dans la rêgle au dessus de celle là
 
   depth--; 
-  //printf("--------------------------deeeeeeppppppttttthhhh------------------------ : %d %s \n ", depth,$1);  
+  printf("--------------------------deeeeeeppppppttttthhhh------------------------ : %d %s \n ", depth,$1);  
   add_to_table(tos,$1,FUNCTION,0);
 
   quadOP *fct=QOcreat(QO_FCT,$1,0,FUNCTION);

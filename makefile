@@ -34,7 +34,7 @@ $(LEXC):
 	@echo "\033[92mLexing complete !\033[0m"
 
 $(YACCC):
-	bison -d -o $@ $(YACCSRC)
+	bison -d -o $@ $(YACCSRC) 
 	@echo "\033[92mYaccing complete !\033[0m"
 
 $(OUTPUT): $(OBJECTS) $(LEXOBJ) $(YACCOBJ)
@@ -76,6 +76,7 @@ test_mips :  $(OUTPUT)
 				echo "\n\033[91mError in $${file}\033[0m" ; \
 				exit 1 ; \
 			fi ; \
+			echo "\033[92m----------------------TEST MIPS----------------------\033[0m" ; \
 			if ! [ -z $(spim -file mips.asm | grep error | wc -l) ]  ; then \
 				echo "\n\033[91mError in $${file}'s MIPS\033[0m" ; \
 				exit 1 ; \
