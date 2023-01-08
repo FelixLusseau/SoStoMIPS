@@ -1,0 +1,30 @@
+i=2;
+
+k=2;
+
+if test ${i} = ${k}
+then
+i=3
+else
+k=4
+fi;
+
+echo ${i};
+
+
+
+if test ${i} != ${k}
+then
+i=3
+else
+k=4
+fi;
+
+if test ${i} -lt ${k}
+then
+i=3
+else
+k=4
+fi;
+
+exit

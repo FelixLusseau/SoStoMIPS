@@ -1,11 +1,6 @@
-declare tableau[5];
+i=1;
+c=0;
 
-tableau[1]=6;
-tableau[2]=1;
-tableau[3]=6;
-tableau[4]=2;
-tableau[5]=5;
-
-echo ${tableau[*]};
 
 exit
+

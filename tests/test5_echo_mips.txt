@@ -1,4 +1,7 @@
-i=1;
-declare table[5];
-table[${i}]=${i};
+declare abc[5];
+
+
+
+
+
 exit

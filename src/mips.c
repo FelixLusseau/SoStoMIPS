@@ -1,6 +1,16 @@
 #include "mips.h"
 
 int curr_temp_reg = 2;
+
+char * TABLE_$ = "";
+char * CURR_TYPE_TO_PRINT = "";
+
+char * IF_ELSE ="";
+int count_goto=1;
+
+int addr_first_instruction_else=0;
+int else_number=0;
+
 extern int output_file;
 
 void mips(void) {
@@ -229,7 +239,16 @@ void QuadToMips(listQ *liste, char *buffer) {
     case Q_EQUAL:
         printf(" EQUAL ");
 
-        if (liste->quad->op1->kind == QO_CST) {
+        if(liste->quad->res->u.name!= NULL && !strncmp(liste->quad->res->u.name,"$",1)){
+            TABLE_$ = liste->quad->res->u.name;
+            
+            break;
+        }
+
+
+        if (liste->quad->op1->kind == QO_CST)
+       
+        {
             sprintf(buffer, "li $t7, %d\n", liste->quad->op1->u.cst);
             sprintf(buffer + strlen(buffer), "sw $t7, %s\n", liste->quad->res->u.name);
         } else {
@@ -260,6 +279,38 @@ void QuadToMips(listQ *liste, char *buffer) {
         break;
     case Q_GOTO:
         printf(" GOTO ");
+
+        /*if(!strcmp(IF_ELSE,"IF")) {
+            IF_ELSE="NAN";
+        }
+        else if (!strcmp(IF_ELSE,"ELSE")) {
+            
+            int addr_first_instruction =liste->quad->res->u.cst;
+            int curr_addr = count_goto;
+
+            int k=0;
+
+            while(k<addr_first_instruction-curr_addr){
+                liste = liste->next;
+                k++;
+                printf("%d ==== k",k);
+                
+            }
+
+            IF_ELSE = "NAN";
+        } */
+
+        if(count_goto+1==addr_first_instruction_else){
+            sprintf(buffer, "j EXIT%d\n", else_number);
+            sprintf(buffer + strlen(buffer), "ELSE%d :\n", else_number);
+
+        }
+
+        if(liste->next!= NULL && liste->next->quad->kind==Q_GOTO)
+            sprintf(buffer + strlen(buffer), "EXIT%d :\n", else_number);
+
+
+        
         break;
     case Q_EXIT:
         printf(" EXIT ");
@@ -291,6 +342,18 @@ void QuadToMips(listQ *liste, char *buffer) {
         break;
     case Q_ECHO:
         printf(" ECHO ");
+
+        int index = liste->quad->op1->u.cst;
+
+        sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, index*4-4); 
+
+        sprintf(buffer + strlen(buffer), "li $v0, 1\n");
+
+        // ??? change a0
+        sprintf(buffer + strlen(buffer), "lw $a0, %s($t%d)\nsyscall\n",TABLE_$ ,curr_temp_reg-1);
+
+        
+
         break;
     case Q_FCT:
         printf(" FCT: ");
@@ -354,6 +417,37 @@ void QuadToMips(listQ *liste, char *buffer) {
     case Q_TAB_EQUAL:
         printf(" TAB[]EQUAL ");
 
+        /**
+
+        if(liste->quad->op2->kind==QO_STR) { // echo "this string";
+            sprintf(buffer, ".data\nSTRING_TO_PRINT:   .asciiz %s\n.text\n",liste->quad->op2->u.name);
+
+            break;
+            
+        }
+
+        if(TODO : if var is int or if it is string) // echo ${var}
+        {
+            // int
+
+        }
+        else{
+
+        }
+
+        if(liste->quad->res->u.name!=NULL && !strncmp(liste->quad->res->u.name,"$",1)){
+            TABLE_$ = "TABLE_TO_PRINT";
+
+            if(liste->quad->op2->u.name != NULL ){
+                printf("WOOOOOOOO : %s",liste->quad->op2->u.name);
+
+                sprintf(buffer, "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name); 
+                sprintf(buffer + strlen(buffer) , "sw $t%d, %s\n",curr_temp_reg-1,TABLE_$);
+                
+            }
+            break;
+        }
+
         if (liste->quad->op1->kind == QO_CST)
             sprintf(buffer, "li $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst * 4); // indice
         else {                                                                                    // indice
@@ -370,7 +464,7 @@ void QuadToMips(listQ *liste, char *buffer) {
             sprintf(buffer + strlen(buffer), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name); // valeur
 
         sprintf(buffer + strlen(buffer), "sw $t%d, %s($t%d)\n", (curr_temp_reg - 1) % 7, liste->quad->res->u.name, (curr_temp_reg - 2) % 7);
-
+        **/
         break;
     case Q_TAB_GIVE:
         printf(" TAB[]GIVE ");
@@ -398,24 +492,165 @@ void QuadToMips(listQ *liste, char *buffer) {
         break;
     case Q_IF:
         printf(" IF _ GOTO ");
+
+        addr_first_instruction_else =liste->next->quad->res->u.cst;
+
+        else_number = isTemporaryVariable(liste->quad->op1->u.name);
+        
+
+        sprintf(buffer,"li $t%d, 1\n", (curr_temp_reg++)%7);
+
+        sprintf(buffer + strlen(buffer), "bne $s%d, $t%d, ELSE%d\n", (else_number)%7,(curr_temp_reg-1)%7,else_number);
+
+
+
         break;
     case Q_IF_EQ:
         printf(" IF == ");
+
+        idx = isTemporaryVariable(liste->quad->res->u.name)%7;
+
+        
+        sprintf(buffer, "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op1->u.name);
+        sprintf(buffer + strlen(buffer), "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op2->u.name);
+
+        sprintf(buffer + strlen(buffer), "beq $t%d, $t%d, ELSE%d\n",(curr_temp_reg-2),(curr_temp_reg-1),idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 0\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "j EXIT%d\n",idx+3000);
+
+
+        sprintf(buffer + strlen(buffer), "ELSE%d : ",idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 1\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "EXIT%d :\n",idx+3000);
+
+
+
+
+
         break;
+    
     case Q_IF_NE:
         printf(" IF != ");
+
+        
+
+        idx = isTemporaryVariable(liste->quad->res->u.name)%7;
+
+        
+        sprintf(buffer, "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op1->u.name);
+        sprintf(buffer + strlen(buffer), "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op2->u.name);
+
+        sprintf(buffer + strlen(buffer), "bne $t%d, $t%d, ELSE%d\n",(curr_temp_reg-2),(curr_temp_reg-1),idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 0\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "j EXIT%d\n",idx+3000);
+
+
+        sprintf(buffer + strlen(buffer), "ELSE%d : ",idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 1\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "EXIT%d :\n",idx+3000);
+
+
+
         break;
     case Q_IF_GT:
         printf(" IF > ");
+
+        idx = isTemporaryVariable(liste->quad->res->u.name)%7;
+
+        
+        sprintf(buffer, "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op1->u.name);
+        sprintf(buffer + strlen(buffer), "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op2->u.name);
+
+        sprintf(buffer + strlen(buffer), "bgt $t%d, $t%d, ELSE%d\n",(curr_temp_reg-2),(curr_temp_reg-1),idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 0\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "j EXIT%d\n",idx+3000);
+
+
+        sprintf(buffer + strlen(buffer), "ELSE%d : ",idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 1\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "EXIT%d :\n",idx+3000);
+
         break;
     case Q_IF_GE:
         printf(" IF >= ");
+
+        idx = isTemporaryVariable(liste->quad->res->u.name)%7;
+
+        
+        sprintf(buffer, "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op1->u.name);
+        sprintf(buffer + strlen(buffer), "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op2->u.name);
+
+        sprintf(buffer + strlen(buffer), "bge $t%d, $t%d, ELSE%d\n",(curr_temp_reg-2),(curr_temp_reg-1),idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 0\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "j EXIT%d\n",idx+3000);
+
+
+        sprintf(buffer + strlen(buffer), "ELSE%d : ",idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 1\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "EXIT%d :\n",idx+3000);
+
         break;
     case Q_IF_LT:
         printf(" IF < ");
+
+        idx = isTemporaryVariable(liste->quad->res->u.name)%7;
+
+        
+        sprintf(buffer, "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op1->u.name);
+        sprintf(buffer + strlen(buffer), "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op2->u.name);
+
+        sprintf(buffer + strlen(buffer), "blt $t%d, $t%d, ELSE%d\n",(curr_temp_reg-2),(curr_temp_reg-1),idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 0\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "j EXIT%d\n",idx+3000);
+
+
+        sprintf(buffer + strlen(buffer), "ELSE%d : ",idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 1\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "EXIT%d :\n",idx+3000);
+
         break;
     case Q_IF_LE:
         printf(" IF <= ");
+
+        idx = isTemporaryVariable(liste->quad->res->u.name)%7;
+
+        
+        sprintf(buffer, "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op1->u.name);
+        sprintf(buffer + strlen(buffer), "lw $t%d, %s\n",(curr_temp_reg++)%7,liste->quad->op2->u.name);
+
+        sprintf(buffer + strlen(buffer), "ble $t%d, $t%d, ELSE%d\n",(curr_temp_reg-2),(curr_temp_reg-1),idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 0\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "j EXIT%d\n",idx+3000);
+
+
+        sprintf(buffer + strlen(buffer), "ELSE%d : ",idx+3000);
+
+        sprintf(buffer + strlen(buffer), "li $s%d, 1\n",idx%7);
+
+        sprintf(buffer + strlen(buffer), "EXIT%d :\n",idx+3000);
+
         break;
     case Q_IF_N:
         printf(" IF NOT EMPTY");
@@ -480,6 +715,8 @@ void QuadToMips(listQ *liste, char *buffer) {
         }
         break;
     }
+
+    count_goto++;
 
     printf("\n");
 }

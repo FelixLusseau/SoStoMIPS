@@ -32,6 +32,7 @@ quadOP* QOcreat_addrs(int v);
 /* creer un variable temporaire pour le code 3 adresses */
 quadOP * QOcreat_temp(int ID_type);
 
+/* affiche un quadOP */
 void QOaffiche(quadOP *op);
 
 /* quad / instruction à 3 addresse*/
@@ -72,8 +73,10 @@ typedef struct quads {
 
 void Qfree(quads *q);
 
+/* créer un quads */
 quads * Qcreat(int type, quadOP* res,quadOP *op1, quadOP *op2);
 
+/* affiche un quads */
 void Qaffiche(quads *q);
 
 /* liste stockant les quads */
@@ -83,16 +86,22 @@ typedef struct listQ {
     int taille;
 }listQ;
 
+/* créer une listQ */
 listQ * Lcreat(void);
 
+/* agrandit un listQ */
 void Lappend(listQ *list,  quads * new_element);
 
+/* envoit le quad n°value_idx d'une listQ */
 quads* LgetQuad(listQ *list, int value_idx) ;
 
+/* concatène 2 listQ, renvoit leur concaténation */
 listQ * Lconcat(listQ *list, listQ *list2) ;
 
+/* affiche un listQ */
 void Laffiche (listQ* list);
 
+/* libère tout les garbages collector du programme */
 void Lfree(void);
 
 /* renvoit le dernier node de la liste */
@@ -104,6 +113,7 @@ typedef struct embranchment {
     listQ *False; // goto dans le cas ou le bool=false
 } embranchment;
 
+/* créer un embranchment */
 embranchment *EMcreat(void);
 
 /* remplie les goto vide de la liste */
@@ -115,6 +125,7 @@ typedef struct case_test {
     embranchment *branch;
 } case_test;
 
+/* créer un case_test */
 case_test *CTcreat(void);
 
 /* remplie les quadOP vide des tests */
@@ -129,6 +140,7 @@ typedef struct for_brnch {
     quads *Id;
 } for_brnch;
 
+/* créer un for_brnch */
 for_brnch *FBcreat(void);
 
 /* utilisé pour CFOR contient les test + les branchements */
@@ -137,6 +149,7 @@ typedef struct lt_op {
     int tab;
 } lt_op;
 
+/* créer un lt_op */
 lt_op *LTOPcreat(void);
 
 
