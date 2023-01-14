@@ -3,7 +3,9 @@ image: felixlusseau/dev-env
 stages:          # List of stages for jobs, and their order of execution
   - build
   - benchs
+  - benchs_mips
   - test
+  - test_mips
 
 build:       # This job runs in the build stage, which runs first.
   stage: build
@@ -17,8 +19,20 @@ benchs:   # This job runs in the test stage.
     - cd /builds/flusseau/projet-compilation-2022/
     - make benchs
 
+benchs_mips:   # This job runs in the test stage.
+  stage: benchs_mips    # It only starts when the job in the build stage completes successfully.
+  script:
+    - cd /builds/flusseau/projet-compilation-2022/
+    - make benchs_mips
+
 test:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - cd /builds/flusseau/projet-compilation-2022/
     - make test
+
+test_mips:   # This job runs in the test stage.
+  stage: test_mips    # It only starts when the job in the build stage completes successfully.
+  script:
+    - cd /builds/flusseau/projet-compilation-2022/
+    - make test_mips
