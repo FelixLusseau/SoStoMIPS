@@ -7,3 +7,4 @@ s34 = $(expr ${tab[3]} + ${tab[4]}) ;
 s = $(expr ${s12} + ${tab[2]} + ${s34}) ;
 echo ${s} "=15"
 
+; exit

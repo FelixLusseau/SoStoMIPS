@@ -12,3 +12,4 @@ fact () { # n
 
 echo $(fact 5) "=120"
 
+; exit

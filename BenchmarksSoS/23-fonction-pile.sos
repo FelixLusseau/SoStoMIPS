@@ -19,3 +19,4 @@ choose () { # k n
 
 echo $(choose 3 5) "=10"
 
+; exit

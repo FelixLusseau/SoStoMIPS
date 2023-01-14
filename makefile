@@ -84,6 +84,20 @@ test_mips :  $(OUTPUT)
 			echo "\033[92mOk\033[m\n" ; \
         done
 
+TESTDIR = BenchmarksSoS
+benchs :  $(OUTPUT)
+		for file in $(wildcard $(TESTDIR)/*.sos) ; do \
+			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
+			rm -f mips.asm ; \
+			if ! ./$(OUTPUT) --tos < $${file} > /dev/null ; then \
+				echo "\n\033[91mError in $${file}\033[0m" ; \
+			fi ; \
+			echo "\033[92m------------TEST MIPS------------\033[0m" ; \
+			echo "\033[91m" ; \
+			spim -file mips.asm > /dev/null ; \
+			echo "\033[0m" ; \
+        done
+
 .PHONY: clean doc
 doc:
 	mkdir -p doc

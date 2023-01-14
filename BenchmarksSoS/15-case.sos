@@ -7,3 +7,4 @@ case ${s} in
     *) echo "no *" ;;
 esac
 
+; exit
