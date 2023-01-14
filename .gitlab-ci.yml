@@ -2,6 +2,7 @@ image: felixlusseau/dev-env
 
 stages:          # List of stages for jobs, and their order of execution
   - build
+  - benchs
   - test
 
 build:       # This job runs in the build stage, which runs first.
@@ -9,6 +10,12 @@ build:       # This job runs in the build stage, which runs first.
   script:
     - cd /builds/flusseau/projet-compilation-2022/
     - make
+
+benchs:   # This job runs in the test stage.
+  stage: benchs    # It only starts when the job in the build stage completes successfully.
+  script:
+    - cd /builds/flusseau/projet-compilation-2022/
+    - make benchs
 
 test:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
