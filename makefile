@@ -71,29 +71,46 @@ test_mips :  $(OUTPUT)
 		for file in $(wildcard tests/*.txt) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
-			if ! ./$(OUTPUT) --tos < $${file}  ; then \
+			if ! ./$(OUTPUT) --tos < $${file} > /dev/null ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
-				exit 1 ; \
+				continue ; \
+			else \
+				echo "\033[92mOk\033[m" ; \
 			fi ; \
-			echo "\033[92m------------TEST MIPS------------\033[0m" ; \
-			if ! [ $(spim -file mips.asm | grep 'error|parser' | wc -l) ]  ; then \
-				echo "\n\033[91mError in $${file}'s MIPS\033[0m" ; \
-				exit 1 ; \
+			echo "\n\033[92m------------TEST MIPS------------\033[0m" ; \
+			if spim -file mips.asm 2>&1 | grep -A 20 'error\|parser' ; then \
+				echo "\n\033[91mError in $${file}'s MIPS\033[0m\n" ; \
+			else \
+				echo "\033[92mOk\033[m\n" ; \
 			fi ; \
-			echo "\033[92mOk\033[m\n" ; \
         done
 
 benchs :  $(OUTPUT)
 		for file in $(wildcard BenchmarksSoS/*.sos) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
+			if ! ./$(OUTPUT) --tos < $${file}  ; then \
+				echo "\n\033[91mError in $${file}\033[0m" ; \
+				exit 1 ; \
+			fi ; \
+        done
+
+benchs_mips :  $(OUTPUT)
+		for file in $(wildcard BenchmarksSoS/*.sos) ; do \
+			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
+			rm -f mips.asm ; \
 			if ! ./$(OUTPUT) --tos < $${file} > /dev/null ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
+				continue ; \
+			else \
+				echo "\033[92mOk\033[m" ; \
 			fi ; \
-			echo "\033[92m------------TEST MIPS------------\033[0m" ; \
-			echo "\033[91m" ; \
-			spim -file mips.asm > /dev/null ; \
-			echo "\033[0m" ; \
+			echo "\n\033[92m------------TEST MIPS------------\033[0m" ; \
+			if spim -file mips.asm 2>&1 | grep -A 20 'error\|parser' ; then \
+				echo "\n\033[91mError in $${file}'s MIPS\033[0m\n" ; \
+			else \
+				echo "\033[92mOk\033[m\n" ; \
+			fi ; \
         done
 
 .PHONY: clean doc
