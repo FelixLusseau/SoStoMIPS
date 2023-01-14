@@ -1,0 +1,10 @@
+echo "Hello world!\n" ;
+echo "Hello" "world!" ;
+echo "\n" ;
+
+i = "cc" ;
+echo ${i} ;
+h = 895 ;
+echo ${h} "\n" ;
+
+exit

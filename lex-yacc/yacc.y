@@ -6,6 +6,9 @@
 #include "quads.h"
 #include "tos.h"
 #include <stdio.h>
+#include <ctype.h>
+
+#define MAX(a,b) (((a)>(b))?(a):(b))
 
 extern int yylex(); 
 extern char* text;
@@ -14,7 +17,11 @@ extern listQ *Lglobal;
 extern struct tos_entry **tos;
 extern int depth;
 extern int taille_parametres;
-extern int width[MAX_TOS_SIZE];
+extern int width;
+int fn_args_counter;
+int str_number = 0;
+char strnb[100];
+char id[100] = "\0";
 %}
 
 %union{char *strval; 
@@ -71,6 +78,7 @@ extern int width[MAX_TOS_SIZE];
 M: %empty {printf("M->empty\n");$$=Lglobal->taille;}
 
 id: ID { // lecture d'un ID
+  strcpy(id, $1);
   int actual_depth=depth;
   int dont_exist=1;
 
@@ -83,7 +91,7 @@ id: ID { // lecture d'un ID
 
   depth=actual_depth;
   if(dont_exist!=0){
-    add_to_table(tos, $1, IDENTIFIER, 0);
+    add_to_table(tos, $1, IDENTIFIER, 0, NULL);
   }
   $$=$1;
 };
@@ -160,9 +168,11 @@ id '=' concatenation {
   quadOP* res= QOcreat(QO_ID,$1,0,$3->id_type);
   quads *q=Qcreat(Q_EQUAL,res,$3,NULL);
   Lappend(Lglobal,q);
+
+  id[0]='\0';
   }
 | ID '[' operande_entier ']' '=' concatenation {
-  add_to_table(tos, $1, ARRAY, atoi((char*)$3));
+  add_to_table(tos, $1, ARRAY, atoi((char*)$3), NULL);
 
   printf("instruction-> ID [ operande_entier ] = concatenation\n");
 
@@ -179,7 +189,7 @@ id '=' concatenation {
     printf("ERROR: ToInt MOT N'EST PAS ENTIER\n");
   }
 
-  add_to_table(tos, $2, ARRAY, index);
+  add_to_table(tos, $2, ARRAY, index, NULL);
 
 
   quadOP *tab=QOcreat(QO_TAB,$2,0,ARRAY);
@@ -538,7 +548,7 @@ concatenation operande {
   printf("concatenation-> concatenation operande \n");
 
   int type=STRING;
-  if($1->id_type == INT && $1->id_type == INT){
+  if($1->id_type == INT && $2->id_type == INT){
     type=INT;
   }
 
@@ -681,6 +691,10 @@ concatenation '=' concatenation       {
   $$=temp;
   }
 | operande operateur2 operande { 
+  if ($1->id_type == INT)
+    update_type(tos, $3->u.name,INT);
+  else if ($3->id_type == INT)
+    update_type(tos, $1->u.name,INT);
   printf("test_instruction-> operande operateur2 operande \n");
   int oper=0;
   switch($2){
@@ -746,7 +760,10 @@ operande:
    }
 | ID { 
   printf("operande-> MOT\n");
-  $$=QOcreat(QO_STR,$1,0,STRING);
+  if(isdigit($1[0]))
+    $$=QOcreat(QO_STR,$1,0,INT);
+  else
+    $$=QOcreat(QO_STR,$1,0,STRING);
   free($1);
   }
 
@@ -765,6 +782,8 @@ operande:
     $$=QOcreat(QO_ID,id,0,UNDEFINED);
     free($2);
 
+    fn_args_counter = MAX(fn_args_counter, entier);
+
   }else{ // $a ou $1mp
       yyerror("error: operande->$ENTIER ne doit contenir que des chiffres ");
   }
@@ -780,7 +799,14 @@ operande:
   $$=QOcreat(QO_ID,"$?",0,UNDEFINED);
   }
 
-| CHAINE { 
+| CHAINE {
+  //printf("((((((((((((((%s ---- %d\n", id,id[0]!='\0');
+  if (id[0]=='\0') 
+    sprintf(strnb, "str%d", str_number++);
+  else
+    strcpy(strnb, id);
+  add_to_table(tos, strnb, IDENTIFIER, 0, $1);
+  update_type(tos, strnb, STRING);
   printf("operande-> CHAINE:%s\n",$1); 
   $$=QOcreat(QO_STR,$1,0,STRING);
   free($1);
@@ -879,6 +905,8 @@ operande_entier:
     $$=op;
     free($2);
 
+    fn_args_counter = MAX(fn_args_counter, entier);
+
   }else{ // $a ou $1mp
       yyerror("error: operande->$ENTIER ne doit contenir que des chiffres ");
   }
@@ -942,6 +970,8 @@ operande_entier:
     $$=temp;
     free($3);
 
+    fn_args_counter = MAX(fn_args_counter, entier);
+
   }else{ // $a ou $1mp
       printf("error: operande->$ENTIER ne doit contenir que des chiffres\n");
   }
@@ -981,10 +1011,12 @@ fois_div_mod: '*' {$$=1;}| '/' {$$=2;}| '%' {$$=3;};
 dec_fct:%empty{
   printf("dec_fct->empty\n");
   depth++;
- printf("deeeeeeppppppttttthhhh : %d  ", depth); 
+ //printf("deeeeeeppppppttttthhhh : %d  ", depth); 
   quads *q=Qcreat(Q_FCT,NULL,NULL,NULL);
   $$=q;
   Lappend(Lglobal,q);
+
+  fn_args_counter = 0;
   };
 
 declaration_de_fonction:
@@ -993,8 +1025,10 @@ ID '(' ')' dec_fct '{'  decl_loc liste_instructions '}' {
  // code déplacé dans la rêgle au dessus de celle là
 
   depth--; 
-  printf("--------------------------deeeeeeppppppttttthhhh------------------------ : %d %s \n ", depth,$1);  
-  add_to_table(tos,$1,FUNCTION,0);
+  //printf("--------------------------deeeeeeppppppttttthhhh------------------------ : %d %s \n ", depth,$1);  
+  add_to_table(tos,$1,FUNCTION,0, NULL);
+  update_args_count(tos, $1, fn_args_counter);
+  // show_table(tos);
 
   quadOP *fct=QOcreat(QO_FCT,$1,0,FUNCTION);
   $4->res=fct;
@@ -1005,7 +1039,7 @@ decl_loc LOCAL id '=' concatenation ';' {
   printf("decl_loc-> decl_loc LOCAL id = concatenation \n");
 
 
-  add_to_table(tos, $3, IDENTIFIER, 0);
+  add_to_table(tos, $3, IDENTIFIER, 0, NULL);
 
   update_type(tos, $3, $5->id_type);
 

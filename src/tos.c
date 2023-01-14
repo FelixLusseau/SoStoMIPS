@@ -22,24 +22,32 @@ struct tos_entry **create_table() {
     return table;
 }
 
-int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_length) {
+int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_length, char *string) {
+    // printf("Adding %s to table as %d", str, var_kind);
     unsigned int hash1 = hash((unsigned char *)str);
 
     if (table[hash1] == NULL) { // Créé une entrée si elle n'existe pas
         CHKP((table[hash1] = malloc(sizeof(struct tos_entry))));
         CHKP((table[hash1]->str = malloc(sizeof(char) * MAX_LENGTH)));
-    }
+    } else // Empêche d'écraser une entrée existante
+        return hash1;
     sprintf(table[hash1]->str, "%s", str);
     if (depth == 0) { // Vérifie si le symbole actuel est global ou local
         table[hash1]->used = 1;
         table[hash1]->depth = depth;
         table[hash1]->var_kind = var_kind;
         table[hash1]->tab_length = tab_length;
+        table[hash1]->fn_args_counter = 0;
         table[hash1]->type = UNDEFINED;
-        if (table[hash1]->next_lvl == NULL)
+        if (string != NULL) {
+            CHKP((table[hash1]->string = malloc(sizeof(char) * MAX_LENGTH)));
+            sprintf(table[hash1]->string, "%s", string);
+        } else
+            table[hash1]->string = NULL;
+        if (table[hash1]->next_lvl == NULL) // bizarre
             table[hash1]->next_lvl = NULL;
     } else {
-        if (!table[hash1]->used)
+        if (!table[hash1]->used) // conditional jump or move depends on uninitialised value(s)
             table[hash1]->used = 0;
         for (int d = 0; d < depth; d++) {
             if (table[hash1]->next_lvl == NULL) {
@@ -52,7 +60,13 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
                 table[hash1]->next_lvl->depth = depth;
                 table[hash1]->next_lvl->var_kind = var_kind;
                 table[hash1]->next_lvl->tab_length = tab_length;
+                table[hash1]->next_lvl->fn_args_counter = 0;
                 table[hash1]->next_lvl->type = UNDEFINED;
+                if (string != NULL) {
+                    CHKP((table[hash1]->next_lvl->string = malloc(sizeof(char) * MAX_LENGTH)));
+                    sprintf(table[hash1]->next_lvl->string, "%s", string);
+                } else
+                    table[hash1]->next_lvl->string = NULL;
                 table[hash1]->next_lvl->next_lvl = NULL;
             } else
                 table[hash1]->next_lvl->used = 0;
@@ -65,10 +79,32 @@ int update_type(struct tos_entry **table, char *str, int type) {
     unsigned int hash1 = hash((unsigned char *)str);
     if (table[hash1] == NULL)
         return -1;
+    if (table[hash1]->used) {
+        if (table[hash1]->type == INT) // Évite de remodifier le type d'un INT
+            return 0;
+        else {
+            table[hash1]->type = type;
+            printf("\033[91mUpdating type of %s to %d\033[0m\n", str, type);
+        }
+    } else {
+        if (table[hash1]->next_lvl->type == INT) // Évite de remodifier le type d'un INT
+            return 0;
+        else {
+            table[hash1]->next_lvl->type = type;
+            printf("\033[91mUpdating type of %s to %d\033[0m\n", str, type);
+        }
+    }
+    return 0;
+}
+
+int update_args_count(struct tos_entry **table, char *str, int fn_args_counter) {
+    unsigned int hash1 = hash((unsigned char *)str);
+    if (table[hash1] == NULL)
+        return -1;
     if (table[hash1]->used)
-        table[hash1]->type = type;
+        table[hash1]->fn_args_counter = fn_args_counter;
     else
-        table[hash1]->next_lvl->type = type;
+        table[hash1]->next_lvl->fn_args_counter = fn_args_counter;
     return 0;
 }
 
@@ -112,7 +148,7 @@ void show_table(struct tos_entry **table) {
                         printf("\t");
                         break;
                     case FUNCTION:
-                        printf("Function\t\t\t\t\t");
+                        printf("Function of %d argument(s)\t\t\t", entry->fn_args_counter);
                         break;
                     case ARRAY:
                         printf("Array of %d elements\t\t\t\t", entry->tab_length);
@@ -121,6 +157,8 @@ void show_table(struct tos_entry **table) {
                     printf("%s", entry->str);
                     if (entry->depth)
                         printf(" (local variable)");
+                    if (entry->type == STRING && entry->string != NULL)
+                        printf(" : %s", entry->string);
                     printf("\n");
                 }
                 entry = entry->next_lvl;
@@ -133,9 +171,14 @@ void free_table(struct tos_entry **table) {
     for (unsigned int i = 0; i < HT_SIZE; i++) { // Parcours de toute la table
         if (table[i] != NULL) {                  // Teste la présence d'un symbole
             if (table[i]->next_lvl != NULL) {    // Libère l'entrée locale si elle existe
+                if (table[i]->next_lvl->string != NULL)
+                    free(table[i]->next_lvl->string);
                 free(table[i]->next_lvl->str);
                 free(table[i]->next_lvl);
             }
+            // printf("Freeing %s\n", table[i]->str);
+            if (table[i]->string != NULL)
+                free(table[i]->string);
             free(table[i]->str);
             free(table[i]);
         }

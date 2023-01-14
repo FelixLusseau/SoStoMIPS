@@ -62,7 +62,7 @@ test :  $(OUTPUT)
 		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
-			if ! ./$(OUTPUT) < $${file}  ; then \
+			if ! ./$(OUTPUT) --tos < $${file}  ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
 				exit 1 ; \
 			fi ; \
@@ -72,7 +72,7 @@ test_mips :  $(OUTPUT)
 		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
-			if ! ./$(OUTPUT) < $${file}  ; then \
+			if ! ./$(OUTPUT) --tos < $${file}  ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
 				exit 1 ; \
 			fi ; \

@@ -27,9 +27,10 @@ void mips(void);
  * @brief Fonction convertissant les quads en MIPS
  *
  * @param liste
- * @param buffer
+ * @param buffer_text
+ * @param buffer_data
  */
-void QuadToMips(listQ *liste, char *buffer);
+void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data);
 
 /**
  * @brief Une variable temporaire porte le nom : __TEMP__NUM
