@@ -800,7 +800,11 @@ operande:
   }
 
 | CHAINE {
-  //printf("((((((((((((((%s ---- %d\n", id,id[0]!='\0');
+  //printf("((((((((((((((%s %s---- %d\n", id, $1, id[0]!='\0');
+  if ($1[0]=='\''){
+    $1[0]='\"';
+    $1[strlen($1)-1]='\"';
+  }
   if (id[0]=='\0') 
     sprintf(strnb, "str%d", str_number++);
   else

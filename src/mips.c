@@ -241,11 +241,11 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
             break;
         }
 
-        if (liste->quad->res->u.name != NULL && !strncmp(liste->quad->res->u.name, "$", 1)) {
+        /* if (liste->quad->res->u.name != NULL && !strncmp(liste->quad->res->u.name, "$", 1)) {
             TABLE_$ = liste->quad->res->u.name;
 
             break;
-        }
+        } */
 
         if (liste->quad->op1->kind == QO_CST)
 
