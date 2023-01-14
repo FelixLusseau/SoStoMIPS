@@ -57,9 +57,8 @@ $(YACCOBJ): $(OBJDIR)/%.o : $(SRCDIR)/%.c $(INCLUDES) $(YACCC)
 	$(CC) -o $@ -c $< $(CFLAGS) -I$(INCLUDE_PATH)
 	@echo "\033[92mCompiling yacc complete !\033[0m"
 
-TESTDIR = tests
 test :  $(OUTPUT)
-		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
+		for file in $(wildcard tests/*.txt) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
 			if ! ./$(OUTPUT) --tos < $${file}  ; then \
@@ -69,7 +68,7 @@ test :  $(OUTPUT)
         done
 
 test_mips :  $(OUTPUT)
-		for file in $(wildcard $(TESTDIR)/*.txt) ; do \
+		for file in $(wildcard tests/*.txt) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
 			if ! ./$(OUTPUT) --tos < $${file}  ; then \
@@ -84,9 +83,8 @@ test_mips :  $(OUTPUT)
 			echo "\033[92mOk\033[m\n" ; \
         done
 
-TESTDIR = BenchmarksSoS
 benchs :  $(OUTPUT)
-		for file in $(wildcard $(TESTDIR)/*.sos) ; do \
+		for file in $(wildcard BenchmarksSoS/*.sos) ; do \
 			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
 			if ! ./$(OUTPUT) --tos < $${file} > /dev/null ; then \
