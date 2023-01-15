@@ -27,7 +27,7 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
     unsigned int hash1 = hash((unsigned char *)str);
 
     if (table[hash1] == NULL) { // Créé une entrée si elle n'existe pas
-        CHKP((table[hash1] = malloc(sizeof(struct tos_entry))));
+        CHKP((table[hash1] = calloc(1, sizeof(struct tos_entry))));
         CHKP((table[hash1]->str = malloc(sizeof(char) * MAX_LENGTH)));
     } else // Empêche d'écraser une entrée existante
         return hash1;
@@ -44,14 +44,14 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
             sprintf(table[hash1]->string, "%s", string);
         } else
             table[hash1]->string = NULL;
-        if (table[hash1]->next_lvl == NULL) // bizarre
-            table[hash1]->next_lvl = NULL;
+        /* if (table[hash1]->next_lvl == NULL) // bizarre
+            table[hash1]->next_lvl = NULL; */
     } else {
-        if (!table[hash1]->used) // conditional jump or move depends on uninitialised value(s)
+        if (!table[hash1]->used) // conditional jump or move depends on uninitialised value(s) // Ok ?
             table[hash1]->used = 0;
         for (int d = 0; d < depth; d++) {
             if (table[hash1]->next_lvl == NULL) {
-                CHKP((table[hash1]->next_lvl = malloc(sizeof(struct tos_entry))));
+                CHKP((table[hash1]->next_lvl = calloc(1, sizeof(struct tos_entry))));
                 CHKP((table[hash1]->next_lvl->str = malloc(sizeof(char) * MAX_LENGTH)));
             }
             sprintf(table[hash1]->next_lvl->str, "%s", str);
