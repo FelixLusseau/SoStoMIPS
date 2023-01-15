@@ -59,7 +59,7 @@ $(YACCOBJ): $(OBJDIR)/%.o : $(SRCDIR)/%.c $(INCLUDES) $(YACCC)
 
 test :  $(OUTPUT)
 		for file in $(wildcard tests/*.txt) ; do \
-			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
+			echo "\033[92m-------------------------------TEST COMPILATION-------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
 			if ! ./$(OUTPUT) --tos < $${file}  ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
@@ -69,7 +69,7 @@ test :  $(OUTPUT)
 
 test_mips :  $(OUTPUT)
 		for file in $(wildcard tests/*.txt) ; do \
-			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
+			echo "\033[92m-------------------------------TEST COMPILATION-------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
 			if ! ./$(OUTPUT) --tos < $${file} > /dev/null ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
@@ -77,17 +77,17 @@ test_mips :  $(OUTPUT)
 			else \
 				echo "\033[92mOk\033[m" ; \
 			fi ; \
-			echo "\n\033[92m------------TEST MIPS------------\033[0m" ; \
+			echo "\n\033[0;34m------------TEST MIPS------------\033[0m" ; \
 			if spim -file mips.asm 2>&1 | grep -A 20 'error\|parser' ; then \
 				echo "\n\033[91mError in $${file}'s MIPS\033[0m\n" ; \
 			else \
-				echo "\033[92mOk\033[m\n" ; \
+				echo "\033[0;34mOk\033[m\n" ; \
 			fi ; \
         done
 
 benchs :  $(OUTPUT)
 		for file in $(wildcard BenchmarksSoS/*.sos) ; do \
-			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
+			echo "\033[92m-------------------------------TEST COMPILATION-------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
 			if ! ./$(OUTPUT) --tos < $${file}  ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
@@ -97,7 +97,7 @@ benchs :  $(OUTPUT)
 
 benchs_mips :  $(OUTPUT)
 		for file in $(wildcard BenchmarksSoS/*.sos) ; do \
-			echo "\033[92m-------------------------------------------------TEST-------------------------------------------------\033[0m" $${file} ; \
+			echo "\033[92m-------------------------------TEST COMPILATION-------------------------------\033[0m" $${file} ; \
 			rm -f mips.asm ; \
 			if ! ./$(OUTPUT) --tos < $${file} > /dev/null ; then \
 				echo "\n\033[91mError in $${file}\033[0m" ; \
@@ -105,11 +105,11 @@ benchs_mips :  $(OUTPUT)
 			else \
 				echo "\033[92mOk\033[m" ; \
 			fi ; \
-			echo "\n\033[92m------------TEST MIPS------------\033[0m" ; \
+			echo "\n\033[0;34m------------TEST MIPS------------\033[0m" ; \
 			if spim -file mips.asm 2>&1 | grep -A 20 'error\|parser' ; then \
 				echo "\n\033[91mError in $${file}'s MIPS\033[0m\n" ; \
 			else \
-				echo "\033[92mOk\033[m\n" ; \
+				echo "\033[0;34mOk\033[m\n" ; \
 			fi ; \
         done
 
