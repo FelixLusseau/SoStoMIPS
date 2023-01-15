@@ -83,6 +83,7 @@ test_mips :  $(OUTPUT)
 			else \
 				echo "\033[0;34mOk\033[m\n" ; \
 			fi ; \
+			echo "\n" ; \
         done
 
 benchs :  $(OUTPUT)
@@ -111,6 +112,7 @@ benchs_mips :  $(OUTPUT)
 			else \
 				echo "\033[0;34mOk\033[m\n" ; \
 			fi ; \
+			echo "\n" ; \
         done
 
 .PHONY: clean doc
