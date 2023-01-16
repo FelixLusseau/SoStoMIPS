@@ -1,6 +1,7 @@
 lecture_valeurs() # Saisie des valeurs entières
 {
     local i=0 ; local nombre = $1 ;
+    echo $( expr ${nombre} + 4 ) ;
     return 0
 } ;
 
