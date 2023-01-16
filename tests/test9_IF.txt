@@ -13,6 +13,14 @@ then
 
 if test ${i} != ${k}
 then
+if test ${i} = ${k}
+then
+
+u=10
+else
+v=10
+fi;
+
 u=10
 else
 v=10
