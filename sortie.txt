@@ -1,0 +1,309 @@
+    mot/id/entier:i
+    =
+    mot/id/entier:2
+operande-> MOT
+        créer quadOP:0  str:2
+concatenation-> operande 
+    ;
+instruction-> ID = concatenation
+[91mUpdating type of i to 1[0m
+        créer quadOP:1  str:i
+liste_instruction->instruction
+        créer quadOP:2  cst:0
+    mot/id/entier:k
+    =
+    mot/id/entier:2
+operande-> MOT
+        créer quadOP:3  str:2
+concatenation-> operande 
+    ;
+instruction-> ID = concatenation
+[91mUpdating type of k to 1[0m
+        créer quadOP:4  str:k
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:5  cst:0
+    mot/id/entier:u
+    =
+    mot/id/entier:5
+operande-> MOT
+        créer quadOP:6  str:5
+concatenation-> operande 
+    ;
+instruction-> ID = concatenation
+[91mUpdating type of u to 1[0m
+        créer quadOP:7  str:u
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:8  cst:0
+    mot/id/entier:v
+    =
+    mot/id/entier:8
+operande-> MOT
+        créer quadOP:9  str:8
+concatenation-> operande 
+    ;
+instruction-> ID = concatenation
+[91mUpdating type of v to 1[0m
+        créer quadOP:10  str:v
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:11  cst:0
+    if
+    test
+    $
+    {
+    mot/id/entier:i
+    }
+operande-> $ { ID }
+        créer quadOP:12  str:i
+    =
+concatenation-> operande 
+    $
+    {
+    mot/id/entier:k
+    }
+operande-> $ { ID }
+        créer quadOP:13  str:k
+concatenation-> operande 
+    then
+test_instruction-> concatenation = concatenation 
+        créer quadOP:14  str:__TEMP__1
+test_expr3 -> test_instruction 
+test_expr2-> test_expr3 
+2
+3
+test_expr-> test_expr2 
+test_bloc-> TEST test_expr 
+M->empty
+    if
+    test
+    $
+    {
+    mot/id/entier:i
+    }
+operande-> $ { ID }
+        créer quadOP:15  str:i
+    ?
+concatenation-> operande 
+    =
+    $
+    {
+    mot/id/entier:k
+    }
+operande-> $ { ID }
+        créer quadOP:16  str:k
+concatenation-> operande 
+    then
+test_instruction-> concatenation != concatenation 
+        créer quadOP:17  str:__TEMP__2
+test_expr3 -> test_instruction 
+test_expr2-> test_expr3 
+2
+3
+test_expr-> test_expr2 
+test_bloc-> TEST test_expr 
+M->empty
+    mot/id/entier:u
+    =
+    mot/id/entier:10
+operande-> MOT
+        créer quadOP:18  str:10
+concatenation-> operande 
+    else
+instruction-> ID = concatenation
+        créer quadOP:19  str:u
+liste_instruction->instruction
+        créer quadOP:20  cst:0
+M->empty
+    mot/id/entier:v
+    =
+    mot/id/entier:10
+operande-> MOT
+        créer quadOP:21  str:10
+concatenation-> operande 
+    fi
+instruction-> ID = concatenation
+        créer quadOP:22  str:v
+liste_instruction->instruction
+        créer quadOP:23  cst:0
+else_part->ELSE liste_instructions
+instruction-> IF test_bloc THEN liste_instructions else_part FI 
+        créer quadOP:24  cst:15
+        créer quadOP:25  cst:17
+liste_instruction->instruction
+        créer quadOP:26  cst:0
+    else
+M->empty
+    mot/id/entier:k
+    =
+    mot/id/entier:4
+operande-> MOT
+        créer quadOP:27  str:4
+concatenation-> operande 
+    fi
+instruction-> ID = concatenation
+        créer quadOP:28  str:k
+liste_instruction->instruction
+        créer quadOP:29  cst:0
+else_part->ELSE liste_instructions
+instruction-> IF test_bloc THEN liste_instructions else_part FI 
+        créer quadOP:30  cst:12
+        créer quadOP:31  cst:20
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:32  cst:0
+    ;
+    if
+    test
+    $
+    {
+    mot/id/entier:i
+    }
+operande-> $ { ID }
+        créer quadOP:33  str:i
+    -lt
+operateur2-> -lt
+    $
+    {
+    mot/id/entier:k
+    }
+operande-> $ { ID }
+        créer quadOP:34  str:k
+test_instruction-> operande operateur2 operande 
+        créer quadOP:35  str:__TEMP__3
+test_expr3 -> test_instruction 
+test_expr2-> test_expr3 
+2
+3
+    then
+test_expr-> test_expr2 
+test_bloc-> TEST test_expr 
+M->empty
+    mot/id/entier:i
+    =
+    mot/id/entier:3
+operande-> MOT
+        créer quadOP:36  str:3
+concatenation-> operande 
+    else
+instruction-> ID = concatenation
+        créer quadOP:37  str:i
+liste_instruction->instruction
+        créer quadOP:38  cst:0
+M->empty
+    mot/id/entier:k
+    =
+    mot/id/entier:4
+operande-> MOT
+        créer quadOP:39  str:4
+concatenation-> operande 
+    fi
+instruction-> ID = concatenation
+        créer quadOP:40  str:k
+liste_instruction->instruction
+        créer quadOP:41  cst:0
+else_part->ELSE liste_instructions
+instruction-> IF test_bloc THEN liste_instructions else_part FI 
+        créer quadOP:42  cst:26
+        créer quadOP:43  cst:28
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:44  cst:0
+    ;
+    echo
+    $
+    {
+    mot/id/entier:k
+    }
+operande-> $ { ID }
+        créer quadOP:45  str:k
+liste_operandes-> operande 
+        créer quadOP:46  cst:1
+        créer quadOP:47  str:$
+    ;
+instruction-> MYECHO liste_operandes 
+        créer quadOP:48  cst:1
+        créer quadOP:49  str:$
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:50  cst:0
+    exit
+instruction->EXIT
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:51  cst:0
+programme->liste_instruction
+
+Affichage Lglobal:
+ligne 1:  res: id:i  EQUAL  op1: string:2  op2: NULL 
+ligne 2:  res: addr:3  GOTO  op1: NULL  op2: NULL 
+ligne 3:  res: id:k  EQUAL  op1: string:2  op2: NULL 
+ligne 4:  res: addr:5  GOTO  op1: NULL  op2: NULL 
+ligne 5:  res: id:u  EQUAL  op1: string:5  op2: NULL 
+ligne 6:  res: addr:7  GOTO  op1: NULL  op2: NULL 
+ligne 7:  res: id:v  EQUAL  op1: string:8  op2: NULL 
+ligne 8:  res: addr:9  GOTO  op1: NULL  op2: NULL 
+ligne 9:  res: id:__TEMP__1  IF ==  op1: id:i  op2: id:k 
+ligne 10:  res: addr:12  IF _ GOTO  op1: id:__TEMP__1  op2: NULL 
+ligne 11:  res: addr:20  GOTO  op1: NULL  op2: NULL 
+ligne 12:  res: id:__TEMP__2  IF !=  op1: id:i  op2: id:k 
+ligne 13:  res: addr:15  IF _ GOTO  op1: id:__TEMP__2  op2: NULL 
+ligne 14:  res: addr:17  GOTO  op1: NULL  op2: NULL 
+ligne 15:  res: id:u  EQUAL  op1: string:10  op2: NULL 
+ligne 16:  res: addr:17  GOTO  op1: NULL  op2: NULL 
+ligne 17:  res: id:v  EQUAL  op1: string:10  op2: NULL 
+ligne 18:  res: addr:19  GOTO  op1: NULL  op2: NULL 
+ligne 19:  res: addr:20  GOTO  op1: NULL  op2: NULL 
+ligne 20:  res: id:k  EQUAL  op1: string:4  op2: NULL 
+ligne 21:  res: addr:22  GOTO  op1: NULL  op2: NULL 
+ligne 22:  res: addr:23  GOTO  op1: NULL  op2: NULL 
+ligne 23:  res: id:__TEMP__3  IF <  op1: id:i  op2: id:k 
+ligne 24:  res: addr:26  IF _ GOTO  op1: id:__TEMP__3  op2: NULL 
+ligne 25:  res: addr:28  GOTO  op1: NULL  op2: NULL 
+ligne 26:  res: id:i  EQUAL  op1: string:3  op2: NULL 
+ligne 27:  res: addr:28  GOTO  op1: NULL  op2: NULL 
+ligne 28:  res: id:k  EQUAL  op1: string:4  op2: NULL 
+ligne 29:  res: addr:30  GOTO  op1: NULL  op2: NULL 
+ligne 30:  res: addr:31  GOTO  op1: NULL  op2: NULL 
+ligne 31:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: id:k 
+ligne 32:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 33:  res: addr:34  GOTO  op1: NULL  op2: NULL 
+ligne 34:  res: NULL  EXIT  op1: NULL  op2: NULL 
+ligne 35:  res: addr:36  GOTO  op1: NULL  op2: NULL 
+Yacc return : ->0
+
+### MIPS: ###
+
+ EQUAL 
+ GOTO 
+ EQUAL 
+ GOTO 
+ EQUAL 
+ GOTO 
+ EQUAL 
+ GOTO 
+ IF == 
+ IF _ GOTO 
+ GOTO 
+ IF != 
+ IF _ GOTO 
+ GOTO 
+ EQUAL 
+ GOTO 
+ EQUAL 
+ GOTO 
+ GOTO 
+ EQUAL 
+ GOTO 
+ GOTO 
+ IF < 
+ IF _ GOTO 
+ GOTO 
+ EQUAL 
+ GOTO 
+ EQUAL 
+ GOTO 
+ GOTO 
+ TAB[]EQUAL 
+ ECHO 1---------- ||k|| 
+ GOTO 
+ EXIT 
+ GOTO 
+
+Free Lglobal:
+
+

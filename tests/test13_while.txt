@@ -1,0 +1,13 @@
+i=2;
+j=5;
+s=0;
+
+
+while test ${j} -le ${i}
+do
+    j = $(expr ${j} + 1)
+done;
+
+
+
+exit

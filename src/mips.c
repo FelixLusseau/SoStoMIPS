@@ -9,12 +9,24 @@ int arg_number = 0;
 
 int count_goto = 1;
 
-int addr_first_instruction_else = 0;
-int else_number = 0;
+
+liste_else *list_of_else;
+
+
 
 extern int output_file;
 
 void mips(void) {
+
+    list_of_else=malloc(sizeof(liste_else));
+
+    list_of_else->number_of_else=0;
+    for(int i=0; i<5000;i++){
+        list_of_else->else_number[i]=-1;
+        list_of_else->addr_first_instruction_else[i]=-1;
+    }
+
+
     printf("\n### MIPS: ###\n\n");
     listQ *liste = Lglobal;
 
@@ -281,6 +293,11 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
     case Q_GOTO:
         printf(" GOTO ");
 
+        int indx = list_of_else->number_of_else;
+
+        int addr_first_instruction_else = list_of_else->addr_first_instruction_else[indx];
+        int else_number = list_of_else->else_number[indx];
+
         if (count_goto + 1 == addr_first_instruction_else) {
             sprintf(buffer_text + strlen(buffer_text), "j EXIT%d\n", else_number);
             sprintf(buffer_text + strlen(buffer_text), "ELSE%d :\n", else_number);
@@ -288,6 +305,10 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
 
         if (liste->next != NULL && liste->next->quad->kind == Q_GOTO)
             sprintf(buffer_text + strlen(buffer_text), "EXIT%d :\n", else_number);
+        
+        // si on doit remonter
+        if(count_goto>liste->quad->res->u.cst)
+            sprintf(buffer_text + strlen(buffer_text), "j addr%d\n",liste->quad->res->u.cst);
 
         break;
     case Q_EXIT:
@@ -458,13 +479,17 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
     case Q_IF:
         printf(" IF _ GOTO ");
 
-        addr_first_instruction_else = liste->next->quad->res->u.cst;
+        int ind = list_of_else->number_of_else;
 
-        else_number = isTemporaryVariable(liste->quad->op1->u.name);
+        list_of_else->number_of_else++;
+
+        list_of_else->addr_first_instruction_else[ind]=liste->next->quad->res->u.cst;
+
+        list_of_else->else_number[ind] = isTemporaryVariable(liste->quad->op1->u.name);
 
         sprintf(buffer_text + strlen(buffer_text), "li $t%d, 1\n", (curr_temp_reg++) % 7);
 
-        sprintf(buffer_text + strlen(buffer_text), "bne $s%d, $t%d, ELSE%d\n", (else_number) % 7, (curr_temp_reg - 1) % 7, else_number);
+        sprintf(buffer_text + strlen(buffer_text), "bne $s%d, $t%d, ELSE%d\n", (list_of_else->else_number[ind]) % 7, (curr_temp_reg - 1) % 7, list_of_else->else_number[ind]);
 
         break;
     case Q_IF_EQ:
@@ -577,6 +602,8 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
         printf(" IF <= ");
 
         idx = isTemporaryVariable(liste->quad->res->u.name) % 7;
+
+        sprintf(buffer_text + strlen(buffer_text), "addr%d : \n",count_goto);
 
         sprintf(buffer_text + strlen(buffer_text), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
         sprintf(buffer_text + strlen(buffer_text), "lw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
