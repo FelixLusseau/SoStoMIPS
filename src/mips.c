@@ -323,18 +323,25 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
     case Q_READ:
         printf(" READ ");
 
-        // Buffer_text
+        // Buffer
         // int
-        /* sprintf(buffer_text + strlen(buffer_text), "li $v0, 5\n");
-        sprintf(buffer_text + strlen(buffer_text), "syscall\n"); */
+        if (liste->quad->res->u.name && get_from_table(tos, liste->quad->res->u.name) != NULL &&
+            get_from_table(tos, liste->quad->res->u.name)->type == INT) {
+            sprintf(buffer_text + strlen(buffer_text), "li $v0, 5\n");
+            sprintf(buffer_text + strlen(buffer_text), "syscall\n");
+            sprintf(buffer_text + strlen(buffer_text), "sw $v0, %s\n", liste->quad->res->u.name);
+        }
 
         // string
-        sprintf(buffer_text + strlen(buffer_text), "move $t%d, $a0\n", (curr_temp_reg++) % 7);
-        sprintf(buffer_text + strlen(buffer_text), "li $v0, 8\n");
-        sprintf(buffer_text + strlen(buffer_text), "la $a0, buffer_text\n");
-        sprintf(buffer_text + strlen(buffer_text), "li $a1, 100\n");
-        sprintf(buffer_text + strlen(buffer_text), "syscall\n");
-        sprintf(buffer_text + strlen(buffer_text), "move $t%d,$a0\n", (curr_temp_reg++) % 7);
+        /* else if (liste->quad->res->u.name && get_from_table(tos, liste->quad->res->u.name) != NULL &&
+                 get_from_table(tos, liste->quad->res->u.name)->type == STRING) {
+            sprintf(buffer_text + strlen(buffer_text), "move $t%d, $a0\n", (curr_temp_reg++) % 7);
+            sprintf(buffer_text + strlen(buffer_text), "li $v0, 8\n");
+            sprintf(buffer_text + strlen(buffer_text), "la $a0, buffer_text\n");
+            sprintf(buffer_text + strlen(buffer_text), "li $a1, 100\n");
+            sprintf(buffer_text + strlen(buffer_text), "syscall\n");
+            sprintf(buffer_text + strlen(buffer_text), "move $t%d,$a0\n", (curr_temp_reg++) % 7);
+        } */
         // il y a un pb dans la copie du buffer_text (manque le malloc)
 
         break;
