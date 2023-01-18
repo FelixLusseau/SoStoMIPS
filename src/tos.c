@@ -109,6 +109,8 @@ int update_args_count(struct tos_entry **table, char *str, int fn_args_counter) 
 }
 
 struct tos_entry *get_from_table(struct tos_entry **table, char *str) {
+    if(str == NULL)
+        return NULL;
     unsigned int hash1 = hash((unsigned char *)str);
     if (table[hash1] == NULL)
         return NULL;
