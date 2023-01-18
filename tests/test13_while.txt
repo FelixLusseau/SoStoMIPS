@@ -1,11 +1,31 @@
 i=2;
-j=5;
+j=3;
 s=0;
 
 
-while test ${j} -le ${i}
+while test ${j} -le 15
 do
+    echo ${j};
+
+    echo " ";
+
+    if test ${j} -le 7
+    then
+    echo "HELLO WORLD //"
+    else
+    echo "GT 7 //"
+    fi;
+
+    while test ${j} -le 5
+    do
+    echo ${j};
+    echo "haha "
+    done;
+
+
+
     j = $(expr ${j} + 1)
+    
 done;
 
 

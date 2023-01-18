@@ -2,7 +2,8 @@
 x = 0 ;
 until test ${x} -eq 42
 do
-    x = $(expr ${x} + 7)
+    x = $(expr ${x} + 7);
+    echo ${x}
 done
 
 ; exit
