@@ -78,7 +78,7 @@ test_mips :  $(OUTPUT)
 				echo "\033[92mOk\033[m" ; \
 			fi ; \
 			echo "\n\033[0;34m------------TEST MIPS------------\033[0m" ; \
-			if spim -file mips.asm 2>&1 | grep -A 20 'error\|parser' ; then \
+			if spim -file mips.asm 2>&1 | grep -A 20 'error\|parser\|undefined' ; then \
 				echo "\n\033[91mError in $${file}'s MIPS\033[0m\n" ; \
 			else \
 				echo "\033[0;34mOk\033[m\n" ; \
@@ -107,7 +107,7 @@ benchs_mips :  $(OUTPUT)
 				echo "\033[92mOk\033[m" ; \
 			fi ; \
 			echo "\n\033[0;34m------------TEST MIPS------------\033[0m" ; \
-			if spim -file mips.asm 2>&1 | grep -A 20 'error\|parser' ; then \
+			if spim -file mips.asm 2>&1 | grep -A 20 'error\|parser\|undefined' ; then \
 				echo "\n\033[91mError in $${file}'s MIPS\033[0m\n" ; \
 			else \
 				echo "\033[0;34mOk\033[m\n" ; \

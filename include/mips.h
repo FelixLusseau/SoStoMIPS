@@ -1,6 +1,7 @@
 #ifndef MIPS_H
 #define MIPS_H
 
+#include <ctype.h>
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
