@@ -22,6 +22,7 @@ int fn_args_counter;
 int str_number = 0;
 char strnb[100];
 char id[100] = "\0";
+int incase = 0;
 %}
 
 %union{char *strval; 
@@ -78,7 +79,8 @@ char id[100] = "\0";
 M: %empty {printf("M->empty\n");$$=Lglobal->taille;}
 
 id: ID { // lecture d'un ID
-  strcpy(id, $1);
+  if (incase==0)
+    strcpy(id, $1);
   int actual_depth=depth;
   int dont_exist=1;
 
@@ -264,9 +266,10 @@ id '=' concatenation {
 
   $6->u.cst=addrM0+1;
   }
-| CASE operande IN liste_cas ESAC { 
+| CASE { incase=1; } operande IN liste_cas ESAC { 
   printf("instruction-> CASE operande IN liste_cas ESAC \n");
-  CTcomplete($4,$2);
+  CTcomplete($5,$3);
+  incase = 0;
   }
 | MYECHO liste_operandes { 
   printf("instruction-> MYECHO liste_operandes \n");
@@ -409,6 +412,17 @@ ID {
 | CHAINE { 
 
   printf("filtre->CHAINE\n");
+
+  if ($1[0]=='\''){
+    $1[0]='\"';
+    $1[strlen($1)-1]='\"';
+  }
+  //if (id[0]=='\0') 
+    sprintf(strnb, "str%d", str_number++);
+  //else
+  //  strcpy(strnb, id);
+  add_to_table(tos, strnb, IDENTIFIER, 0, $1);
+  update_type(tos, strnb, STRING);
 
   quadOP *str=QOcreat(QO_STR,$1,0,STRING);
   quadOP *temp=QOcreat_temp(STRING);

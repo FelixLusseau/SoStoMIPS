@@ -23,7 +23,7 @@ struct tos_entry **create_table() {
 }
 
 int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_length, char *string) {
-    // printf("Adding %s to table as %d", str, var_kind);
+    printf("Adding %s to table as %d", str, var_kind);
     unsigned int hash1 = hash((unsigned char *)str);
 
     if (table[hash1] == NULL) { // Créé une entrée si elle n'existe pas
@@ -32,6 +32,7 @@ int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_leng
     } else // Empêche d'écraser une entrée existante
         return hash1;
     sprintf(table[hash1]->str, "%s", str);
+    printf("\033[0;32mAdding %s to table\033[0m\n", str);
     if (depth == 0) { // Vérifie si le symbole actuel est global ou local
         table[hash1]->used = 1;
         table[hash1]->depth = depth;
@@ -109,7 +110,7 @@ int update_args_count(struct tos_entry **table, char *str, int fn_args_counter) 
 }
 
 struct tos_entry *get_from_table(struct tos_entry **table, char *str) {
-    if(str == NULL)
+    if (str == NULL)
         return NULL;
     unsigned int hash1 = hash((unsigned char *)str);
     if (table[hash1] == NULL)
