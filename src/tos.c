@@ -23,7 +23,7 @@ struct tos_entry **create_table() {
 }
 
 int add_to_table(struct tos_entry **table, char *str, int var_kind, int tab_length, char *string) {
-    printf("Adding %s to table as %d", str, var_kind);
+    // printf("Adding %s to table as %d", str, var_kind);
     unsigned int hash1 = hash((unsigned char *)str);
 
     if (table[hash1] == NULL) { // Créé une entrée si elle n'existe pas
@@ -115,7 +115,7 @@ struct tos_entry *get_from_table(struct tos_entry **table, char *str) {
     unsigned int hash1 = hash((unsigned char *)str);
     if (table[hash1] == NULL)
         return NULL;
-    if (depth == 1 && table[hash1]->used == 0 && table[hash1]->next_lvl != NULL)
+    if (/* depth == 1 && */ table[hash1]->used == 0 && table[hash1]->next_lvl != NULL)
         return table[hash1]->next_lvl;
     else
         return table[hash1];
