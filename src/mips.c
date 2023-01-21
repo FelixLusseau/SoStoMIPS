@@ -671,6 +671,10 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
         } else if (liste->quad->op2->kind == QO_STR && (liste->quad->op1->u.name[0] == '"' || liste->quad->op1->u.name[0] == '\'')) {
             sprintf(buffer_text + strlen(buffer_text), "lw $t%d, str%d\n", (curr_temp_reg++) % 7, arg_number);
             arg_number++;
+        } else if (!get_from_table(tos, liste->quad->op2->u.name) && (liste->quad->op2->u.name[0] == '"' || liste->quad->op2->u.name[0] == '\'')) {
+            sprintf(buffer_text + strlen(buffer_text), "lw $t%d, str%d\n", (curr_temp_reg++) % 7, arg_number);
+            arg_number++;
+            // printf("\033[45mcc %d\033[0m", arg_number);
         } else {
             sprintf(buffer_text + strlen(buffer_text), "li $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
         }
