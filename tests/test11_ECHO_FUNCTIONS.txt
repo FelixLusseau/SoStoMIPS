@@ -1,3 +1,7 @@
+echo "Hello world!\n" ;
+echo "Hello" "world!" ;
+echo "\n" ;
+
 lecture_valeurs() # Saisie des valeurs entières
 {
     local i=0 ; local nombre = $1 ;
@@ -5,9 +9,6 @@ lecture_valeurs() # Saisie des valeurs entières
     return 0
 } ;
 
-echo "Hello world!\n" ;
-echo "Hello" "world!" ;
-echo "\n" ;
 
 lecture_valeurs 5 ;
 

@@ -2,11 +2,11 @@
 s = 0 ;
 for i in 1 2 3 4 5
 do
-    j = 1 ;
-    while test ${j} -le ${i}
+    h = 1 ;
+    while test ${h} -le ${i}
     do
-        s = $(expr ${s} + ${j}) ;
-        j = $(expr ${j} + 1)
+        s = $(expr ${s} + ${h}) ;
+        h = $(expr ${h} + 1)
     done
 done ;
 x = $(expr ( 5 * 6 * 7 ) / ( 1 * 2 * 3 )) ;
