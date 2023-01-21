@@ -1,165 +1,113 @@
-    mot/id/entier:s
+    mot/id/entier:x
     =
-[0;32mAdding s to table[0m
-    chaine:"def"
-[91mUpdating type of s to 3[0m
-operande-> CHAINE:"def"
-        créer quadOP:0  str:"def"
+[0;32mAdding x to table[0m
+    mot/id/entier:0
+operande-> MOT
+        créer quadOP:0  str:0
 concatenation-> operande 
     ;
 instruction-> ID = concatenation
-[91mUpdating type of s to 3[0m
-        créer quadOP:1  str:s
+[91mUpdating type of x to 1[0m
+        créer quadOP:1  str:x
 liste_instruction->instruction
         créer quadOP:2  cst:0
-    case
+    until
+M->empty
+    test
     $
     {
-    mot/id/entier:s
+    mot/id/entier:x
     }
 operande-> $ { ID }
-        créer quadOP:3  str:s
-    in
-    chaine:"abc"
-filtre->CHAINE
-[0;32mAdding str0 to table[0m
-[91mUpdating type of str0 to 3[0m
-        créer quadOP:4  str:"abc"
+        créer quadOP:3  str:x
+    -eq
+operateur2-> -eq
+    mot/id/entier:42
+operande-> MOT
+        créer quadOP:4  str:42
+test_instruction-> operande operateur2 operande 
         créer quadOP:5  str:__TEMP__1
-    )
+test_expr3 -> test_instruction 
+test_expr2-> test_expr3 
+2
+3
+    do
+test_expr-> test_expr2 
+test_bloc-> TEST test_expr 
 M->empty
-    echo
-    chaine:"no abc"
-[0;32mAdding str1 to table[0m
-[91mUpdating type of str1 to 3[0m
-operande-> CHAINE:"no abc"
-        créer quadOP:6  str:"no abc"
-liste_operandes-> operande 
-        créer quadOP:7  cst:1
-        créer quadOP:8  str:$
-    ;
-instruction-> MYECHO liste_operandes 
-        créer quadOP:9  cst:1
-        créer quadOP:10  str:$
-liste_instruction->instruction
-        créer quadOP:11  cst:0
-    ;
-liste_cas->filtre ) liste_instructions ; ; 
-        créer quadOP:12  cst:6
-        créer quadOP:13  cst:9
-    chaine:"def"
-filtre->CHAINE
-[0;32mAdding str2 to table[0m
-[91mUpdating type of str2 to 3[0m
-        créer quadOP:14  str:"def"
-        créer quadOP:15  str:__TEMP__2
+    mot/id/entier:x
+    =
+    $
+    (
+    expr
+    $
+    {
+    mot/id/entier:x
+    }
+operande_entier-> $ { id } 
+        créer quadOP:6  str:x
+produit_entier-> operande_entier 
+    +
+somme_entiere-> produit_entier 
+    mot/id/entier:7
+operande_entier-> ENTIER 
+ToInt: 7
+        créer quadOP:7  cst:7
+produit_entier-> operande_entier 
     )
-M->empty
-    echo
-    chaine:"yes"
-[0;32mAdding str3 to table[0m
-[91mUpdating type of str3 to 3[0m
-operande-> CHAINE:"yes"
-        créer quadOP:16  str:"yes"
-liste_operandes-> operande 
-        créer quadOP:17  cst:1
-        créer quadOP:18  str:$
+somme_entiere-> somme_entiere plus_ou_moin produit_entier 
+        créer quadOP:8  str:__TEMP__2
+operande-> $ ( EXPR somme_entiere )
+concatenation-> operande 
     ;
-instruction-> MYECHO liste_operandes 
-        créer quadOP:19  cst:1
-        créer quadOP:20  str:$
+instruction-> ID = concatenation
+        créer quadOP:9  str:x
 liste_instruction->instruction
-        créer quadOP:21  cst:0
-    ;
-liste_cas->liste_cas filtre ) liste_instructions ; ; 
-        créer quadOP:22  cst:12
-        créer quadOP:23  cst:15
-    chaine:"ghij"
-filtre->CHAINE
-[0;32mAdding str4 to table[0m
-[91mUpdating type of str4 to 3[0m
-        créer quadOP:24  str:"ghij"
-        créer quadOP:25  str:__TEMP__3
-    )
-M->empty
+        créer quadOP:10  cst:0
     echo
-    chaine:"no ghij"
-[0;32mAdding str5 to table[0m
-[91mUpdating type of str5 to 3[0m
-operande-> CHAINE:"no ghij"
-        créer quadOP:26  str:"no ghij"
+    $
+    {
+    mot/id/entier:x
+    }
+operande-> $ { ID }
+        créer quadOP:11  str:x
 liste_operandes-> operande 
-        créer quadOP:27  cst:1
-        créer quadOP:28  str:$
-    ;
+        créer quadOP:12  cst:1
+        créer quadOP:13  str:$
+    done
 instruction-> MYECHO liste_operandes 
-        créer quadOP:29  cst:1
-        créer quadOP:30  str:$
-liste_instruction->instruction
-        créer quadOP:31  cst:0
-    ;
-liste_cas->liste_cas filtre ) liste_instructions ; ; 
-        créer quadOP:32  cst:18
-        créer quadOP:33  cst:21
-    *
-filtre-> *
-    )
-M->empty
-    echo
-    chaine:"no *"
-[0;32mAdding str6 to table[0m
-[91mUpdating type of str6 to 3[0m
-operande-> CHAINE:"no *"
-        créer quadOP:34  str:"no *"
-liste_operandes-> operande 
-        créer quadOP:35  cst:1
-        créer quadOP:36  str:$
-    ;
-instruction-> MYECHO liste_operandes 
-        créer quadOP:37  cst:1
-        créer quadOP:38  str:$
-liste_instruction->instruction
-        créer quadOP:39  cst:0
-    ;
-liste_cas->liste_cas filtre ) liste_instructions ; ; 
-    esac
-instruction-> CASE operande IN liste_cas ESAC 
+        créer quadOP:14  cst:1
+        créer quadOP:15  str:$
 liste_instruction->liste_instructions ; instruction
-        créer quadOP:40  cst:0
+        créer quadOP:16  cst:0
+M->empty
+instruction-> UNTIL test_bloc DO liste_instructions DONE 
+        créer quadOP:17  cst:12
+        créer quadOP:18  cst:6
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:19  cst:0
     ;
     exit
 instruction->EXIT
 liste_instruction->liste_instructions ; instruction
-        créer quadOP:41  cst:0
+        créer quadOP:20  cst:0
 programme->liste_instruction
 
 Affichage Lglobal:
-ligne 1:  res: id:s  EQUAL  op1: string:"def"  op2: NULL 
+ligne 1:  res: id:x  EQUAL  op1: string:0  op2: NULL 
 ligne 2:  res: addr:3  GOTO  op1: NULL  op2: NULL 
-ligne 3:  res: id:__TEMP__1  IF ==  op1: id:s  op2: string:"abc" 
-ligne 4:  res: addr:6  IF _ GOTO  op1: id:__TEMP__1  op2: NULL 
-ligne 5:  res: addr:9  GOTO  op1: NULL  op2: NULL 
-ligne 6:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"no abc" 
-ligne 7:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 3:  res: id:__TEMP__1  IF ==  op1: id:x  op2: string:42 
+ligne 4:  res: addr:12  IF _ GOTO  op1: id:__TEMP__1  op2: NULL 
+ligne 5:  res: addr:6  GOTO  op1: NULL  op2: NULL 
+ligne 6:  res: id:__TEMP__2  ADD  op1: id:x  op2: cst:7 
+ligne 7:  res: id:x  EQUAL  op1: id:__TEMP__2  op2: NULL 
 ligne 8:  res: addr:9  GOTO  op1: NULL  op2: NULL 
-ligne 9:  res: id:__TEMP__2  IF ==  op1: id:s  op2: string:"def" 
-ligne 10:  res: addr:12  IF _ GOTO  op1: id:__TEMP__2  op2: NULL 
-ligne 11:  res: addr:15  GOTO  op1: NULL  op2: NULL 
-ligne 12:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"yes" 
-ligne 13:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 9:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: id:x 
+ligne 10:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 11:  res: addr:3  GOTO  op1: NULL  op2: NULL 
+ligne 12:  res: addr:13  GOTO  op1: NULL  op2: NULL 
+ligne 13:  res: NULL  EXIT  op1: NULL  op2: NULL 
 ligne 14:  res: addr:15  GOTO  op1: NULL  op2: NULL 
-ligne 15:  res: id:__TEMP__3  IF ==  op1: id:s  op2: string:"ghij" 
-ligne 16:  res: addr:18  IF _ GOTO  op1: id:__TEMP__3  op2: NULL 
-ligne 17:  res: addr:21  GOTO  op1: NULL  op2: NULL 
-ligne 18:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"no ghij" 
-ligne 19:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
-ligne 20:  res: addr:21  GOTO  op1: NULL  op2: NULL 
-ligne 21:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"no *" 
-ligne 22:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
-ligne 23:  res: addr:24  GOTO  op1: NULL  op2: NULL 
-ligne 24:  res: addr:25  GOTO  op1: NULL  op2: NULL 
-ligne 25:  res: NULL  EXIT  op1: NULL  op2: NULL 
-ligne 26:  res: addr:27  GOTO  op1: NULL  op2: NULL 
 Yacc return : ->0
 
 ### MIPS: ###
@@ -169,20 +117,8 @@ Yacc return : ->0
  IF == 
  IF _ GOTO 
  GOTO 
- TAB[]EQUAL 
- ECHO 
- GOTO 
- IF == 
- IF _ GOTO 
- GOTO 
- TAB[]EQUAL 
- ECHO 
- GOTO 
- IF == 
- IF _ GOTO 
- GOTO 
- TAB[]EQUAL 
- ECHO 
+ ADD 
+ EQUAL 
  GOTO 
  TAB[]EQUAL 
  ECHO 

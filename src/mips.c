@@ -153,6 +153,8 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
 
         if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
 
+            sprintf(buffer_data + strlen(buffer_data), "%s:  \t.word\t0\n", liste->quad->res->u.name);
+
             // load the op1 in a temporary variable
 
             if (liste->quad->op1->kind == QO_CST) {
@@ -171,12 +173,13 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
                 sprintf(buffer_text + strlen(buffer_text), "\tsub $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
             }
         }
-
+        
         break;
     case Q_MUL:
         printf(" MUL ");
 
         if ((idx = isTemporaryVariable(liste->quad->res->u.name)) >= 0) {
+            
 
             // load the op1 in a temporary variable
 
@@ -184,7 +187,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
                 sprintf(buffer_text + strlen(buffer_text), "\tli $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
                 sprintf(buffer_data + strlen(buffer_data), "%s:  \t.word\t0\n", liste->quad->res->u.name);
             } else {
-
+                sprintf(buffer_data + strlen(buffer_data), "%s:  \t.word\t0\n", liste->quad->res->u.name);
                 sprintf(buffer_text + strlen(buffer_text), "\tlw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
             }
 
@@ -235,6 +238,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
             // load the op1 in a temporary variable
             if (liste->quad->op1->kind == QO_CST) {
                 sprintf(buffer_text + strlen(buffer_text), "\tli $t%d, %d\n", (curr_temp_reg++) % 7, liste->quad->op1->u.cst);
+                sprintf(buffer_data + strlen(buffer_data), "%s:  \t.word\t0\n", liste->quad->res->u.name);
             } else {
                 sprintf(buffer_text + strlen(buffer_text), "\tlw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
                 sprintf(buffer_data + strlen(buffer_data), "%s:  \t.word\t0\n", liste->quad->res->u.name);
