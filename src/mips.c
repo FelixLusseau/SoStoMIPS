@@ -258,6 +258,40 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
 
     case Q_CONCAT:
         printf(" CONCAT OPERANDE ");
+        char temp[100];
+        memset(temp, 0, 100);
+        // printf("type : %d\n", liste->quad->op1->kind);
+        if (liste->quad->op1 && get_from_table(tos, liste->quad->op1->u.name) != NULL &&
+            get_from_table(tos, liste->quad->op1->u.name)->type == STRING && get_from_table(tos, liste->quad->op1->u.name)->string != NULL) {
+            sprintf(temp, "%s", get_from_table(tos, liste->quad->op1->u.name)->string);
+            temp[strlen(temp) - 2] = '\0';
+        } else if (liste->quad->op1 && get_from_table(tos, liste->quad->op1->u.name) != NULL &&
+                   get_from_table(tos, liste->quad->op1->u.name)->type == STRING && get_from_table(tos, liste->quad->op1->u.name)->string == NULL) {
+            sprintf(temp, "%s", strstr(buffer_data, liste->quad->op1->u.name) + strlen(liste->quad->op1->u.name) + 12);
+            temp[strlen(temp) - 2] = '\0';
+        } else if (liste->quad->op1 && liste->quad->op1->kind == QO_STR) {
+            // printf("cc");
+            sprintf(temp, "%s", liste->quad->op1->u.name);
+            temp[strlen(temp) - 2] = '\0';
+        } else if (liste->quad->op1 && liste->quad->op1->kind == QO_ID && liste->quad->op1->u.name[0] == '_' && liste->quad->op1->u.name[1] == '_') {
+            // printf("cc");
+            sprintf(temp, "%s", strstr(buffer_data, liste->quad->op1->u.name) + strlen(liste->quad->op1->u.name) + 12);
+            temp[strlen(temp) - 2] = '\0';
+        }
+        // printf("temp: %s\n", temp);
+        //  strcat(temp, "cccccc");
+        if (liste->quad->op2 && get_from_table(tos, liste->quad->op2->u.name) != NULL &&
+            get_from_table(tos, liste->quad->op2->u.name)->type == STRING) {
+            printf("table: %s", &get_from_table(tos, liste->quad->op2->u.name)->string[1]);
+            strcat(temp, &get_from_table(tos, liste->quad->op2->u.name)->string[1]);
+        } else if (liste->quad->op2 && liste->quad->op2->kind == QO_STR) {
+            printf("pastable: %s", &liste->quad->op2->u.name[1]);
+            strcat(temp, &liste->quad->op2->u.name[1]);
+        } else if (liste->quad->op1 && liste->quad->op1->kind == QO_ID && liste->quad->op1->u.name[0] == '_' && liste->quad->op1->u.name[1] == '_') {
+            strcat(temp, strstr(buffer_data, liste->quad->op1->u.name) + strlen(liste->quad->op1->u.name) + 12 + 1);
+        }
+        // printf("tempfin: %s\n", temp);
+        sprintf(buffer_data + strlen(buffer_data), "%s:  \t.asciiz\t%s\n", liste->quad->res->u.name, temp);
         break;
     case Q_CONCAT_OP:
         printf(" CONCAT ");
@@ -266,16 +300,19 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
         printf(" EQUAL ");
 
         if (liste->quad->res->u.name && get_from_table(tos, liste->quad->res->u.name) != NULL &&
-            get_from_table(tos, liste->quad->res->u.name)->type == STRING) {
+            get_from_table(tos, liste->quad->res->u.name)->type == STRING && liste->quad->op1->u.name[0] != '_' &&
+            liste->quad->op1->u.name[1] != '_') {
             sprintf(buffer_data + strlen(buffer_data), "%s:  \t.asciiz\t%s\n", liste->quad->res->u.name, liste->quad->op1->u.name);
             break;
-        }
-
-        /* if (liste->quad->res->u.name != NULL && !strncmp(liste->quad->res->u.name, "$", 1)) {
-            TABLE_$ = liste->quad->res->u.name;
-
+        } else if (liste->quad->res->u.name && get_from_table(tos, liste->quad->res->u.name) != NULL &&
+                   get_from_table(tos, liste->quad->res->u.name)->type == STRING && liste->quad->op1->u.name[0] == '_' &&
+                   liste->quad->op1->u.name[1] == '_') {
+            char temp2[100];
+            memset(temp2, 0, 100);
+            sprintf(temp2, "%s", strstr(buffer_data, liste->quad->op1->u.name) + strlen(liste->quad->op1->u.name) + 12);
+            sprintf(buffer_data + strlen(buffer_data), "%s:  \t.asciiz\t%s\n", liste->quad->res->u.name, temp2);
             break;
-        } */
+        }
 
         if (liste->quad->op1->kind == QO_CST) {
             sprintf(buffer_text + strlen(buffer_text), "\tli $t7, %d\n", liste->quad->op1->u.cst);
