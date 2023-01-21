@@ -1,0 +1,761 @@
+    commentaire
+    declare
+    mot/id/entier:valeurs
+    [
+    mot/id/entier:4
+    ]
+instruction-> DECLARE ID [ ENTIER ] 
+ToInt: 4
+        créer quadOP:0  str:valeurs
+        créer quadOP:1  cst:4
+liste_instruction->instruction
+        créer quadOP:2  cst:0
+    ;
+    mot/id/entier:lecture_valeurs
+    (
+    )
+dec_fct->empty
+    commentaire
+    {
+decl_loc-> empty 
+    local
+    mot/id/entier:i
+    =
+    mot/id/entier:0
+operande-> MOT
+        créer quadOP:3  str:0
+concatenation-> operande 
+    ;
+decl_loc-> decl_loc LOCAL id = concatenation 
+[91mUpdating type of i to 1[0m
+        créer quadOP:4  str:i
+    local
+    mot/id/entier:nombre
+    =
+    $
+    mot/id/entier:1
+operande-> $ ENTIER
+ToInt: 1
+        créer quadOP:5  str:$1
+concatenation-> operande 
+    ;
+decl_loc-> decl_loc LOCAL id = concatenation 
+[91mUpdating type of nombre to 0[0m
+        créer quadOP:6  str:nombre
+    echo
+    chaine:"Il faut saisir "
+[91mUpdating type of nombre to 3[0m
+operande-> CHAINE:"Il faut saisir "
+        créer quadOP:7  str:"Il faut saisir "
+liste_operandes-> operande 
+        créer quadOP:8  cst:1
+        créer quadOP:9  str:$
+    $
+    mot/id/entier:1
+operande-> $ ENTIER
+ToInt: 1
+        créer quadOP:10  str:$1
+liste_operandes-> liste_operandes operande 
+        créer quadOP:11  cst:2
+        créer quadOP:12  str:$
+    chaine:"valeurs entieres\n"
+[91mUpdating type of nombre to 3[0m
+operande-> CHAINE:"valeurs entieres\n"
+        créer quadOP:13  str:"valeurs entieres\n"
+liste_operandes-> liste_operandes operande 
+        créer quadOP:14  cst:3
+        créer quadOP:15  str:$
+    ;
+instruction-> MYECHO liste_operandes 
+        créer quadOP:16  cst:1
+        créer quadOP:17  str:$
+        créer quadOP:18  cst:2
+        créer quadOP:19  str:$
+        créer quadOP:20  cst:3
+        créer quadOP:21  str:$
+liste_instruction->instruction
+        créer quadOP:22  cst:0
+    while
+M->empty
+    test
+    $
+    {
+    mot/id/entier:i
+    }
+operande-> $ { ID }
+        créer quadOP:23  str:i
+    -lt
+operateur2-> -lt
+    $
+    {
+    mot/id/entier:nombre
+    }
+operande-> $ { ID }
+        créer quadOP:24  str:nombre
+[91mUpdating type of nombre to 1[0m
+test_instruction-> operande operateur2 operande 
+        créer quadOP:25  str:__TEMP__1
+test_expr3 -> test_instruction 
+test_expr2-> test_expr3 
+2
+3
+    do
+test_expr-> test_expr2 
+test_bloc-> TEST test_expr 
+M->empty
+    echo
+    chaine:"Entrez la valeur "
+operande-> CHAINE:"Entrez la valeur "
+        créer quadOP:26  str:"Entrez la valeur "
+liste_operandes-> operande 
+        créer quadOP:27  cst:1
+        créer quadOP:28  str:$
+    $
+    (
+    expr
+    $
+    {
+    mot/id/entier:i
+    }
+operande_entier-> $ { id } 
+        créer quadOP:29  str:i
+produit_entier-> operande_entier 
+    +
+somme_entiere-> produit_entier 
+    mot/id/entier:1
+operande_entier-> ENTIER 
+ToInt: 1
+        créer quadOP:30  cst:1
+produit_entier-> operande_entier 
+    )
+somme_entiere-> somme_entiere plus_ou_moin produit_entier 
+        créer quadOP:31  str:__TEMP__2
+operande-> $ ( EXPR somme_entiere )
+liste_operandes-> liste_operandes operande 
+        créer quadOP:32  cst:2
+        créer quadOP:33  str:$
+    chaine:" : \n"
+operande-> CHAINE:" : \n"
+        créer quadOP:34  str:" : \n"
+liste_operandes-> liste_operandes operande 
+        créer quadOP:35  cst:3
+        créer quadOP:36  str:$
+    ;
+instruction-> MYECHO liste_operandes 
+        créer quadOP:37  cst:1
+        créer quadOP:38  str:$
+        créer quadOP:39  cst:2
+        créer quadOP:40  str:$
+        créer quadOP:41  cst:3
+        créer quadOP:42  str:$
+liste_instruction->instruction
+        créer quadOP:43  cst:0
+    read
+    mot/id/entier:valeurs
+    [
+    $
+    {
+    mot/id/entier:i
+    }
+operande_entier-> $ { id } 
+        créer quadOP:44  str:i
+    ]
+instruction-> READ ID [ operande_entier ] 
+        créer quadOP:45  str:valeurs
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:46  cst:0
+    ;
+    if
+    test
+    ?
+    $
+    {
+    mot/id/entier:valeurs
+    [
+    $
+    {
+    mot/id/entier:i
+    }
+operande_entier-> $ { id } 
+        créer quadOP:47  str:i
+    ]
+    }
+operande-> $ { id [ operande_entier ] }
+        créer quadOP:48  str:valeurs
+        créer quadOP:49  str:__TEMP__3
+    -gt
+operateur2-> -gt
+    mot/id/entier:0
+operande-> MOT
+        créer quadOP:50  str:0
+test_instruction-> operande operateur2 operande 
+        créer quadOP:51  str:__TEMP__4
+test_expr3-> ! test_instruction 
+        créer quadOP:52  str:__TEMP__5
+test_expr2-> test_expr3 
+2
+3
+    then
+test_expr-> test_expr2 
+test_bloc-> TEST test_expr 
+M->empty
+    echo
+    chaine:"Les valeurs doivent etre strictement positives !\n"
+operande-> CHAINE:"Les valeurs doivent etre strictement positives !\n"
+        créer quadOP:53  str:"Les valeurs doivent etre strictement positives !\n"
+liste_operandes-> operande 
+        créer quadOP:54  cst:1
+        créer quadOP:55  str:$
+    ;
+instruction-> MYECHO liste_operandes 
+        créer quadOP:56  cst:1
+        créer quadOP:57  str:$
+liste_instruction->instruction
+        créer quadOP:58  cst:0
+    return
+    mot/id/entier:1
+operande_entier-> ENTIER 
+ToInt: 1
+        créer quadOP:59  cst:1
+instruction-> RETURN operande_entier 
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:60  cst:0
+    fi
+M->empty
+else_part->empty
+instruction-> IF test_bloc THEN liste_instructions else_part FI 
+        créer quadOP:61  cst:31
+        créer quadOP:62  cst:36
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:63  cst:0
+    ;
+    mot/id/entier:i
+    =
+    $
+    (
+    expr
+    $
+    {
+    mot/id/entier:i
+    }
+operande_entier-> $ { id } 
+        créer quadOP:64  str:i
+produit_entier-> operande_entier 
+    +
+somme_entiere-> produit_entier 
+    mot/id/entier:1
+operande_entier-> ENTIER 
+ToInt: 1
+        créer quadOP:65  cst:1
+produit_entier-> operande_entier 
+    )
+somme_entiere-> somme_entiere plus_ou_moin produit_entier 
+        créer quadOP:66  str:__TEMP__6
+operande-> $ ( EXPR somme_entiere )
+concatenation-> operande 
+    done
+instruction-> ID = concatenation
+        créer quadOP:67  str:i
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:68  cst:0
+M->empty
+instruction-> WHILE test_bloc DO liste_instructions DONE 
+        créer quadOP:69  cst:16
+        créer quadOP:70  cst:40
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:71  cst:0
+    ;
+    return
+    mot/id/entier:0
+operande_entier-> ENTIER 
+ToInt: 0
+        créer quadOP:72  cst:0
+instruction-> RETURN operande_entier 
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:73  cst:0
+    }
+declaration_de_fonction-> id ( ) { decl_loc liste_instructions }
+        créer quadOP:74  str:lecture_valeurs
+instruction-> declaration_de_fonction 
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:75  cst:0
+    ;
+    mot/id/entier:moyenne
+    (
+    )
+dec_fct->empty
+    {
+decl_loc-> empty 
+    commentaire
+    local
+    mot/id/entier:i
+    =
+    mot/id/entier:0
+operande-> MOT
+        créer quadOP:76  str:0
+concatenation-> operande 
+    ;
+decl_loc-> decl_loc LOCAL id = concatenation 
+        créer quadOP:77  str:i
+    local
+    mot/id/entier:somme
+    =
+    mot/id/entier:0
+operande-> MOT
+        créer quadOP:78  str:0
+concatenation-> operande 
+    ;
+decl_loc-> decl_loc LOCAL id = concatenation 
+[91mUpdating type of somme to 1[0m
+        créer quadOP:79  str:somme
+    while
+M->empty
+    test
+    $
+    {
+    mot/id/entier:i
+    }
+operande-> $ { ID }
+        créer quadOP:80  str:i
+    -lt
+operateur2-> -lt
+    $
+    mot/id/entier:1
+operande-> $ ENTIER
+ToInt: 1
+        créer quadOP:81  str:$1
+test_instruction-> operande operateur2 operande 
+        créer quadOP:82  str:__TEMP__7
+test_expr3 -> test_instruction 
+test_expr2-> test_expr3 
+2
+3
+    do
+test_expr-> test_expr2 
+test_bloc-> TEST test_expr 
+M->empty
+    mot/id/entier:somme
+    =
+    $
+    (
+    expr
+    $
+    {
+    mot/id/entier:somme
+    }
+operande_entier-> $ { id } 
+        créer quadOP:83  str:somme
+produit_entier-> operande_entier 
+    +
+somme_entiere-> produit_entier 
+    $
+    {
+    mot/id/entier:valeurs
+    [
+    $
+    {
+    mot/id/entier:i
+    }
+operande_entier-> $ { id } 
+        créer quadOP:84  str:i
+    ]
+    }
+operande_entier-> $ { id [ operande_entier ] } 
+        créer quadOP:85  str:valeurs
+        créer quadOP:86  str:__TEMP__8
+produit_entier-> operande_entier 
+    )
+somme_entiere-> somme_entiere plus_ou_moin produit_entier 
+        créer quadOP:87  str:__TEMP__9
+operande-> $ ( EXPR somme_entiere )
+concatenation-> operande 
+    ;
+instruction-> ID = concatenation
+        créer quadOP:88  str:somme
+liste_instruction->instruction
+        créer quadOP:89  cst:0
+    mot/id/entier:i
+    =
+    $
+    (
+    expr
+    $
+    {
+    mot/id/entier:i
+    }
+operande_entier-> $ { id } 
+        créer quadOP:90  str:i
+produit_entier-> operande_entier 
+    +
+somme_entiere-> produit_entier 
+    mot/id/entier:1
+operande_entier-> ENTIER 
+ToInt: 1
+        créer quadOP:91  cst:1
+produit_entier-> operande_entier 
+    )
+somme_entiere-> somme_entiere plus_ou_moin produit_entier 
+        créer quadOP:92  str:__TEMP__10
+operande-> $ ( EXPR somme_entiere )
+concatenation-> operande 
+    done
+instruction-> ID = concatenation
+        créer quadOP:93  str:i
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:94  cst:0
+M->empty
+instruction-> WHILE test_bloc DO liste_instructions DONE 
+        créer quadOP:95  cst:50
+        créer quadOP:96  cst:57
+liste_instruction->instruction
+        créer quadOP:97  cst:0
+    ;
+    echo
+    $
+    (
+    expr
+    $
+    {
+    mot/id/entier:somme
+    }
+operande_entier-> $ { id } 
+        créer quadOP:98  str:somme
+produit_entier-> operande_entier 
+    /
+    $
+    mot/id/entier:1
+operande_entier-> $ ENTIER 
+ToInt: 1
+        créer quadOP:99  str:$1
+produit_entier-> produit_entier fois_div_mod operande_entier
+        créer quadOP:100  str:__TEMP__11
+    )
+somme_entiere-> produit_entier 
+operande-> $ ( EXPR somme_entiere )
+liste_operandes-> operande 
+        créer quadOP:101  cst:1
+        créer quadOP:102  str:$
+    }
+instruction-> MYECHO liste_operandes 
+        créer quadOP:103  cst:1
+        créer quadOP:104  str:$
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:105  cst:0
+declaration_de_fonction-> id ( ) { decl_loc liste_instructions }
+        créer quadOP:106  str:moyenne
+instruction-> declaration_de_fonction 
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:107  cst:0
+    ;
+    echo
+    chaine:"Nombre de valeurs : "
+operande-> CHAINE:"Nombre de valeurs : "
+        créer quadOP:108  str:"Nombre de valeurs : "
+liste_operandes-> operande 
+        créer quadOP:109  cst:1
+        créer quadOP:110  str:$
+    ;
+instruction-> MYECHO liste_operandes 
+        créer quadOP:111  cst:1
+        créer quadOP:112  str:$
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:113  cst:0
+    read
+    mot/id/entier:nombre
+    ;
+instruction-> READ ID 
+        créer quadOP:114  str:nombre
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:115  cst:0
+    mot/id/entier:lecture_valeurs
+    $
+    {
+    mot/id/entier:nombre
+    }
+operande-> $ { ID }
+        créer quadOP:116  str:nombre
+liste_operandes-> operande 
+        créer quadOP:117  cst:1
+        créer quadOP:118  str:$
+    ;
+appel_de_fonction-> id liste_operandes 
+        créer quadOP:119  str:lecture_valeurs
+instruction-> appel_de_fonction 
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:120  cst:0
+    if
+    test
+    $
+    ?
+operande-> $ ?
+        créer quadOP:121  str:$?
+    =
+concatenation-> operande 
+    mot/id/entier:0
+operande-> MOT
+        créer quadOP:122  str:0
+concatenation-> operande 
+    then
+test_instruction-> concatenation = concatenation 
+        créer quadOP:123  str:__TEMP__12
+test_expr3 -> test_instruction 
+test_expr2-> test_expr3 
+2
+3
+test_expr-> test_expr2 
+test_bloc-> TEST test_expr 
+M->empty
+    echo
+    chaine:"Moyenne = "
+operande-> CHAINE:"Moyenne = "
+        créer quadOP:124  str:"Moyenne = "
+liste_operandes-> operande 
+        créer quadOP:125  cst:1
+        créer quadOP:126  str:$
+    $
+    (
+    mot/id/entier:moyenne
+    $
+    {
+    mot/id/entier:nombre
+    }
+operande-> $ { ID }
+        créer quadOP:127  str:nombre
+liste_operandes-> operande 
+        créer quadOP:128  cst:1
+        créer quadOP:129  str:$
+    )
+appel_de_fonction-> id liste_operandes 
+        créer quadOP:130  str:moyenne
+operande-> $ ( appel_de_fonction )
+liste_operandes-> liste_operandes operande 
+        créer quadOP:131  cst:2
+        créer quadOP:132  str:$
+    chaine:"\n"
+operande-> CHAINE:"\n"
+        créer quadOP:133  str:"\n"
+liste_operandes-> liste_operandes operande 
+        créer quadOP:134  cst:3
+        créer quadOP:135  str:$
+    else
+instruction-> MYECHO liste_operandes 
+        créer quadOP:136  cst:1
+        créer quadOP:137  str:$
+        créer quadOP:138  cst:2
+        créer quadOP:139  str:$
+        créer quadOP:140  cst:3
+        créer quadOP:141  str:$
+liste_instruction->instruction
+        créer quadOP:142  cst:0
+M->empty
+    echo
+    chaine:"Erreur\n"
+operande-> CHAINE:"Erreur\n"
+        créer quadOP:143  str:"Erreur\n"
+liste_operandes-> operande 
+        créer quadOP:144  cst:1
+        créer quadOP:145  str:$
+    fi
+instruction-> MYECHO liste_operandes 
+        créer quadOP:146  cst:1
+        créer quadOP:147  str:$
+liste_instruction->instruction
+        créer quadOP:148  cst:0
+else_part->ELSE liste_instructions
+instruction-> IF test_bloc THEN liste_instructions else_part FI 
+        créer quadOP:149  cst:74
+        créer quadOP:150  cst:83
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:151  cst:0
+    ;
+    exit
+instruction->EXIT
+liste_instruction->liste_instructions ; instruction
+        créer quadOP:152  cst:0
+programme->liste_instruction
+
+Affichage Lglobal:
+ligne 1:  res: tab:valeurs  TAB[]CREAT  op1: cst:4  op2: NULL 
+ligne 2:  res: addr:3  GOTO  op1: NULL  op2: NULL 
+ligne 3:  res: fct:lecture_valeurs  FCT:  op1: NULL  op2: NULL 
+ligne 4:  res: id:i  EQUAL  op1: string:0  op2: NULL 
+ligne 5:  res: id:nombre  EQUAL  op1: id:$1  op2: NULL 
+ligne 6:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"Il faut saisir " 
+ligne 7:  res: tab:$  TAB[]EQUAL  op1: cst:2  op2: id:$1 
+ligne 8:  res: tab:$  TAB[]EQUAL  op1: cst:3  op2: string:"valeurs entieres\n" 
+ligne 9:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 10:  res: tab:$  ECHO  op1: cst:2  op2: NULL 
+ligne 11:  res: tab:$  ECHO  op1: cst:3  op2: NULL 
+ligne 12:  res: addr:13  GOTO  op1: NULL  op2: NULL 
+ligne 13:  res: id:__TEMP__1  IF <  op1: id:i  op2: id:nombre 
+ligne 14:  res: addr:16  IF _ GOTO  op1: id:__TEMP__1  op2: NULL 
+ligne 15:  res: addr:40  GOTO  op1: NULL  op2: NULL 
+ligne 16:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"Entrez la valeur " 
+ligne 17:  res: id:__TEMP__2  ADD  op1: id:i  op2: cst:1 
+ligne 18:  res: tab:$  TAB[]EQUAL  op1: cst:2  op2: id:__TEMP__2 
+ligne 19:  res: tab:$  TAB[]EQUAL  op1: cst:3  op2: string:" : \n" 
+ligne 20:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 21:  res: tab:$  ECHO  op1: cst:2  op2: NULL 
+ligne 22:  res: tab:$  ECHO  op1: cst:3  op2: NULL 
+ligne 23:  res: addr:24  GOTO  op1: NULL  op2: NULL 
+ligne 24:  res: tab:valeurs  READ  op1: id:i  op2: NULL 
+ligne 25:  res: addr:26  GOTO  op1: NULL  op2: NULL 
+ligne 26:  res: id:__TEMP__3  TAB[]GIVE  op1: tab:valeurs  op2: id:i 
+ligne 27:  res: id:__TEMP__4  IF >  op1: id:__TEMP__3  op2: string:0 
+ligne 28:  res: id:__TEMP__5  NOT  op1: id:__TEMP__4  op2: NULL 
+ligne 29:  res: addr:31  IF _ GOTO  op1: id:__TEMP__5  op2: NULL 
+ligne 30:  res: addr:36  GOTO  op1: NULL  op2: NULL 
+ligne 31:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"Les valeurs doivent etre strictement positives !\n" 
+ligne 32:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 33:  res: addr:34  GOTO  op1: NULL  op2: NULL 
+ligne 34:  res: cst:1  RETURN  op1: NULL  op2: NULL 
+ligne 35:  res: addr:36  GOTO  op1: NULL  op2: NULL 
+ligne 36:  res: addr:37  GOTO  op1: NULL  op2: NULL 
+ligne 37:  res: id:__TEMP__6  ADD  op1: id:i  op2: cst:1 
+ligne 38:  res: id:i  EQUAL  op1: id:__TEMP__6  op2: NULL 
+ligne 39:  res: addr:13  GOTO  op1: NULL  op2: NULL 
+ligne 40:  res: addr:41  GOTO  op1: NULL  op2: NULL 
+ligne 41:  res: cst:0  RETURN  op1: NULL  op2: NULL 
+ligne 42:  res: addr:43  GOTO  op1: NULL  op2: NULL 
+ligne 43:  res: addr:44  GOTO  op1: NULL  op2: NULL 
+ligne 44:  res: fct:moyenne  FCT:  op1: NULL  op2: NULL 
+ligne 45:  res: id:i  EQUAL  op1: string:0  op2: NULL 
+ligne 46:  res: id:somme  EQUAL  op1: string:0  op2: NULL 
+ligne 47:  res: id:__TEMP__7  IF <  op1: id:i  op2: id:$1 
+ligne 48:  res: addr:50  IF _ GOTO  op1: id:__TEMP__7  op2: NULL 
+ligne 49:  res: addr:57  GOTO  op1: NULL  op2: NULL 
+ligne 50:  res: id:__TEMP__8  TAB[]GIVE  op1: tab:valeurs  op2: id:i 
+ligne 51:  res: id:__TEMP__9  ADD  op1: id:somme  op2: id:__TEMP__8 
+ligne 52:  res: id:somme  EQUAL  op1: id:__TEMP__9  op2: NULL 
+ligne 53:  res: addr:54  GOTO  op1: NULL  op2: NULL 
+ligne 54:  res: id:__TEMP__10  ADD  op1: id:i  op2: cst:1 
+ligne 55:  res: id:i  EQUAL  op1: id:__TEMP__10  op2: NULL 
+ligne 56:  res: addr:47  GOTO  op1: NULL  op2: NULL 
+ligne 57:  res: addr:58  GOTO  op1: NULL  op2: NULL 
+ligne 58:  res: id:__TEMP__11  DIV  op1: id:somme  op2: id:$1 
+ligne 59:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: id:__TEMP__11 
+ligne 60:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 61:  res: addr:62  GOTO  op1: NULL  op2: NULL 
+ligne 62:  res: addr:63  GOTO  op1: NULL  op2: NULL 
+ligne 63:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"Nombre de valeurs : " 
+ligne 64:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 65:  res: addr:66  GOTO  op1: NULL  op2: NULL 
+ligne 66:  res: id:nombre  READ  op1: NULL  op2: NULL 
+ligne 67:  res: addr:68  GOTO  op1: NULL  op2: NULL 
+ligne 68:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: id:nombre 
+ligne 69:  res: fct:lecture_valeurs  CALL FCT ()  op1: NULL  op2: NULL 
+ligne 70:  res: addr:71  GOTO  op1: NULL  op2: NULL 
+ligne 71:  res: id:__TEMP__12  IF ==  op1: id:$?  op2: string:0 
+ligne 72:  res: addr:74  IF _ GOTO  op1: id:__TEMP__12  op2: NULL 
+ligne 73:  res: addr:83  GOTO  op1: NULL  op2: NULL 
+ligne 74:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"Moyenne = " 
+ligne 75:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: id:nombre 
+ligne 76:  res: fct:moyenne  CALL FCT ()  op1: NULL  op2: NULL 
+ligne 77:  res: tab:$  TAB[]EQUAL  op1: cst:2  op2: 
+ligne 78:  res: tab:$  TAB[]EQUAL  op1: cst:3  op2: string:"\n" 
+ligne 79:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 80:  res: tab:$  ECHO  op1: cst:2  op2: NULL 
+ligne 81:  res: tab:$  ECHO  op1: cst:3  op2: NULL 
+ligne 82:  res: addr:83  GOTO  op1: NULL  op2: NULL 
+ligne 83:  res: tab:$  TAB[]EQUAL  op1: cst:1  op2: string:"Erreur\n" 
+ligne 84:  res: tab:$  ECHO  op1: cst:1  op2: NULL 
+ligne 85:  res: addr:86  GOTO  op1: NULL  op2: NULL 
+ligne 86:  res: addr:87  GOTO  op1: NULL  op2: NULL 
+ligne 87:  res: NULL  EXIT  op1: NULL  op2: NULL 
+ligne 88:  res: addr:89  GOTO  op1: NULL  op2: NULL 
+Yacc return : ->0
+
+### MIPS: ###
+
+ TAB[]CREAT 
+ GOTO 
+ FCT: 
+ EQUAL 
+ EQUAL 
+ TAB[]EQUAL 
+ TAB[]EQUAL 
+ TAB[]EQUAL 
+ ECHO 
+ ECHO 
+ ECHO 
+ GOTO 
+ IF < 
+ IF _ GOTO 
+ GOTO 
+ TAB[]EQUAL 
+ ADD 
+ TAB[]EQUAL 
+ TAB[]EQUAL 
+ ECHO 
+ ECHO 
+ ECHO 
+ GOTO 
+ READ 
+ GOTO 
+ TAB[]GIVE 
+ IF > 
+ NOT 
+ IF _ GOTO 
+ GOTO 
+ TAB[]EQUAL 
+ ECHO 
+ GOTO 
+ RETURN 
+ GOTO 
+ GOTO 
+ ADD 
+ EQUAL 
+ GOTO 
+ GOTO 
+ RETURN 
+ GOTO 
+ GOTO 
+ FCT: 
+ EQUAL 
+ EQUAL 
+ IF < 
+ IF _ GOTO 
+ GOTO 
+ TAB[]GIVE 
+ ADD 
+ EQUAL 
+ GOTO 
+ ADD 
+ EQUAL 
+ GOTO 
+ GOTO 
+ DIV 
+ TAB[]EQUAL 
+ ECHO 
+ GOTO 
+ GOTO 
+ TAB[]EQUAL 
+ ECHO 
+ GOTO 
+ READ 
+ GOTO 
+ TAB[]EQUAL 
+ CALL FCT () 
+ GOTO 
+ IF == 
+ IF _ GOTO 
+ GOTO 
+ TAB[]EQUAL 
+ TAB[]EQUAL 
+ CALL FCT () 
+ TAB[]EQUAL 
+ TAB[]EQUAL 
+ ECHO 
+ ECHO 
+ ECHO 
+ GOTO 
+ TAB[]EQUAL 
+ ECHO 
+ GOTO 
+ GOTO 
+ EXIT 
+ GOTO 
+
+Free Lglobal:
+
+
