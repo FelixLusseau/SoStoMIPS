@@ -133,6 +133,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
                 sprintf(buffer_data + strlen(buffer_data), "%s:  \t.word\t0\n", liste->quad->res->u.name);
             } else {
                 sprintf(buffer_text + strlen(buffer_text), "\tlw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op1->u.name);
+                sprintf(buffer_data + strlen(buffer_data), "%s:  \t.word\t0\n", liste->quad->res->u.name);
             }
 
             // concatenation
