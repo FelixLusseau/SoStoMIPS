@@ -335,9 +335,15 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
             // printf("\033[46mcc\033[0m");
             // printf("%c\n", liste->quad->op1->u.name[1]);
             if (liste->quad->res->u.name && get_from_table(tos, liste->quad->res->u.name) &&
-                get_from_table(tos, liste->quad->res->u.name)->type == INT && liste->quad->op1->u.name[0] == '$') {
-                // printf("\033[45mcc2\033[0m");
-                sprintf(buffer_text + strlen(buffer_text), "\tsw $a%c, %s\n", liste->quad->op1->u.name[1] - 1, liste->quad->res->u.name);
+                get_from_table(tos, liste->quad->res->u.name)->type == INT ) {
+                if(liste->quad->op1->u.name[0] == '$'){
+                    // printf("\033[45mcc2\033[0m");
+                    sprintf(buffer_text + strlen(buffer_text), "\tsw $a%c, %s\n", liste->quad->op1->u.name[1] - 1, liste->quad->res->u.name);
+                }
+                else {
+                    sprintf(buffer_text + strlen(buffer_text), "\tlw $t7, %s\n", liste->quad->op1->u.name);
+                    sprintf(buffer_text + strlen(buffer_text), "\tsw $t7, %s\n", liste->quad->res->u.name);
+                }
             }
             // Et pour un string ?
         } else {
