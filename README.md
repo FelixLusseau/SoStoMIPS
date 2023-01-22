@@ -25,4 +25,10 @@ ou
 ```bash
 make test_mips
 ```
-qui compile et exécute le code avec Spim si installé.
+qui compile et exécute le code de nos tests avec Spim si installé.
+
+ou
+```bash
+make benchs_mips
+```
+qui compile et exécute le code des benchmarks du projet avec Spim si installé.
