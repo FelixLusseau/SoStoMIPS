@@ -12,6 +12,7 @@ int count_goto = 1;
 liste_else *list_of_else;
 
 extern int output_file;
+int function = 0;
 
 void mips(void) {
 
@@ -34,6 +35,7 @@ void mips(void) {
 
     char buffer_text[BUFSIZ];
     char buffer_data[BUFSIZ];
+    char buffer_function[BUFSIZ];
     // int Woctet;
     //  int taille_chaine = 0;
 
@@ -77,7 +79,10 @@ void mips(void) {
 
     while (liste != NULL) {
 
-        QuadToMips(liste, buffer_text, buffer_data);
+        if (liste->quad->kind == Q_FCT || function == 1)
+            QuadToMips(liste, buffer_function, buffer_data);
+        else
+            QuadToMips(liste, buffer_text, buffer_data);
 
         liste = liste->next;
     }
@@ -85,6 +90,8 @@ void mips(void) {
     buffer_data[0] = '\0';
     CHK(write(file, &buffer_text, strlen(buffer_text)));
     buffer_text[0] = '\0';
+    CHK(write(file, &buffer_function, strlen(buffer_function)));
+    buffer_function[0] = '\0';
 
     for (int i = 0; i < args_pointer; i++) {
         printf("%s", args_tab[i]);
@@ -224,6 +231,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
             } else {
                 sprintf(buffer_text + strlen(buffer_text), "\tlw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer_text + strlen(buffer_text), "\tmul $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
+                sprintf(buffer_text + strlen(buffer_text), "\tsw $s%d, %s\n", idx % 7, liste->quad->res->u.name);
             }
         }
 
@@ -253,6 +261,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
             else {
                 sprintf(buffer_text + strlen(buffer_text), "\tlw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer_text + strlen(buffer_text), "\tdiv $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
+                sprintf(buffer_text + strlen(buffer_text), "\tsw $s%d, %s\n", idx % 7, liste->quad->res->u.name);
             }
         }
         break;
@@ -447,22 +456,23 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
             sprintf(buffer_text + strlen(buffer_text), "\tlw $v0, %s\n", liste->quad->res->u.name);
         } */
         // Return value
-        if (liste->quad->res->kind == QO_STR) {
+        if (liste->quad->res && liste->quad->res->kind == QO_STR && liste->quad->res->u.name) {
             sprintf(buffer_text + strlen(buffer_text), "\tla $a0, %s\n", liste->quad->res->u.name);
             sprintf(buffer_text + strlen(buffer_text), "\tli $v0, 4\n");
             sprintf(buffer_text + strlen(buffer_text), "\tsyscall\n");
-        } else if (liste->quad->res->kind == QO_CST) {
-            sprintf(buffer_text + strlen(buffer_text), "\tlw $a0, %d\n", liste->quad->res->u.cst);
+        } else if (liste->quad->res && liste->quad->res->kind == QO_CST && liste->quad->res->u.cst) {
+            sprintf(buffer_text + strlen(buffer_text), "\tli $a0, %d\n", liste->quad->res->u.cst);
             sprintf(buffer_text + strlen(buffer_text), "\tli $v0, 1\n");
             sprintf(buffer_text + strlen(buffer_text), "\tsyscall\n");
-        } else {
+        } /* else {
             sprintf(buffer_text + strlen(buffer_text), "\tla $a0, %s\n", liste->quad->res->u.name);
             sprintf(buffer_text + strlen(buffer_text), "\tli $v0, 4\n");
             sprintf(buffer_text + strlen(buffer_text), "\tsyscall\n");
-        }
+        } */
 
         // Return from the function
         sprintf(buffer_text + strlen(buffer_text), "\tjr $ra\n");
+        function = 0;
         break;
     case Q_READ:
         printf(" READ ");
@@ -522,6 +532,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
     case Q_FCT:
         printf(" FCT: ");
 
+        function = 1;
         // Write the label of the function
         sprintf(buffer_text + strlen(buffer_text), "%s:\n", liste->quad->res->u.name);
 

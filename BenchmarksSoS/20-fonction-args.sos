@@ -7,7 +7,8 @@ fact () { # n
         p = $(expr ${p} * ${i}) ;
         i = $(expr ${i} + 1)
     done ;
-    echo ${p}
+    echo ${p} ;
+    return 
 } ;
 
 echo $(fact 5) "=120"

@@ -10,7 +10,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <ctype.h>
 
 #include "errors.h"
 #include "quads.h"
@@ -22,7 +21,7 @@ typedef struct liste_else {
     int number_of_else;
     int addr_first_instruction_else[5000];
     int else_number[5000];
-}liste_else;
+} liste_else;
 
 /**
  * @brief Fonction écrivant dans le fichier assembleur les variables
