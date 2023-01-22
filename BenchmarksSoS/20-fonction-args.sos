@@ -2,10 +2,12 @@
 fact () { # n
     local p = 1 ;
     local i = 2 ;
-    while test ${i} -le $1
+    while test ${i} -le 5
     do
         p = $(expr ${p} * ${i}) ;
-        i = $(expr ${i} + 1)
+        i = $(expr ${i} + 1);
+        echo ${i};
+        echo "haha "
     done ;
     echo ${p} ;
     return 
