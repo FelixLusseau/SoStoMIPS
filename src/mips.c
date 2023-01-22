@@ -193,7 +193,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
             // concatenation
 
             if (liste->quad->op2->kind == QO_CST)
-                sprintf(buffer_text + strlen(buffer_text), "\tsubi $s%d, $t%d, %d\n", idx % 7, (curr_temp_reg - 1) % 7, liste->quad->op2->u.cst);
+                sprintf(buffer_text + strlen(buffer_text), "\tsub $s%d, $t%d, %d\n", idx % 7, (curr_temp_reg - 1) % 7, liste->quad->op2->u.cst);
             else {
                 sprintf(buffer_text + strlen(buffer_text), "\tlw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer_text + strlen(buffer_text), "\tsub $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
