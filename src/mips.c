@@ -485,6 +485,10 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
                 sprintf(buffer_text + strlen(buffer_text), "\tlw $a0, %s\n", args_tab[i]);
                 sprintf(buffer_text + strlen(buffer_text), "\tli $v0, 1\n");
                 sprintf(buffer_text + strlen(buffer_text), "\tsyscall\n");
+            } else if (args_tab[i][0] == '$') {
+                sprintf(buffer_text + strlen(buffer_text), "\tla $a0, str%d\n", arg_number);
+                sprintf(buffer_text + strlen(buffer_text), "\tli $v0, 4\n");
+                sprintf(buffer_text + strlen(buffer_text), "\tsyscall\n");
             } else {
                 sprintf(buffer_text + strlen(buffer_text), "\tla $a0, %s\n", args_tab[i]);
                 sprintf(buffer_text + strlen(buffer_text), "\tli $v0, 4\n");
@@ -512,7 +516,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
                 if (liste->quad->res->u.name[0] == '"' || liste->quad->res->u.name[0] == '\'')
                     sprintf(buffer_text + strlen(buffer_text), "\tla $a%d, %s\n", k, args_tab[args_pointer - 1]);
                 else
-                    sprintf(buffer_text + strlen(buffer_text), "\tli $a%d, %s\n", k, args_tab[args_pointer - 1]);
+                    sprintf(buffer_text + strlen(buffer_text), "\tla $a%d, %s\n", k, args_tab[args_pointer - 1]);
             }
             args_pointer--;
         }

@@ -1,0 +1,12 @@
+echo "Hello world!\n" ;
+
+echo_chaine() # Saisie des valeurs entières
+{
+    echo $1 ;
+    return 0
+} ;
+
+
+echo_chaine "echo dans la fonction" ;
+
+exit
