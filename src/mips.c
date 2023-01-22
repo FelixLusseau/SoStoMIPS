@@ -15,7 +15,7 @@ int function = 0;
 
 void mips(void) {
 
-    list_of_else = malloc(sizeof(liste_else));
+    CHKP(list_of_else = malloc(sizeof(liste_else)));
 
     list_of_else->number_of_else = 0;
     for (int i = 0; i < 5000; i++) {
@@ -35,6 +35,7 @@ void mips(void) {
     char buffer_text[BUFSIZ];
     char buffer_data[BUFSIZ];
     char buffer_function[BUFSIZ];
+    memset(buffer_function, 0, BUFSIZ);
 
     /*************************** Déclaration des variables ***************************************/
 
@@ -77,16 +78,15 @@ void mips(void) {
         liste = liste->next;
     }
     CHK(write(file, &buffer_data, strlen(buffer_data)));
-    buffer_data[0] = '\0';
     CHK(write(file, &buffer_text, strlen(buffer_text)));
-    buffer_text[0] = '\0';
-    CHK(write(file, &buffer_function, strlen(buffer_function)));
-    buffer_function[0] = '\0';
+    if (buffer_function[0] != '\0')
+        CHK(write(file, &buffer_function, strlen(buffer_function)));
 
     for (int i = 0; i < args_pointer; i++) {
         printf("%s", args_tab[i]);
     }
 
+    free(list_of_else);
     close(file);
 }
 
