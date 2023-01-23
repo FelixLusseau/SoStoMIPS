@@ -167,6 +167,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
             } else {
                 sprintf(buffer_text + strlen(buffer_text), "\tlw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer_text + strlen(buffer_text), "\tadd $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
+                sprintf(buffer_text + strlen(buffer_text), "\tsw $s%d, %s\n", idx % 7, liste->quad->res->u.name);
             }
         }
 
@@ -194,6 +195,7 @@ void QuadToMips(listQ *liste, char *buffer_text, char *buffer_data) {
             else {
                 sprintf(buffer_text + strlen(buffer_text), "\tlw $t%d, %s\n", (curr_temp_reg++) % 7, liste->quad->op2->u.name);
                 sprintf(buffer_text + strlen(buffer_text), "\tsub $s%d, $t%d, $t%d\n", idx % 7, (curr_temp_reg - 2) % 7, (curr_temp_reg - 1) % 7);
+                sprintf(buffer_text + strlen(buffer_text), "\tsw $s%d, %s\n", idx % 7, liste->quad->res->u.name);
             }
         }
 
