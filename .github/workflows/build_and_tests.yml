@@ -29,6 +29,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install Spim
+      run: sudo apt install spim -y
     - name: make tests MIPS
       run: make test_mips
       
@@ -47,6 +49,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install Spim
+      run: sudo apt install spim -y
     - name: make Benchs MIPS
       run: make benchs_mips
       

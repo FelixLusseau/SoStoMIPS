@@ -1,6 +1,11 @@
 # Projet Compilation 2022
 
-![https://git.unistra.fr/flusseau/projet-compilation-2022/-/pipelines](https://git.unistra.fr/flusseau/projet-compilation-2022/badges/main/pipeline.svg)
+[![Build and run tests / benchs](https://github.com/FelixLusseau/SoStoMIPS/actions/workflows/build_and_tests.yml/badge.svg)](https://github.com/FelixLusseau/SoStoMIPS/actions/workflows/build_and_tests.yml)
+
+[![Author](https://img.shields.io/badge/author-@LouiseCouture-blue)](https://github.com/LouiseCouture)
+[![Author](https://img.shields.io/badge/author-@AymaneElmahi-blue)](https://github.com/AymaneElmahi)
+[![Author](https://img.shields.io/badge/author-@FelixLusseau-blue)](https://github.com/FelixLusseau)
+[![Author](https://img.shields.io/badge/author-@OussamaTakiAmrani-blue)](https://github.com/oussama-taki-amrani)
 
 Compilateur pour le langage SoS vers MIPS écrit en C.
 
