@@ -1,0 +1,28 @@
+name: Build and run tests / benchs
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: make
+      run: make
+    - name: make tests
+      continue-on-error: true
+      run: make test
+    - name: make tests MIPS
+      continue-on-error: true
+      run: make test_mips
+    - name: make Benchs
+      continue-on-error: true
+      run: make benchs
+    - name: make Benchs MIPS
+      continue-on-error: true
+      run: make Benchs_mips
+      
